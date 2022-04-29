@@ -1,4 +1,4 @@
-let socket = io.connect(":30000?sketch=1556869");
+const socket = io('socket-server.underconstruction.fun:3000');
 
 // setup initializes these
 let video; // p5.js Video instance
