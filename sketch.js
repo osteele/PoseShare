@@ -1,5 +1,3 @@
-const socket = io('socket-server.underconstruction.fun:3000');
-
 // setup initializes these
 let video; // p5.js Video instance
 let poseNet;
@@ -7,11 +5,6 @@ let poseNet;
 // settings
 let mirrorVideo = true;
 let confidenceThreshold = 0.2;
-
-// smoothing
-let smoothing = 0.8;
-let smoothingSlider;
-let previousPose;
 
 let people = []; // each entry is {id, pose, timestamp}
 let partnerId = null; // if not null, show only that person
@@ -35,7 +28,6 @@ function setup() {
 
 function draw() {
   clear();
-  smoothing = smoothingSlider.value();
 
   let s = min(width / video.width, height / video.height);
   scale(s);
@@ -77,90 +69,6 @@ function drawPeople() {
   }
 }
 
-function drawPerson(person) {
-  let {
-    id,
-    pose,
-    timestamp,
-    hue
-  } = person;
-  drawKeypoints(pose, color(hue, 100, 100));
-  // drawSkeleton(pose, color(hue, 50, 50));
-  drawPoseOutline(pose, color(hue, 50, 50, 0.50));
-}
-
-function drawKeypoints(pose, c) {
-  fill(c);
-  noStroke();
-  for (let keypoint of pose.pose.keypoints) {
-    if (keypoint.score >= confidenceThreshold) {
-      ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
-    }
-  }
-}
-
-function drawSkeleton(pose, c) {
-  stroke(c);
-  strokeWeight(2);
-  for (let skeleton of pose.skeleton) {
-    let [p1, p2] = skeleton;
-    if (min(p1.score, p2.score) >= confidenceThreshold) {
-      line(p1.position.x, p1.position.y, p2.position.x, p2.position.y);
-    }
-  }
-}
-
-function drawPoseOutline(pose, c) {
-  let keypoints = pose.pose.keypoints;
-
-  function findPart(partName) {
-    if (partName.match(/\+/)) {
-      let [p1, p2] = partName.split('+').map(findPart);
-      return {
-        score: (p1.score + p2.score) / 2,
-        position: {
-          x: (p1.position.x + p2.position.x),
-          y: (p1.position.x + p2.position.x),
-        }
-      };
-    }
-    return keypoints.find(({
-      part
-    }) => part === partName);
-  };
-
-  function drawOutline() {
-    beginShape();
-    for (let name of partNames) {
-      let kp = findPart(name);
-      // if (!kp) {
-      // 	console.info('not found: ' + name);
-      // 	noLoop();
-      // }
-      if (kp && kp.score >= confidenceThreshold) {
-        if (name.match(/elbow|knee/i)) {
-          curveVertex(kp.position.x, kp.position.y);
-        } else {
-          vertex(kp.position.x, kp.position.y);
-        }
-      }
-    }
-    fill(c);
-    stroke(c);
-    strokeWeight(10);
-    endShape(CLOSE);
-  }
-
-  let partNames = [
-    'rightShoulder', 'rightElbow', 'rightWrist', 'rightShoulder',
-    'rightHip', 'rightKnee', 'rightAnkle', 'rightHip+leftHip',
-    'leftKnee', 'leftAnkle', 'leftHip',
-    'leftShoulder', 'leftElbow', 'leftWrist', 'leftShoulder',
-  ];
-  drawOutline(partNames);
-  drawOutline(['leftEye', 'rightEye', 'nose']);
-}
-
 function initializeCamera() {
   video = createCapture(VIDEO);
   video.size(640, 480);
@@ -187,30 +95,6 @@ function setupPosenet() {
         self: true
       });
     }
-  });
-}
-
-function connectWebsocket() {
-  poseNet.on("pose", ([pose]) => {
-    if (pose) {
-      pose = smoothPose(pose);
-      socket.emit('pose', {
-        id: myPersonId,
-        name: username,
-        pose
-      });
-    }
-  });
-  socket.on('pose', ({
-    id,
-    name,
-    pose
-  }) => {
-    updatePersonPose({
-      id,
-      name,
-      pose
-    });
   });
 }
 
@@ -269,64 +153,4 @@ function createPartnerSelector() {
       }
     }
   });
-}
-
-let myPersonId, username;
-let setUsernameButton;
-
-const POSE_SHARE_PERSON_ID_KEY = 'poseSharePersonId';
-const POSE_SHARE_USERNAME_KEY = 'poseShareUsername';
-
-function setUsername() {
-  myPersonId = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
-  username = localStorage.getItem(POSE_SHARE_USERNAME_KEY);
-  if (!myPersonId) {
-    myPersonId = Array.from({
-      length: 20
-    })
-      .map(() => floor(random(16)).toString(16))
-      .join('');
-    localStorage.setItem(POSE_SHARE_PERSON_ID_KEY, myPersonId);
-  }
-  if (!username) {
-    promptForUsername();
-  }
-  setUsernameButton = createButton(username ? "You are: " + username : 'Set your username')
-    .position(10, 10)
-    .mousePressed(promptForUsername);
-}
-
-function promptForUsername() {
-  do {
-    username = prompt("Enter your user name", username || '') || username;
-  } while (!username);
-
-  localStorage.setItem(POSE_SHARE_USERNAME_KEY, username);
-  if (setUsernameButton) {
-    setUsernameButton.elt.innerHTML = 'You are: ' + username;
-  }
-}
-
-function smoothPose(pose) {
-  let smoothed = pose;
-  if (previousPose) {
-    smoothed = {
-      ...pose,
-      pose: pose.pose,
-      keypoints: pose.keypoints
-    };
-    smoothed.pose.keypoints.forEach((keypoint, i) => {
-      let prev = previousPose.pose.keypoints[i];
-      smoothed.pose.keypoints[i] = {
-        ...keypoint,
-        score: lerp(prev.score, keypoint.score, 1 - smoothing),
-        position: {
-          x: lerp(prev.position.x, keypoint.position.x, 1 - smoothing),
-          y: lerp(prev.position.y, keypoint.position.y, 1 - smoothing),
-        }
-      }
-    });
-  }
-  previousPose = pose;
-  return smoothed;
 }
