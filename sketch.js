@@ -14,7 +14,6 @@ function setup() {
   colorMode(HSB);
   initializeCamera();
   setUsername();
-  setupPosenet();
   connectWebsocket();
   createPartnerSelector();
 
@@ -54,10 +53,10 @@ function drawPeople() {
     timestamp
   }) => timestamp > millis() - 5000);
 
-  // If the user has specified a particular partner, show
-  // only that partner. (This replaces the initialize of
-  // `activePeople` in the previous statement. It does *not*
-  // restrict the filter to active people.
+  // If the user has specified a particular partner, show only that partner.
+  //
+  // This replaces the initialize of `activePeople` in the previous statement.
+  // It does *not* restrict the filter to active people.
   if (partnerId) {
     activePeople = [people.find(({
       id
@@ -70,13 +69,12 @@ function drawPeople() {
 }
 
 function initializeCamera() {
-  video = createCapture(VIDEO);
+  video = createCapture(VIDEO, initializePosenet);
   video.size(640, 480);
-  // Hide the video element, and just show the canvas
   video.hide();
 }
 
-function setupPosenet() {
+function initializePosenet() {
   poseNet = ml5.poseNet(
     video, {
     flipHorizontal: true,
@@ -88,13 +86,22 @@ function setupPosenet() {
   poseNet.on("pose", ([pose]) => {
     if (pose) {
       pose = smoothPose(pose);
-      updatePersonPose({
-        id: myPersonId,
-        name: username,
-        pose,
-        self: true
-      });
+      setOwnPose(pose);
     }
+  });
+}
+
+function setOwnPose(pose) {
+  updatePersonPose({
+    id: myPersonId,
+    name: username,
+    self: true,
+    pose,
+  });
+  socket.emit('pose', {
+    id: myPersonId,
+    name: username,
+    pose
   });
 }
 
