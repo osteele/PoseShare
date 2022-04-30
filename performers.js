@@ -16,20 +16,25 @@ function setOwnPose(pose) {
 }
 
 function updatePersonPose(person) {
-  let entry = performers.find(({
-    id
-  }) => id === person.id);
-  if (!entry) {
-    entry = {
-      id: person.id
-    };
-    performers.push(entry);
+  let ix = performers.findIndex(({ id }) => id === person.id);
+  if (ix < 0) {
+    ix = performers.length;
+    performers.push(person);
   }
-  entry.name = person.name;
-  entry.pose = person.pose;
-  entry.timestamp = millis();
-  entry.self = person.self;
-  entry.timestamp = millis();
+  performers[ix] = {
+    ...performers[ix],
+    ...person,
+    timestamp: millis(),
+  };
+}
+
+function updatePerformerData(performerData) {
+  performerData.forEach(({ id, hue }) => {
+    updatePersonPose({
+      id,
+      hue,
+    });
+  });
 }
 
 function createPartnerSelector() {
@@ -75,12 +80,13 @@ function createPartnerSelector() {
 }
 
 function getScenePartners() {
+  const activePerformers = performers.filter(({ pose }) => pose);
   // If the user has specified a particular partner, show only that partner.
   if (partnerId) {
-    const partner = performers.find(({ id }) => id === partnerId);
+    const partner = activePerformers.find(({ id }) => id === partnerId);
     return [partner];
   } else {
     // make a list of people who have been seen recently
-    return performers.filter(({ timestamp }) => timestamp > millis() - 5000);
+    return activePerformers.filter(({ timestamp }) => timestamp > millis() - 5000);
   }
 }

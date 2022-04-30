@@ -41,14 +41,8 @@ function draw() {
 
 // Does not draw the background. draw() does that first.
 function drawScene() {
-  // assign each person a hue
-  performers.forEach((person, i) => {
-    person.hue = map(i, 0, performers.length, 0, 360)
-  });
-
-  let activePeople = getScenePartners();
-
-  for (let person of activePeople) {
+  const scenePartners = getScenePartners();
+  for (const person of scenePartners) {
     drawPerson(person);
   }
 }

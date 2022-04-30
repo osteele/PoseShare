@@ -1,21 +1,27 @@
 function drawPerson(person) {
-  let {
-    id,
+  const {
     pose,
-    timestamp,
-    hue
+    hue,
+    self
   } = person;
-  drawKeypoints(pose, color(hue, 100, 100));
+  // if (!self) {
+  drawKeypoints(pose, color(hue, 100, 100), self);
+  // }
   // drawSkeleton(pose, color(hue, 50, 50));
-  drawPoseOutline(pose, color(hue, 50, 50, 0.50));
+  drawPoseOutline(pose, color(hue, 50, 50, 0.50), self);
 }
 
-function drawKeypoints(pose, c) {
+function drawKeypoints(pose, c, outline) {
   fill(c);
   noStroke();
-  for (let keypoint of pose.pose.keypoints) {
+  if (outline) {
+    noFill(c);
+    stroke(c);
+    strokeWeight(1);
+  }
+  for (const keypoint of pose.pose.keypoints) {
     if (keypoint.score >= confidenceThreshold) {
-      ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
+      circle(keypoint.position.x, keypoint.position.y, 10);
     }
   }
 }
@@ -23,20 +29,27 @@ function drawKeypoints(pose, c) {
 function drawSkeleton(pose, c) {
   stroke(c);
   strokeWeight(2);
-  for (let skeleton of pose.skeleton) {
-    let [p1, p2] = skeleton;
+  for (const skeleton of pose.skeleton) {
+    const [p1, p2] = skeleton;
     if (min(p1.score, p2.score) >= confidenceThreshold) {
       line(p1.position.x, p1.position.y, p2.position.x, p2.position.y);
     }
   }
 }
 
-function drawPoseOutline(pose, c) {
-  let keypoints = pose.pose.keypoints;
+const partNames = [
+  'rightShoulder', 'rightElbow', 'rightWrist', 'rightShoulder',
+  'rightHip', 'rightKnee', 'rightAnkle', 'rightHip+leftHip',
+  'leftKnee', 'leftAnkle', 'leftHip',
+  'leftShoulder', 'leftElbow', 'leftWrist', 'leftShoulder',
+];
+
+function drawPoseOutline(pose, c, outlineOnly) {
+  const keypoints = pose.pose.keypoints;
 
   function findPart(partName) {
     if (partName.match(/\+/)) {
-      let [p1, p2] = partName.split('+').map(findPart);
+      const [p1, p2] = partName.split('+').map(findPart);
       return {
         score: (p1.score + p2.score) / 2,
         position: {
@@ -52,32 +65,26 @@ function drawPoseOutline(pose, c) {
 
   function drawOutline() {
     beginShape();
-    for (let name of partNames) {
-      let kp = findPart(name);
-      // if (!kp) {
-      // 	console.info('not found: ' + name);
-      // 	noLoop();
-      // }
-      if (kp && kp.score >= confidenceThreshold) {
+    for (const name of partNames) {
+      const keypoint = findPart(name);
+      if (keypoint && keypoint.score >= confidenceThreshold) {
         if (name.match(/elbow|knee/i)) {
-          curveVertex(kp.position.x, kp.position.y);
+          curveVertex(keypoint.position.x, keypoint.position.y);
         } else {
-          vertex(kp.position.x, kp.position.y);
+          vertex(keypoint.position.x, keypoint.position.y);
         }
       }
     }
     fill(c);
     stroke(c);
     strokeWeight(10);
+    if (outlineOnly) {
+      noFill();
+      strokeWeight(2);
+    }
     endShape(CLOSE);
   }
 
-  let partNames = [
-    'rightShoulder', 'rightElbow', 'rightWrist', 'rightShoulder',
-    'rightHip', 'rightKnee', 'rightAnkle', 'rightHip+leftHip',
-    'leftKnee', 'leftAnkle', 'leftHip',
-    'leftShoulder', 'leftElbow', 'leftWrist', 'leftShoulder',
-  ];
   drawOutline(partNames);
   drawOutline(['leftEye', 'rightEye', 'nose']);
 }
