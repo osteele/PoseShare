@@ -1,8 +1,8 @@
-let myPersonId, username;
-let setUsernameButton;
-
 const POSE_SHARE_PERSON_ID_KEY = 'poseSharePersonId';
 const POSE_SHARE_USERNAME_KEY = 'poseShareUsername';
+
+let myPersonId, username;
+let setUsernameButton;
 
 function setUsername() {
   myPersonId = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
