@@ -1,4 +1,4 @@
-const socket = io(':3030');
+const socket = io();
 
 function connectWebsocket() {
   socket.on('pose', pose => {

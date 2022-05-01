@@ -1,15 +1,24 @@
-const http = require("http");
-const { Server } = require("socket.io");
+const express = require('express');
+const app = express();
+const path = require('path');
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 const { instrument } = require("@socket.io/admin-ui");
+const port = process.env.PORT || 3000;
 
-const httpServer = http.createServer();
-
-const io = new Server(httpServer, {
-  cors: {
-    origin: ["http://localhost:3000"],
-    credentials: true
-  }
+server.listen(port, () => {
+  console.log('Server listening at port %d', port);
 });
+
+// Routing
+app.use(express.static(path.join(__dirname, 'public')));
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: ["http://localhost:3000"],
+//     credentials: true
+//   }
+// });
 
 let performers = [];
 
@@ -44,5 +53,3 @@ io.on('connection', (socket) => {
 instrument(io, {
   auth: false
 });
-
-httpServer.listen(3030);
