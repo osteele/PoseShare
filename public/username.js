@@ -1,35 +1,37 @@
 const POSE_SHARE_PERSON_ID_KEY = 'poseSharePersonId';
 const POSE_SHARE_USERNAME_KEY = 'poseShareUsername';
 
-let myPersonId, username;
-let setUsernameButton;
+const clientId = getClientId();
+let username = getUsername();
 
-function setUsername() {
-  myPersonId = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
-  username = localStorage.getItem(POSE_SHARE_USERNAME_KEY);
-  if (!myPersonId) {
-    myPersonId = Array.from({
+function getClientId() {
+  let id = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
+  if (!id) {
+    id = Array.from({
       length: 20
     })
       .map(() => floor(random(16)).toString(16))
       .join('');
-    localStorage.setItem(POSE_SHARE_PERSON_ID_KEY, myPersonId);
+    localStorage.setItem(POSE_SHARE_PERSON_ID_KEY, id);
   }
-  if (!username) {
-    promptForUsername();
-  }
-  setUsernameButton = createButton(username ? "You are: " + username : 'Set your username')
-    .position(10, 10)
-    .mousePressed(promptForUsername);
+  return id;
 }
 
-function promptForUsername() {
-  do {
-    username = prompt("Enter your user name", username || '') || username;
-  } while (!username);
-
-  localStorage.setItem(POSE_SHARE_USERNAME_KEY, username);
-  if (setUsernameButton) {
-    setUsernameButton.elt.innerHTML = 'You are: ' + username;
+function getUsername() {
+  let name = localStorage.getItem(POSE_SHARE_USERNAME_KEY);
+  for (; !name;) {
+    name = prompt("Enter your user name", name || '');
   }
+  localStorage.setItem(POSE_SHARE_USERNAME_KEY, name);
+  settings.name = name;
+  return name;
 }
+
+usernameController.onFinishChange(value => {
+  value = value.trim();
+  if (value) {
+    setUsername(value);
+  } else {
+    settings.name = username;
+  }
+});

@@ -1,25 +1,25 @@
+const gui = new dat.GUI();
+let confidenceThreshold = 0.2;
+const settings = {
+  name: '',
+  mirrorVideo: true,
+  smoothing: 0.8,
+};
+const usernameController = gui.add(settings, 'name').listen();
+// const partnerController = gui.add(settings, 'partner').options(partnerNames);
+gui.add(settings, 'mirrorVideo');
+gui.add(settings, 'smoothing', 0, 0.95, 0.05);
+
 // setup initializes these
 let video; // p5.js Video instance
 let poseNet;
-
-// settings
-let mirrorVideo = true;
-let confidenceThreshold = 0.2;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB);
   initializeWebcam();
-  setUsername();
   connectWebsocket();
   createPartnerSelector();
-
-  createDiv('Smoothing').position(10, 70);
-  smoothingSlider = createSlider(0, 0.95, smoothing, 0.05)
-    .position(100, 70);
-  let checkbox = createCheckbox('Mirror video', mirrorVideo)
-    .position(10, 40)
-    .changed(() => mirrorVideo = checkbox.checked());
 }
 
 function draw() {
@@ -29,7 +29,7 @@ function draw() {
   scale(s);
 
   push();
-  if (mirrorVideo) {
+  if (settings.mirrorVideo) {
     translate(video.width, 0);
     scale(-1, 1);
   }

@@ -3,13 +3,13 @@ let partnerId = null; // if not null, show only that person
 
 function setOwnPose(pose) {
   updatePersonPose({
-    id: myPersonId,
+    id: clientId,
     name: username,
     self: true,
     pose,
   });
   socket.emit('pose', {
-    id: myPersonId,
+    id: clientId,
     name: username,
     pose
   });

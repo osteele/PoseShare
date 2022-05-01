@@ -1,10 +1,7 @@
-// smoothing
-let smoothing = 0.8;
-let smoothingSlider;
 let previousPose;
 
 function smoothPose(pose) {
-  smoothing = smoothingSlider.value();
+  const smoothing = settings.smoothing;
   let smoothed = pose;
   if (previousPose) {
     smoothed = {
