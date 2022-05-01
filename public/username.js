@@ -30,7 +30,7 @@ function getUsername() {
 usernameController.onFinishChange(value => {
   value = value.trim();
   if (value) {
-    setUsername(value);
+    username = value;
   } else {
     settings.name = username;
   }

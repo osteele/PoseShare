@@ -1,15 +1,3 @@
-const gui = new dat.GUI();
-let confidenceThreshold = 0.2;
-const settings = {
-  name: '',
-  mirrorVideo: true,
-  smoothing: 0.8,
-};
-const usernameController = gui.add(settings, 'name').listen();
-// const partnerController = gui.add(settings, 'partner').options(partnerNames);
-gui.add(settings, 'mirrorVideo');
-gui.add(settings, 'smoothing', 0, 0.95, 0.05);
-
 // setup initializes these
 let video; // p5.js Video instance
 let poseNet;
@@ -24,9 +12,6 @@ function setup() {
 
 function draw() {
   clear();
-
-  let s = min(width / video.width, height / video.height);
-  scale(s);
 
   push();
   if (settings.mirrorVideo) {
