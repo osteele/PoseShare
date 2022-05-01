@@ -1,4 +1,4 @@
-const socket = io('socket-server.underconstruction.fun:3000');
+const socket = io(':3030');
 
 function connectWebsocket() {
   socket.on('pose', pose => {
