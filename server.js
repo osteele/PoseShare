@@ -36,6 +36,10 @@ io.on('connection', (socket) => {
       performer.connected = true;
     } else {
       users.push({ ...data, connected: true });
+      // re-assign the hues
+      users.forEach((performer, i) => performer.hue = 360 * i / users.length);
+      // send the new hues to the clients
+      io.emit('performers', getPerformerList());
     }
     if (!username) {
       console.log('connected', socket.id, '->', data.name);

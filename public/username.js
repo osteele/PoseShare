@@ -31,8 +31,8 @@ usernameController.onFinishChange(value => {
   value = value.trim();
   if (value) {
     username = value;
+    localStorage.setItem(POSE_SHARE_USERNAME_KEY, username);
   } else {
     settings.name = username;
-    localStorage.setItem(POSE_SHARE_USERNAME_KEY, name);
   }
 });
