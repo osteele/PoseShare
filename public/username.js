@@ -33,5 +33,6 @@ usernameController.onFinishChange(value => {
     username = value;
   } else {
     settings.name = username;
+    localStorage.setItem(POSE_SHARE_USERNAME_KEY, name);
   }
 });

@@ -16,11 +16,13 @@ function setOwnPose(pose) {
 }
 
 function updatePersonPose(person) {
+  // find the index of the person in the list of performers
   let ix = performers.findIndex(({ id }) => id === person.id);
   if (ix < 0) {
     ix = performers.length;
     performers.push(person);
   }
+  // update their record
   performers[ix] = {
     ...performers[ix],
     ...person,
@@ -28,6 +30,7 @@ function updatePersonPose(person) {
   };
 }
 
+// Update the performer data with properties from the server
 function updatePerformerData(performerData) {
   performerData.forEach(({ id, hue }) => {
     updatePersonPose({
