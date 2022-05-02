@@ -20,34 +20,88 @@ app.use(express.static(path.join(__dirname, 'public')));
 //   }
 // });
 
-let performers = [];
+let users = [];
 
 io.on('connection', (socket) => {
-  console.log('connected', socket.id);
+  let printedConnected = false;
+  let clientId = null;
+  let username = null;
+
+  setTimeout(printConnectionMessage, 100);
   socket.emit('performers', getPerformerList());
 
-  function getPerformerList() {
-    return performers.map(({ id, name, hue }) => ({ id, name, hue }));
-  }
-
+  socket.on('userdata', (data) => {
+    let performer = findUserById(data.id);
+    if (performer) {
+      performer.connected = true;
+    } else {
+      users.push({ ...data, connected: true });
+    }
+    if (!username) {
+      console.log('connected', socket.id, '->', data.name);
+    }
+    clientId = data.clientId;
+    username = data.name;
+    printedConnectedList();
+  });
 
   socket.on('disconnect', () => {
-    console.log('disconnected', socket.id);
+    console.log('disconnected', username || socket.id);
+    const performer = clientId && findUserById(clientId);
+    if (performer) {
+      performer.connected = false;
+    }
   });
-  socket.on('pose', (pose) => {
-    let performer = performers.find(({ id }) => id === pose.id);
+
+  socket.on('pose', (person) => {
+    username = person.name;
+    printConnectionMessage();
+
     const now = new Date;
-    if (!performer) {
-      performer = { ...pose, pose: undefined, timestamp: now };
-      performers.push(performer);
-      performers = performers.filter(({ timestamp }) => now - timestamp < 5000);
-      performers.forEach((performer, i) => performer.hue = 360 * i / performers.length);
+    let user = findUserById(person.id);
+    if (!user) {
+      // reap old performers
+      users = users.filter(({ timestamp }) => now - timestamp < 5000);
+      user = { ...person, connected: true, pose: undefined };
+      users.push(user);
+      // re-assign the hues
+      users.forEach((performer, i) => performer.hue = 360 * i / users.length);
+      // send the new hues to the clients
       io.emit('performers', getPerformerList());
     }
-    performer.timestamp = now;
-    socket.broadcast.volatile.emit('pose', pose);
+    user.timestamp = now;
+    socket.broadcast.volatile.emit('pose', person);
   });
+
+  function getPerformerList() {
+    return users.map(({ id, name, hue }) => ({ id, name, hue }));
+  }
+
+  function printConnectionMessage() {
+    if (!printedConnected) {
+      console.log('connected', username || socket.id);
+      printedConnected = true;
+    }
+  }
 });
+
+function printedConnectedList() {
+  const connected = users.filter(({ connected }) => connected);
+  const disconnected = users.filter(({ connected }) => !connected);
+  msg = `Active: ${connected.length ? names(connected) : 'none'}`;
+  if (disconnected.length) {
+    msg += `; Disconnected: ${names(disconnected)}`;
+  }
+  console.log(msg);
+
+  function names(people) {
+    return people.map(({ name }) => name).join(', ');
+  }
+}
+
+function findUserById(clientId) {
+  return users.find(({ id }) => id === clientId);
+}
 
 
 instrument(io, {
