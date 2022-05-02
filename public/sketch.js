@@ -8,6 +8,7 @@ function setup() {
   initializeWebcam();
   connectWebsocket();
   createPartnerSelector();
+  setupChooseCamera();
 }
 
 function draw() {

@@ -41,7 +41,7 @@ function updatePerformerData(performerData) {
 }
 
 function createPartnerSelector() {
-  let showAllString = 'Show All';
+  const showAllString = 'Show All';
 
   function getOptionName({
     name,
@@ -59,11 +59,11 @@ function createPartnerSelector() {
   sel.selected(showAllString);
 
   sel.changed(() => {
-    let item = sel.value();
+    const item = sel.value();
     if (item === showAllString) {
       partnerId = null;
     } else {
-      let partner = performers.find(person => getOptionName(person) === item);
+      const partner = performers.find(person => getOptionName(person) === item);
       partnerId = partner ? partner.id : null;
     }
   });
@@ -72,8 +72,8 @@ function createPartnerSelector() {
     sel.elt.innerHTML = '';
     sel.option(showAllString);
     sel.selected(showAllString);
-    for (let person of getOtherPerformers()) {
-      let optionName = getOptionName(person);
+    for (const person of getOtherPerformers()) {
+      const optionName = getOptionName(person);
       sel.option(optionName);
       if (person.id === partnerId) {
         sel.selected(optionName);
