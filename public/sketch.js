@@ -22,6 +22,7 @@ function draw() {
   pop();
 
   drawScene();
+  updateGallery();
 }
 
 // Does not draw the background. draw() does that first.

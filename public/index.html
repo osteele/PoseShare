@@ -15,7 +15,8 @@
 
         body {
             margin: 0;
-            display: flex;
+            position: relative;
+            {# display: flex; #}
             {# justify-content: center;
             align-items: center; #}
         }
@@ -32,10 +33,20 @@
             position: fixed;
         }
 
+        #gallery-container {
+            position: fixed;
+            left: 660px;
+            top: 198px;
+        }
     </style>
 </head>
 
-<body></body>
+<body>
+    <div id="gallery-container">
+    <h2 id="gallery-title">Gallery</h2>
+    <svg id="gallery" width="300" height="300"></svg>
+    </div>
+</body>
 
 <!-- import the javascript library file(s) -->
 <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
@@ -56,6 +67,7 @@
 <script src="./sketch.js"></script>
 <script src="./blazePose.js"></script>
 <script src="./drawPose.js"></script>
+<script src="./gallery.js"></script>
 <script src="./performers.js"></script>
 <script src="./smoothing.js"></script>
 <script src="./socket.js"></script>

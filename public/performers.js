@@ -48,10 +48,10 @@ function createPartnerSelector() {
     return name;
   }
 
-  createDiv('Partner:').position(660, 210);
+  createDiv('Partner:').position(660, 180);
 
   const sel = createSelect();
-  sel.position(730, 210);
+  sel.position(730, 180);
   sel.option(showAllString);
   sel.selected(showAllString);
 
