@@ -1,0 +1,45 @@
+body,
+html {
+  height: 100%;
+  background: #222;
+  color: white;
+}
+
+body {
+  margin: 0;
+  position: relative;
+  {
+    # display: flex;
+    #;
+  }
+  {
+    # justify-content: center;
+    align-items: center;
+    #;
+  }
+}
+
+canvas {
+  position: relative;
+  left: 10px;
+  top: 10px;
+}
+
+.dg.main {
+  left: 660px;
+  top: 10px;
+  position: fixed;
+}
+
+#gallery-container {
+  position: fixed;
+  left: 660px;
+  top: 198px;
+}
+
+#log {
+  position: fixed;
+  left: 10px;
+  top: 500px;
+  color: #aaa;
+}

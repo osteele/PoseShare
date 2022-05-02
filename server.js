@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
   setTimeout(printConnectionMessage, 100);
   socket.emit('performers', getPerformerList());
 
-  socket.on('userdata', (data) => {
+  socket.on('join', (data) => {
     let performer = findUserById(data.id);
     if (performer) {
       performer.connected = true;
@@ -47,6 +47,8 @@ io.on('connection', (socket) => {
     clientId = data.clientId;
     username = data.name;
     printedConnectedList();
+    socket.emit('log', `Welcome ${username}`);
+    socket.broadcast.emit('log', `${username} joined`);
   });
 
   socket.on('disconnect', () => {
@@ -55,6 +57,7 @@ io.on('connection', (socket) => {
     if (performer) {
       performer.connected = false;
     }
+    io.emit('log', `${username} left`);
   });
 
   socket.on('pose', (person) => {
