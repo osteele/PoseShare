@@ -7,14 +7,20 @@ let username = getUsername();
 function getClientId() {
   let id = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
   if (!id) {
-    id = Array.from({
-      length: 20
-    })
-      .map(() => floor(random(16)).toString(16))
-      .join('');
+    id = createClientId(id);
     localStorage.setItem(POSE_SHARE_PERSON_ID_KEY, id);
   }
   return id;
+}
+
+function createClientId() {
+  const { floor, random } = Math;
+  // The following statement doesn't necessarily generate two characters for
+  // each hex digit, but that's okay; it's still enough entropy to avoid
+  // collisions.
+  return Array.from({ length: 20 })
+    .map(() => floor(16 * random()).toString(16))
+    .join('');
 }
 
 function getUsername() {
