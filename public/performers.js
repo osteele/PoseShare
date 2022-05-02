@@ -48,10 +48,10 @@ function createPartnerSelector() {
     return name;
   }
 
-  createDiv('Partner:').position(200, 10);
+  createDiv('Partner:').position(660, 210);
 
   const sel = createSelect();
-  sel.position(270, 10);
+  sel.position(730, 210);
   sel.option(showAllString);
   sel.selected(showAllString);
 
@@ -69,7 +69,7 @@ function createPartnerSelector() {
     sel.elt.innerHTML = '';
     sel.option(showAllString);
     sel.selected(showAllString);
-    for (let person of performers) {
+    for (let person of getOtherPerformers()) {
       let optionName = getOptionName(person);
       sel.option(optionName);
       if (person.id === partnerId) {
@@ -87,6 +87,14 @@ function getScenePartners() {
     return [partner];
   } else {
     // make a list of people who have been seen recently
-    return activePerformers.filter(({ timestamp }) => timestamp > millis() - 5000);
+    return activePerformers.filter(({ self, timestamp }) => timestamp > millis() - 5000 && !self);
   }
+}
+
+function getOtherPerformers() {
+  return performers.filter(({ self, pose }) => !self && pose);
+}
+
+function getOwnRecord() {
+  return performers.find(({ self, pose }) => self && pose);
 }

@@ -4,11 +4,18 @@ function drawPerson(person) {
     hue,
     self
   } = person;
-  // if (!self) {
   drawKeypoints(pose, color(hue, 100, 100), self);
-  // }
-  // drawSkeleton(pose, color(hue, 50, 50));
-  drawPoseOutline(pose, color(hue, 50, 50, 0.50), self);
+  switch (settings.appearance) {
+    case 'skeleton':
+      drawSkeleton(pose, color(hue, 50, 50));
+      break;
+    case 'kiki':
+    case 'bouba':
+      drawPoseOutline(pose, color(hue, 50, 50, 0.50),
+        settings.appearance === 'bouba',
+        self);
+      break;
+  }
 }
 
 function drawKeypoints(pose, c, outline) {
@@ -44,7 +51,7 @@ const partNames = [
   'leftShoulder', 'leftElbow', 'leftWrist', 'leftShoulder',
 ];
 
-function drawPoseOutline(pose, c, outlineOnly) {
+function drawPoseOutline(pose, c, curved, outlineOnly) {
   const keypoints = pose.pose.keypoints;
 
   function findPart(partName) {
@@ -68,7 +75,7 @@ function drawPoseOutline(pose, c, outlineOnly) {
     for (const name of partNames) {
       const keypoint = findPart(name);
       if (keypoint && keypoint.score >= confidenceThreshold) {
-        if (name.match(/elbow|knee/i)) {
+        if (curved && name.match(/elbow|knee/i)) {
           curveVertex(keypoint.position.x, keypoint.position.y);
         } else {
           vertex(keypoint.position.x, keypoint.position.y);

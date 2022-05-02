@@ -3,7 +3,7 @@ let video; // p5.js Video instance
 let poseNet;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(640, 480);
   colorMode(HSB);
   initializeWebcam();
   connectWebsocket();
@@ -27,6 +27,12 @@ function draw() {
 // Does not draw the background. draw() does that first.
 function drawScene() {
   const scenePartners = getScenePartners();
+  if (settings.showSelf) {
+    const self = getOwnRecord();
+    if (self) {
+      scenePartners.push(self);
+    }
+  }
   for (const person of scenePartners) {
     drawPerson(person);
   }
