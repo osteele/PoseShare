@@ -1,6 +1,6 @@
 let confidenceThreshold = 0.2;
 
-const gui = new dat.GUI();
+const gui = new dat.GUI({ autoPlace: false });
 const settings = {
   name: '',
   mirrorVideo: true,
@@ -13,3 +13,5 @@ gui.add(settings, 'mirrorVideo');
 gui.add(settings, 'showSelf');
 gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba']);
 gui.add(settings, 'smoothing', 0, 0.95, 0.05);
+
+document.body.appendChild(gui.domElement)
