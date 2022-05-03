@@ -19,8 +19,8 @@ function updateGallery() {
   const cols = ceil(activePerformers.length / rows);
   const width = svg.width.animVal.value;
   const height = svg.height.animVal.value;
-  const cellWidth = min(width / cols, height / rows);
-  const scale = cellWidth / 640;
+  const scale = min(width / cols / 640, height / rows / 480);
+  const cellWidth = 640 * scale;
   const cellHeight = 480 * scale;
 
   let row = -1, col = cols;

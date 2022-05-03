@@ -6,40 +6,59 @@ html {
 }
 
 body {
-  margin: 0;
-  position: relative;
-  {
-    # display: flex;
-    #;
-  }
-  {
-    # justify-content: center;
-    align-items: center;
-    #;
-  }
+  margin: 10px;
 }
 
-canvas {
-  position: relative;
-  left: 10px;
-  top: 10px;
+.flex-container {
+  width: 1080px;
+  display: flex;
 }
 
-.dg.main {
-  left: 660px;
-  top: 10px;
-  position: fixed;
+.flex-row {
+  display: flex;
+  flex-direction: row;
 }
 
-#gallery-container {
-  position: fixed;
-  left: 660px;
-  top: 198px;
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin-right: 5px;
+}
+
+#sketch-container {
+  padding-right: 10px;
+}
+
+#controls-sidebar {
+  width: 300px;
+}
+
+#p5-controls {
+  flex-wrap: wrap;
+}
+
+#gallery-title {
+  display: none;
+}
+
+#dat-container {
+  padding-bottom: 25px;
+  /* margin-bottom: 5px; */
+}
+
+#p5-controls {
+  padding: 15px 0;
+}
+
+.vpad {
+  padding: 5px 0;
 }
 
 #log {
-  position: fixed;
-  left: 10px;
-  top: 500px;
+  width: 640px;
+  padding-right: 10px;
   color: #aaa;
 }

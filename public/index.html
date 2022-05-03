@@ -8,12 +8,26 @@
   </head>
 
   <body>
-    <div id="gallery-container">
-      <h2 id="gallery-title">Gallery</h2>
-      <svg id="gallery" width="300" height="300"></svg>
-    </div>
-    <div id="log">
-      <code></code>
+    <div class="container">
+      <div class="flex-row">
+        <div id="sketch-container">
+          <div id="loading">Loading…</div>
+        </div>
+        <div id="controls-sidebar" class="flex-column">
+          <div id="dat-container"></div>
+          <div id="p5-controls">
+            <div id="partner-container" class="flex-row vpad"></div>
+            <div id="camera-container" class="flex-row vpad"></div>
+          </div>
+          <div id="gallery-container">
+            <h2 id="gallery-title">Gallery</h2>
+            <svg id="gallery" width="300" height="225"></svg>
+          </div>
+        </div>
+      </div>
+      <div id="log">
+        <code></code>
+      </div>
     </div>
   </body>
 
@@ -35,6 +49,7 @@
   <script src="./settings.js"></script>
   <script src="./sketch.js"></script>
   <script src="./blazePose.js"></script>
+  <script src="./camera.js"></script>
   <script src="./drawPose.js"></script>
   <script src="./gallery.js"></script>
   <script src="./performers.js"></script>

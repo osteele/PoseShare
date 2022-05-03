@@ -51,12 +51,9 @@ function createPartnerSelector() {
     return name;
   }
 
-  createDiv('Partner:').position(660, 180);
-
-  const sel = createSelect();
-  sel.position(730, 180);
+  createDiv('Partner:').class('label').parent('partner-container');
+  const sel = createSelect().parent('partner-container');
   sel.option(showAllString);
-  sel.selected(showAllString);
 
   sel.changed(() => {
     const item = sel.value();

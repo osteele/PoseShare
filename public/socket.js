@@ -18,7 +18,7 @@ function connectWebsocket() {
     const elt = document.querySelector('#log');
     const line = document.createElement('code');
     const ts = (new Date()).toISOString().replace(/.+T(.{5}).+/, '$1');
-    line.innerText = `${ts}: ${log}\n`;
+    line.innerText = `${ts} — ${log}\n`;
     elt.appendChild(line);
     while (document.querySelectorAll('#log code').length > 20) {
       document.querySelector('#log code').remove();

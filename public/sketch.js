@@ -3,12 +3,12 @@ let video; // p5.js Video instance
 let poseNet;
 
 function setup() {
-  createCanvas(640, 480);
+  createCanvas(640, 480).parent('sketch-container');
   colorMode(HSB);
   initializeWebcam();
   connectWebsocket();
   createPartnerSelector();
-  setupChooseCamera();
+  // setupChooseCamera();
 }
 
 function draw() {
@@ -40,19 +40,13 @@ function drawScene() {
   }
 }
 
-function initializeWebcam() {
-  video = createCapture(VIDEO, initializePosenet);
-  video.size(640, 480);
-  video.hide();
-}
-
 function initializePosenet() {
   poseNet = ml5.poseNet(
     video, {
     flipHorizontal: true,
     detectionType: "single"
   },
-    // () => select("#status").hide()
+    () => select("#loading").hide()
   );
 
   poseNet.on("pose", ([pose]) => {
