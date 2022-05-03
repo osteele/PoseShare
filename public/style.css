@@ -24,8 +24,27 @@ body {
   flex-direction: column;
 }
 
+.vpad {
+  padding: 5px 0;
+}
+
 .label {
   margin-right: 5px;
+}
+
+#sketch-container {
+  position: relative;
+}
+
+video {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  z-index: -1;
+}
+
+video.mirror {
+  transform: scale(-1, 1);
 }
 
 #sketch-container {
@@ -51,10 +70,6 @@ body {
 
 #p5-controls {
   padding: 15px 0;
-}
-
-.vpad {
-  padding: 5px 0;
 }
 
 #log {

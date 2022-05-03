@@ -33,7 +33,7 @@ function getUsername() {
   return name;
 }
 
-usernameController.onFinishChange(value => {
+guiControllers.username.onFinishChange(value => {
   value = value.trim();
   if (value) {
     username = value;

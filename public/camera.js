@@ -8,9 +8,21 @@ function initializeWebcam() {
     } else {
       setupChooseCamera();
     }
-  });
+  })
   video.size(640, 480);
+  video.parent('sketch-container');
   video.hide();
+
+  updateMirror();
+  guiControllers.mirrorVideo.onFinishChange(updateMirror);
+
+  function updateMirror() {
+    if (settings.mirrorVideo) {
+      video.addClass('mirror');
+    } else {
+      video.removeClass('mirror');
+    }
+  }
 }
 
 async function setupChooseCamera() {

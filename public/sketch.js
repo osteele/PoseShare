@@ -8,7 +8,6 @@ function setup() {
   initializeWebcam();
   connectWebsocket();
   createPartnerSelector();
-  // setupChooseCamera();
 }
 
 function draw() {
@@ -56,18 +55,4 @@ function initializePosenet() {
       setOwnPose(pose);
     }
   });
-}
-
-// Add xOffset and yOffset to all the keypoints in the pose
-function adjustPose(pose, xOffset, yOffset) {
-  for (const keypoint of pose.pose.keypoints) {
-    keypoint.position.x += xOffset;
-    keypoint.position.y += yOffset;
-  }
-  for (const [p1, p2] of pose.skeleton) {
-    p1.position.x += xOffset;
-    p1.position.y += yOffset;
-    p2.position.x += xOffset;
-    p2.position.y += yOffset;
-  }
 }
