@@ -5,6 +5,7 @@ const settings = {
   showSelf: true,
   appearance: 'bouba',
   smoothing: 0.8,
+  trail: 0,
 };
 
 const guiControllers = {
@@ -14,5 +15,6 @@ const guiControllers = {
 gui.add(settings, 'showSelf').name('Show Self');
 gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba']);
 gui.add(settings, 'smoothing', 0, 0.95, 0.05);
+gui.add(settings, 'trail', 0, 10);
 
 document.querySelector('#dat-container').appendChild(gui.domElement)

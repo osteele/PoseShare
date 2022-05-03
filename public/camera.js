@@ -6,7 +6,7 @@ function initializeWebcam() {
     video = createCapture(VIDEO, () => resolve(video));
     video.size(640, 480);
     video.parent('sketch-container');
-    video.hide();
+    // video.hide();
 
     updateMirror();
     guiControllers.mirrorVideo.onFinishChange(updateMirror);

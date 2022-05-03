@@ -1,6 +1,6 @@
-function drawPerson(person) {
+function drawPerson(person, outline) {
   const { pose, hue, self } = person;
-  drawKeypoints(pose, color(hue, 100, 100), self);
+  drawKeypoints(pose, color(hue, 100, 100), outline);
   switch (settings.appearance) {
     case 'skeleton':
       drawSkeleton(pose, color(hue, 50, 50));
@@ -9,7 +9,7 @@ function drawPerson(person) {
     case 'bouba':
       drawPoseOutline(pose, color(hue, 50, 50, 0.50),
         settings.appearance === 'bouba',
-        self);
+        outline);
       break;
   }
 }

@@ -12,15 +12,18 @@ function setup() {
 }
 
 function draw() {
-  clear();
-
   push();
-  if (settings.mirrorVideo) {
-    translate(video.width, 0);
-    scale(-1, 1);
-  }
-  image(video, 0, 0);
+  drawingContext.globalCompositeOperation = 'destination-out';
+  background(0, 1 / (1 + 2 * settings.trail));
   pop();
+
+  // push();
+  // if (settings.mirrorVideo) {
+  //   translate(video.width, 0);
+  //   scale(-1, 1);
+  // }
+  // image(video, 0, 0);
+  // pop();
 
   drawScene();
   updateGallery();
@@ -28,15 +31,15 @@ function draw() {
 
 // Does not draw the background. draw() does that first.
 function drawScene() {
-  const scenePartners = getScenePartners();
+  const performers = getPerformers();
   if (settings.showSelf) {
     const self = getOwnRecord();
     if (self) {
-      scenePartners.push(self);
+      performers.push(self);
     }
   }
-  for (const person of scenePartners) {
-    drawPerson(person);
+  for (const person of performers) {
+    drawPerson(person, performers.length > 1 && person.self);
   }
 }
 

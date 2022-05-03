@@ -34,21 +34,24 @@ body {
 
 #sketch-container {
   position: relative;
+  z-index: 1;
+  padding-right: 10px;
 }
 
-video {
-  position: absolute;
+#sketch-container canvas {
+  position: relative;
+  z-index: 20;
+}
+
+#sketch-container video {
+  position: fixed;
   top: 10px;
-  left: 20px;
-  z-index: -1;
+  left: 10px;
+  z-index: 10;
 }
 
 video.mirror {
   transform: scale(-1, 1);
-}
-
-#sketch-container {
-  padding-right: 10px;
 }
 
 #controls-sidebar {

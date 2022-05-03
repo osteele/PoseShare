@@ -4,7 +4,7 @@ function updateGallery() {
   const svg = document.getElementById('gallery');
   svg.innerHTML = '';
 
-  let activePerformers = getActivePerformers();
+  let activePerformers = getPerformersForGallery();
 
   const rows = ceil(sqrt(activePerformers.length));
   const cols = ceil(activePerformers.length / rows);

@@ -79,7 +79,7 @@ function createPartnerSelector() {
   });
 }
 
-function getScenePartners() {
+function getPerformers() {
   const activePerformers = performers.filter(({ pose }) => pose);
   // If the user has specified a particular partner, show only that partner.
   if (partnerId) {
@@ -99,7 +99,7 @@ function getOwnRecord() {
   return performers.find(({ self, pose }) => self && pose);
 }
 
-function getActivePerformers() {
+function getPerformersForGallery() {
   const syntheticPerformersMatch = document.location.hash.match(/synthetics(?:=(\d+))?/);
   let synthesizePerformerTotal = syntheticPerformersMatch === null ? 0 : Number(syntheticPerformersMatch[1] || 0);
   let activePerformers = performers;
