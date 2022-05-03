@@ -39,16 +39,16 @@ io.on('connection', (socket) => {
       // re-assign the hues
       users.forEach((performer, i) => performer.hue = 360 * i / users.length);
       // send the new hues to the clients
-      io.emit('performers', getPerformerList());
     }
     if (!username) {
       console.log('connected', socket.id, '->', data.name);
     }
-    clientId = data.clientId;
+    clientId = data.id;
     username = data.name;
     printedConnectedList();
     socket.emit('log', `Welcome ${username}`);
     socket.broadcast.emit('log', `${username} joined`);
+    io.emit('performers', getPerformerList());
   });
 
   socket.on('disconnect', () => {
@@ -57,7 +57,8 @@ io.on('connection', (socket) => {
     if (performer) {
       performer.connected = false;
     }
-    io.emit('log', `${username} left`);
+    socket.broadcast.emit('log', `${username} left`);
+    socket.broadcast.emit('performers', getPerformerList());
   });
 
   socket.on('pose', (person) => {
@@ -81,7 +82,7 @@ io.on('connection', (socket) => {
   });
 
   function getPerformerList() {
-    return users.map(({ id, name, hue }) => ({ id, name, hue }));
+    return users.map((user) => ({ ...user, timestamp: undefined }));
   }
 
   function printConnectionMessage() {

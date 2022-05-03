@@ -5,15 +5,15 @@ function connectWebsocket() {
     socket.emit('join', { id: clientId, name: username });
   });
 
-  socket.on('pose', pose => {
+  socket.on('pose', (pose) => {
     updatePersonPose(pose);
   });
 
-  socket.on('performers', performers_ => {
+  socket.on('performers', (performers_) => {
     updatePerformerData(performers_);
   });
 
-  socket.on('log', log => {
+  socket.on('log', (log) => {
     console.log(log);
     const elt = document.querySelector('#log');
     const line = document.createElement('code');

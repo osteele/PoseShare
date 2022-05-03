@@ -32,12 +32,7 @@ function updatePersonPose(person) {
 
 // Update the performer data with properties from the server
 function updatePerformerData(performerData) {
-  performerData.forEach(({ id, hue }) => {
-    updatePersonPose({
-      id,
-      hue,
-    });
-  });
+  performerData.forEach(updatePersonPose);
 }
 
 function createPartnerSelector() {
@@ -80,7 +75,7 @@ function createPartnerSelector() {
 }
 
 function getPerformers() {
-  const activePerformers = performers.filter(({ pose }) => pose);
+  const activePerformers = performers.filter(({ pose, connected }) => pose && connected);
   // If the user has specified a particular partner, show only that partner.
   if (partnerId) {
     const partner = activePerformers.find(({ id }) => id === partnerId);

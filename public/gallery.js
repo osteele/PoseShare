@@ -22,13 +22,15 @@ function updateGallery() {
     }
     if (!person.pose) continue;
 
+    const color = person.connected ? `hsl(${person.hue}, 100%, 50%)` : 'gray';
+    const background = person.connected ? `hsla(${person.hue}, 100%, 50%, 10%)` : 'hsla(0, 0%, 0%, 10%)';
+
     let cell = svg.getElementById(person.id);
     if (!cell) {
       cell = document.createElementNS('http://www.w3.org/2000/svg', 'g');
       cell.setAttribute('id', person.id);
       svg.appendChild(cell);
     }
-    const color = `hsl(${person.hue}, 100%, 50%)`;
     cell.setAttribute('transform', `translate(${col * cellWidth} ${row * cellHeight})`);
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -72,7 +74,7 @@ function updateGallery() {
 
     // add a rectangle for the pose outline
     const border = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    border.setAttribute('fill', `hsla(${person.hue}, 100%, 50%, 10%)`);
+    border.setAttribute('fill', background);
     border.setAttribute('stroke', color);
     // border.setAttribute('stroke-width', 2);
     border.setAttribute('width', cellWidth - 1);
