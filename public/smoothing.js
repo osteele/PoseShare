@@ -1,7 +1,7 @@
 let previousPose;
 
 function smoothPose(pose) {
-  const smoothing = settings.smoothing;
+  const { smoothing } = settings;
   let smoothed = pose;
   if (previousPose) {
     smoothed = {

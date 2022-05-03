@@ -1,9 +1,5 @@
 function drawPerson(person) {
-  const {
-    pose,
-    hue,
-    self
-  } = person;
+  const { pose, hue, self } = person;
   drawKeypoints(pose, color(hue, 100, 100), self);
   switch (settings.appearance) {
     case 'skeleton':
@@ -36,8 +32,7 @@ function drawKeypoints(pose, c, outline) {
 function drawSkeleton(pose, c) {
   stroke(c);
   strokeWeight(2);
-  for (const skeleton of pose.skeleton) {
-    const [p1, p2] = skeleton;
+  for (const [p1, p2] of pose.skeleton) {
     if (min(p1.score, p2.score) >= confidenceThreshold) {
       line(p1.position.x, p1.position.y, p2.position.x, p2.position.y);
     }

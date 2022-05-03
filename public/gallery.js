@@ -1,25 +1,16 @@
-const syntheticPerformersMatch = document.location.hash.match(/synthetics(?:=(\d+))?/);
-const synthesizePerformers = syntheticPerformersMatch === null ? 0 : Number(syntheticPerformersMatch[1] || 0);
+let galleryScale = 1;
 
 function updateGallery() {
   const svg = document.getElementById('gallery');
+  svg.innerHTML = '';
 
-  let activePerformers = performers;
-  if (synthesizePerformers) {
-    // synthesize some more performers, for debugging purposes
-    activePerformers = [...activePerformers];
-    let srcIndex = 0;
-    while (activePerformers.length > 0 && activePerformers.length < synthesizePerformers) {
-      const src = activePerformers[srcIndex++];
-      activePerformers.push({ ...src, id: src.id + '-1', hue: src.hue + 30 });
-    }
-  }
+  let activePerformers = getActivePerformers();
 
   const rows = ceil(sqrt(activePerformers.length));
   const cols = ceil(activePerformers.length / rows);
   const width = svg.width.animVal.value;
   const height = svg.height.animVal.value;
-  const scale = min(width / cols / 640, height / rows / 480);
+  const scale = galleryScale = min(width / cols / 640, height / rows / 480);
   const cellWidth = 640 * scale;
   const cellHeight = 480 * scale;
 
@@ -39,7 +30,6 @@ function updateGallery() {
     }
     const color = `hsl(${person.hue}, 100%, 50%)`;
     cell.setAttribute('transform', `translate(${col * cellWidth} ${row * cellHeight})`);
-    cell.innerHTML = '';
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('transform', `scale(${scale})`);
@@ -90,3 +80,20 @@ function updateGallery() {
     cell.appendChild(border);
   }
 }
+
+function initGallery() {
+  const svg = document.getElementById('gallery');
+  let dragging = false;
+  svg.onmousedown = e => {
+    dragging = true;
+  };
+  svg.onmousemove = e => {
+    if (dragging) {
+      xOffset = e.offsetX / galleryScale;
+      yOffset = e.offsetY / galleryScale;
+    }
+  };
+  document.onmouseup = () => dragging = false;
+}
+
+initGallery();

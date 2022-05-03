@@ -16,3 +16,6 @@ gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba']);
 gui.add(settings, 'smoothing', 0, 0.95, 0.05);
 
 document.querySelector('#dat-container').appendChild(gui.domElement)
+
+let xOffset = 0;
+let yOffset = 0;

@@ -98,3 +98,19 @@ function getOtherPerformers() {
 function getOwnRecord() {
   return performers.find(({ self, pose }) => self && pose);
 }
+
+function getActivePerformers() {
+  const syntheticPerformersMatch = document.location.hash.match(/synthetics(?:=(\d+))?/);
+  let synthesizePerformerTotal = syntheticPerformersMatch === null ? 0 : Number(syntheticPerformersMatch[1] || 0);
+  let activePerformers = performers;
+  if (synthesizePerformerTotal) {
+    // synthesize some more performers, for debugging purposes
+    activePerformers = [...activePerformers];
+    let srcIndex = 0;
+    while (activePerformers.length > 0 && activePerformers.length < synthesizePerformerTotal) {
+      const src = activePerformers[srcIndex++];
+      activePerformers.push({ ...src, id: src.id + '-1', hue: src.hue + 30 });
+    }
+  }
+  return activePerformers;
+}
