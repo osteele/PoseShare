@@ -1,20 +1,17 @@
+let cameraReadyPromise;
 let cameraSel;
 
 function initializeWebcam() {
-  video = createCapture(VIDEO, () => {
-    initializePosenet();
-    if (cameraSel) {
-      cameraSel.selected(getCameraName(video.elt.srcObject.getVideoTracks()[0]));
-    } else {
-      setupChooseCamera();
-    }
-  })
-  video.size(640, 480);
-  video.parent('sketch-container');
-  video.hide();
+  cameraReadyPromise = new Promise(resolve => {
+    video = createCapture(VIDEO, () => resolve(video));
+    video.size(640, 480);
+    video.parent('sketch-container');
+    video.hide();
 
-  updateMirror();
-  guiControllers.mirrorVideo.onFinishChange(updateMirror);
+    updateMirror();
+    guiControllers.mirrorVideo.onFinishChange(updateMirror);
+  });
+  cameraReadyPromise.then(setupChooseCamera);
 
   function updateMirror() {
     if (settings.mirrorVideo) {
