@@ -2,6 +2,7 @@ let galleryScale = 1;
 
 function updateGallery() {
   const svg = document.getElementById('gallery');
+  d3.select(svg).style('cursor', 'pointer');
   svg.innerHTML = '';
 
   let activePerformers = getPerformersForGallery();
@@ -22,8 +23,8 @@ function updateGallery() {
     }
     if (!person.pose) continue;
 
-    const color = person.connected ? `hsl(${person.hue}, 100%, 50%)` : 'gray';
-    const background = person.connected ? `hsla(${person.hue}, 100%, 50%, 10%)` : 'hsla(0, 0%, 0%, 10%)';
+    const color = `hsl(${person.hue}, 100%, 50%)`;
+    const background = `hsla(${person.hue}, 100%, 50%, 10%)`;
 
     let cell = svg.getElementById(person.id);
     if (!cell) {
@@ -36,50 +37,62 @@ function updateGallery() {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('transform', `scale(${scale})`);
     cell.appendChild(g);
+    if (!person.connected || true) {
+      d3.select(cell).attr('filter', 'saturate(5%) blur(1px)');
+    }
 
     // add text for the person.name
-    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    text.setAttribute('x', cellWidth / 2);
-    text.setAttribute('y', 18);
-    text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('dominant-baseline', 'middle');
-    text.setAttribute('font-size', 20);
-    text.setAttribute('fill', 'hsla(0, 0%, 100%, 25%)');
-    text.textContent = person.name;
-    cell.appendChild(text);
+    d3.select(cell)
+      .append('text')
+      .attr('x', cellWidth / 2)
+      .attr('y', '1em')
+      .attr('text-anchor', 'middle')
+      // .attr('dominant-baseline', 'text-top')
+      .attr('font-size', 20)
+      .attr('fill', 'hsla(0, 0%, 100%, 25%)')
+      .text(person.name);
 
     // add circles for the keypoints
-    for (const { score, position } of person.pose.pose.keypoints) {
-      if (score < confidenceThreshold) continue;
-      let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', position.x);
-      circle.setAttribute('cy', position.y);
-      circle.setAttribute('r', '10');
-      circle.setAttribute('fill', color);
-      g.appendChild(circle);
-    }
+    d3.select(g)
+      .selectAll('circle')
+      .data(person.pose.pose.keypoints)
+      .enter().append('circle')
+      .attr('cx', d => d.position.x)
+      .attr('cy', d => d.position.y)
+      .attr('r', 10)
+      .attr('display', d => d.score >= confidenceThreshold ? 'inline' : 'none')
+      .attr('fill', color);
 
     // add lines for the bones
-    for (const [p1, p2] of person.pose.skeleton) {
-      if (min(p1.score, p2.score) < confidenceThreshold) continue;
-      let line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', p1.position.x);
-      line.setAttribute('y1', p1.position.y);
-      line.setAttribute('x2', p2.position.x);
-      line.setAttribute('y2', p2.position.y);
-      line.setAttribute('stroke', color);
-      line.setAttribute('stroke-width', '2');
-      g.appendChild(line);
-    }
+    d3.select(g)
+      .selectAll('line')
+      .data(person.pose.skeleton)
+      .enter().append('line')
+      .attr('x1', d => d[0].position.x)
+      .attr('y1', d => d[0].position.y)
+      .attr('x2', d => d[1].position.x)
+      .attr('y2', d => d[1].position.y)
+      .attr('display', d => Math.min(d[0].score, d[1].score) >= confidenceThreshold ? 'inline' : 'none')
+      .attr('stroke', color)
+      .attr('stroke-width', 2);
 
     // add a rectangle for the pose outline
-    const border = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    border.setAttribute('fill', background);
-    border.setAttribute('stroke', color);
-    // border.setAttribute('stroke-width', 2);
-    border.setAttribute('width', cellWidth - 1);
-    border.setAttribute('height', cellHeight - 1);
-    cell.appendChild(border);
+    d3.select(cell)
+      .append('rect')
+      .attr('fill', background)
+      .attr('stroke', color)
+      .attr('width', cellWidth - 1)
+      .attr('height', cellHeight - 1);
+
+
+    // // add a rectangle that removes the colors
+    // d3.select(cell)
+    //   .append('rect')
+    //   .attr('fill', 'white')
+    //   // .attr('stroke', 'transparent')
+    //   .attr('width', cellWidth - 1)
+    //   .attr('height', cellHeight - 1)
+
   }
 }
 
