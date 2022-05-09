@@ -3,6 +3,7 @@ export interface Performer {
   name: string;
   connected: boolean;
   hue: number;
+  position?: number;
   timestamp: Date;
 }
 
