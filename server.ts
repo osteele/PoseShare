@@ -1,48 +1,24 @@
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import path from "path";
+import {
+  findOrCreatePerformer,
+  findPerformerById,
+  getPerformersForBroadcast,
+  logConnectedUsers,
+} from "./performers";
+import { ClientToServerEvent } from "./types";
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 
-interface Performer {
-  id: string;
-  name: string;
-  connected: boolean;
-  hue: number;
-  timestamp: Date;
-}
-
-interface ClientToServerEvent {
-  broadcast: {
-    emit: (name: string, data: {}) => void;
-    volatile: {
-      emit(name: string, person: Performer, pose: unknown): void;
-    };
-  };
-  emit(name: string, event: ServerToClientEvent): void;
-  on(name: string, handler: (person: Performer, pose: unknown) => void): void;
-  id: string;
-}
-
-interface ServerToClientEvent {}
-
 server.listen(port, () => {
-  console.log("Server listening at port %d", port);
+  console.log("Server listening at http://localhost:%d", port);
 });
 
 // Routing
 app.use(express.static(path.join(__dirname, "public")));
-
-// const io = new Server(server, {
-//   cors: {
-//     origin: ["http://localhost:3000"],
-//     credentials: true
-//   }
-// });
-
-let users: Performer[] = [];
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let printedConnected = false;
@@ -50,66 +26,43 @@ io.on("connection", (socket: ClientToServerEvent) => {
   let username: string | null = null;
 
   setTimeout(printConnectionMessage, 100);
-  socket.emit("performers", getPerformerList());
+  socket.emit("performers", getPerformersForBroadcast());
 
-  socket.on("join", (data) => {
-    let performer = findUserById(data.id);
-    if (performer) {
-      performer.connected = true;
-    } else {
-      users.push({ ...data, connected: true });
-      // re-assign the hues
-      users.forEach(
-        (performer, i) => (performer.hue = (360 * i) / users.length)
-      );
-      // send the new hues to the clients
-    }
+  socket.on("join", (person) => {
+    findOrCreatePerformer(person);
     if (!username) {
-      console.log("connected", socket.id, "->", data.name);
+      console.log("connected", socket.id, "->", person.name);
     }
-    clientId = data.id;
-    username = data.name;
-    printedConnectedList();
+    clientId = person.id;
+    username = person.name;
+    logConnectedUsers();
     socket.emit("log", `Welcome ${username}`);
     socket.broadcast.emit("log", `${username} joined`);
-    io.emit("performers", getPerformerList());
+    io.emit("performers", getPerformersForBroadcast());
   });
 
   socket.on("disconnect", () => {
     console.log("disconnected", username || socket.id);
-    const performer = clientId && findUserById(clientId);
+    const performer = clientId && findPerformerById(clientId);
     if (performer) {
       performer.connected = false;
     }
     socket.broadcast.emit("log", `${username} left`);
-    socket.broadcast.emit("performers", getPerformerList());
+    socket.broadcast.emit("performers", getPerformersForBroadcast());
   });
 
   socket.on("pose", (person, pose) => {
     username = person.name;
     printConnectionMessage();
 
-    const now = new Date();
-    let user = findUserById(person.id);
-    if (!user) {
-      // reap old performers
-      users = users.filter(({ timestamp }) => +now - +timestamp < 5000);
-      user = { ...person, connected: true };
-      users.push(user);
-      // re-assign the hues
-      users.forEach(
-        (performer, i) => (performer.hue = (360 * i) / users.length)
-      );
-      // send the new hues to the clients
-      io.emit("performers", getPerformerList());
+    let performer = findPerformerById(person.id);
+    if (!performer) {
+      performer = findOrCreatePerformer(person);
+      io.emit("performers", getPerformersForBroadcast());
     }
-    user.timestamp = now;
-    socket.broadcast.volatile.emit("pose", person, pose);
+    performer.timestamp = new Date();
+    socket.broadcast.volatile.emit("pose", performer, pose);
   });
-
-  function getPerformerList() {
-    return users.map((user) => ({ ...user, timestamp: undefined }));
-  }
 
   function printConnectionMessage() {
     if (!printedConnected) {
@@ -118,24 +71,6 @@ io.on("connection", (socket: ClientToServerEvent) => {
     }
   }
 });
-
-function printedConnectedList() {
-  const connected = users.filter(({ connected }) => connected);
-  const disconnected = users.filter(({ connected }) => !connected);
-  let msg = `Active: ${connected.length ? names(connected) : "none"}`;
-  if (disconnected.length) {
-    msg += `; Disconnected: ${names(disconnected)}`;
-  }
-  console.log(msg);
-
-  function names(people: Performer[]) {
-    return people.map(({ name }) => name).join(", ");
-  }
-}
-
-function findUserById(clientId: string) {
-  return users.find(({ id }) => id === clientId);
-}
 
 instrument(io, {
   auth: false,
