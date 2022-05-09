@@ -5,12 +5,12 @@ function connectWebsocket() {
     socket.emit('join', { id: clientId, name: username });
   });
 
-  socket.on('pose', (pose) => {
-    updatePersonPose(pose);
+  socket.on('pose', (person, pose) => {
+    updatePersonPose(person, pose);
   });
 
-  socket.on('performers', (performers_) => {
-    updatePerformerData(performers_);
+  socket.on('performers', (performers) => {
+    updatePerformerData(performers);
   });
 
   socket.on('log', (log) => {

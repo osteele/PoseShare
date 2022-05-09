@@ -5,7 +5,7 @@ const settings = {
   showSelf: true,
   appearance: 'bouba',
   smoothing: 0.8,
-  trail: 0,
+  trail: 5,
 };
 
 const guiControllers = {

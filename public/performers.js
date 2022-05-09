@@ -1,47 +1,41 @@
 const performers = []; // each entry is {id, pose, timestamp}
-let partnerId = null; // if not null, show only that person
+let partnerId = null; // if not null, show only the performer with that id
 
 function setOwnPose(pose) {
   updatePersonPose({
     id: clientId,
     name: username,
     self: true,
-    pose,
-  });
-  socket.emit('pose', {
-    id: clientId,
-    name: username,
-    pose
-  });
+  }, pose);
+  socket.emit('pose', { id: clientId, name: username }, pose);
 }
 
-function updatePersonPose(person) {
+function updatePersonPose(person, pose) {
   // find the index of the person in the list of performers
   let ix = performers.findIndex(({ id }) => id === person.id);
   if (ix < 0) {
     ix = performers.length;
     performers.push(person);
   }
-  // update their record
+  // update the record
   performers[ix] = {
     ...performers[ix],
     ...person,
+    pose: pose || performers[ix].pose,
     timestamp: millis(),
   };
 }
 
 // Update the performer data with properties from the server
 function updatePerformerData(performerData) {
-  performerData.forEach(updatePersonPose);
+  performerData.forEach(person => updatePersonPose(person));
 }
 
 function createPartnerSelector() {
   const showAllString = 'Show All';
 
-  function getOptionName({
-    name,
-    self
-  }) {
+  // get the name of the performer as an option for the selection element
+  function getOptionName({ name, self }) {
     if (self) name += " (self)";
     return name;
   }
@@ -60,6 +54,8 @@ function createPartnerSelector() {
     }
   });
 
+  // TODO: use this when the list of partners or their names change, instead of
+  // on mouse entry
   sel.mouseMoved(() => {
     sel.elt.innerHTML = '';
     sel.option(showAllString);
@@ -74,16 +70,20 @@ function createPartnerSelector() {
   });
 }
 
-function getPerformers() {
+function getPerformers({ includeSelf } = {}) {
   const activePerformers = performers.filter(({ pose, connected }) => pose && connected);
-  // If the user has specified a particular partner, show only that partner.
-  if (partnerId) {
-    const partner = activePerformers.find(({ id }) => id === partnerId);
-    return [partner];
-  } else {
-    // make a list of people who have been seen recently
-    return activePerformers.filter(({ self, timestamp }) => timestamp > millis() - 5000 && !self);
+  let result = partnerId
+    // If the user has specified a particular partner, show only that partner.
+    ? [activePerformers.find(({ id }) => id === partnerId)]
+    // else make a list of people who have been seen recently
+    : activePerformers.filter(({ self, timestamp }) => timestamp > millis() - 5000 && !self);
+  if (includeSelf) {
+    const self = getOwnRecord();
+    if (self) {
+      result.push(self);
+    }
   }
+  return result;
 }
 
 function getOtherPerformers() {

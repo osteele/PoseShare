@@ -37,7 +37,8 @@ function updateGallery() {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('transform', `scale(${scale})`);
     cell.appendChild(g);
-    if (!person.connected || true) {
+    // dim squares of disconnected performers
+    if (!person.connected) {
       d3.select(cell).attr('filter', 'saturate(5%) blur(1px)');
     }
 

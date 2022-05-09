@@ -2,6 +2,10 @@
 let video; // p5.js Video instance
 let poseNet;
 
+// Enable the following to draw the image on the canQvas. Currently it is
+// rendered via a <video> element placed behind theQ canvas.
+const drawVideoOnCanvas = false;
+
 function setup() {
   createCanvas(640, 480).parent('sketch-container');
   colorMode(HSB);
@@ -17,27 +21,23 @@ function draw() {
   background(0, 1 / (1 + 2 * settings.trail));
   pop();
 
-  // push();
-  // if (settings.mirrorVideo) {
-  //   translate(video.width, 0);
-  //   scale(-1, 1);
-  // }
-  // image(video, 0, 0);
-  // pop();
+  if (drawVideoOnCanvas) {
+    push();
+    if (settings.mirrorVideo) {
+      translate(video.width, 0);
+      scale(-1, 1);
+    }
+    image(video, 0, 0);
+    pop();
+  }
 
   drawScene();
   updateGallery();
 }
 
-// Does not draw the background. draw() does that first.
+// Does not draw the background. draw() does that before it calls this function.
 function drawScene() {
-  const performers = getPerformers();
-  if (settings.showSelf) {
-    const self = getOwnRecord();
-    if (self) {
-      performers.push(self);
-    }
-  }
+  const performers = getPerformers({ includeSelf: settings.showSelf });
   for (const person of performers) {
     drawPerson(person, performers.length > 1 && person.self);
   }

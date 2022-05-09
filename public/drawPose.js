@@ -1,5 +1,5 @@
 function drawPerson(person, outline) {
-  const { pose, hue, self } = person;
+  const { pose, hue } = person;
   drawKeypoints(pose, color(hue, 100, 100), outline);
   switch (settings.appearance) {
     case 'skeleton':
