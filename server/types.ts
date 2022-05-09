@@ -4,7 +4,13 @@ export interface Performer {
   connected: boolean;
   hue: number;
   position?: number;
+  room: Room;
   timestamp: Date;
+}
+
+export interface Room {
+  name: string;
+  size: number;
 }
 
 export interface ClientToServerEvent {

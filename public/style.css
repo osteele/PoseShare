@@ -80,3 +80,17 @@ video.mirror {
   padding-right: 10px;
   color: #aaa;
 }
+
+#reload-splash {
+  display: none;
+  background: red;
+  border-radius: 5px;
+  color: white;
+  padding: 0 10px;
+  animation: height 1s infinite;
+}
+
+#reload-splash a {
+  display: inline-block;
+  padding: 5px;
+}

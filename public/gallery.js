@@ -7,8 +7,10 @@ function updateGallery() {
 
   let activePerformers = getPerformersForGallery();
 
-  const rows = ceil(sqrt(activePerformers.length));
-  const cols = ceil(activePerformers.length / rows);
+  const gridCount = Math.max(activePerformers.length, (room || []).length);
+
+  const rows = ceil(sqrt(gridCount));
+  const cols = ceil(gridCount / rows);
   const width = svg.width.animVal.value;
   const height = svg.height.animVal.value;
   const scale = galleryScale = min(width / cols / 640, height / rows / 480);

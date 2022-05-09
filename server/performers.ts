@@ -8,7 +8,7 @@ let rooms: Record<string, [{ id: string; name: string; position: number }]> =
   {};
 
 // Read the json for data/rooms.json if this file exists.
-function readRoomData() {
+function readRoomConfig() {
   if (fs.existsSync(ROOMS_FILE)) {
     const data = fs.readFileSync(ROOMS_FILE, "utf8");
     rooms = JSON.parse(data);
@@ -18,21 +18,21 @@ function readRoomData() {
 }
 
 if (fs.existsSync(ROOMS_FILE)) {
-  readRoomData();
+  readRoomConfig();
   // Watch the ./data/rooms.json file for changes.
   fs.watch(ROOMS_FILE, () => {
     console.info(`${ROOMS_FILE} updated`);
-    readRoomData();
+    readRoomConfig();
   });
 }
 
 export function logConnectedUsers() {
   const connected = performers.filter(({ connected }) => connected);
   const disconnected = performers.filter(({ connected }) => !connected);
-  let msg = `Active: ${connected.length ? names(connected) : "none"}`;
-  if (disconnected.length) {
-    msg += `; Disconnected: ${names(disconnected)}`;
-  }
+  const msg = [
+    `Active: ${connected.length ? names(connected) : "none"}`,
+    disconnected.length > 0 ? `Disconnected: ${names(disconnected)}` : "",
+  ].join("; ");
   console.log(msg);
 
   function names(people: Performer[]) {
@@ -51,7 +51,7 @@ export function findOrCreatePerformer(data: Performer) {
   if (!performer) {
     performer = { ...data };
     performers.push(performer);
-    updatePerformerFromRoomFile(data, performer);
+    updatePerformerFromRoom(data, performer);
     // re-assign the hues
     performers.forEach(
       (performer, i) => (performer.hue = (360 * i) / performers.length)
@@ -63,10 +63,14 @@ export function findOrCreatePerformer(data: Performer) {
   return performer;
 }
 
+export function getPerformerRoom(performer: Performer) {
+  return rooms["default"];
+}
+
 // If there's a entry with this id or name in the rooms.json file, copy the
 // position over.
-function updatePerformerFromRoomFile(data: Performer, performer: Performer) {
-  const room = rooms["default"];
+function updatePerformerFromRoom(data: Performer, performer: Performer) {
+  const room = getPerformerRoom(data);
   if (room) {
     const roomPerformer =
       room.find(({ id }) => id === data.id) ||
@@ -79,7 +83,7 @@ function updatePerformerFromRoomFile(data: Performer, performer: Performer) {
 
 // Returns a list of performers to be broadcast to clients.
 export function getPerformersForBroadcast() {
-  return performers.map((user) => ({ ...user, timestamp: undefined }));
+  return performers.map(({ room, timestamp, ...performer }) => performer);
 }
 
 // Remove performers that haven't been connected for a while.

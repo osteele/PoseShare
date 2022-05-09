@@ -1,9 +1,11 @@
+import * as fs from "fs";
+import { createHash } from "crypto";
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
-import path from "path";
 import {
   findOrCreatePerformer,
   findPerformerById,
+  getPerformerRoom,
   getPerformersForBroadcast,
   logConnectedUsers,
 } from "./performers";
@@ -18,11 +20,18 @@ server.listen(port, () => {
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static("./public"));
+let clientHash = computeDirectoryHash("./public");
+fs.watch("./public", () => {
+  clientHash = computeDirectoryHash("./public");
+  // console.info("clientHash", clientHash);
+  io.emit("reload");
+});
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let printedConnected = false;
   let clientId: string | null = null;
+  let clientVersion: string | null = null;
   let username: string | null = null;
 
   setTimeout(printConnectionMessage, 100);
@@ -30,7 +39,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
   // When a client connects, find or create a performer with the given data.
   socket.on("join", (client) => {
-    findOrCreatePerformer(client);
+    const performer = findOrCreatePerformer(client);
     if (!username) {
       console.log("connected", socket.id, "->", client.name);
     }
@@ -39,7 +48,10 @@ io.on("connection", (socket: ClientToServerEvent) => {
     logConnectedUsers();
     socket.emit("log", `Welcome ${username}`);
     socket.broadcast.emit("log", `${username} joined`);
+    // Send the client the list of performers and room data.
     io.emit("performers", getPerformersForBroadcast());
+    io.emit("room", getPerformerRoom(performer));
+    io.emit("liveReload", (clientVersion = clientHash));
   });
 
   // When a client disconnects, set the connected property to false.
@@ -65,6 +77,11 @@ io.on("connection", (socket: ClientToServerEvent) => {
     }
     performer.timestamp = new Date();
     socket.broadcast.volatile.emit("pose", performer, pose);
+
+    // Use this as an excuse to tell the client whether to reload.
+    if (clientVersion !== clientHash) {
+      io.emit("liveReload", (clientVersion = clientHash));
+    }
   });
 
   function printConnectionMessage() {
@@ -74,6 +91,25 @@ io.on("connection", (socket: ClientToServerEvent) => {
     }
   }
 });
+
+function computeDirectoryHash(dir: string) {
+  const h = createHash("sha256");
+  visit(dir);
+  return h.digest("hex");
+
+  function visit(dir: string) {
+    if (fs.statSync(dir).isDirectory()) {
+      fs.readdirSync(dir)
+        .filter((file) => !file.startsWith("."))
+        .forEach((file) => {
+          visit(`${dir}/${file}`);
+        });
+    } else {
+      // update the hash with the contents of the file
+      h.update(fs.readFileSync(dir));
+    }
+  }
+}
 
 instrument(io, {
   auth: false,
