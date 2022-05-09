@@ -18,7 +18,7 @@ server.listen(port, () => {
 });
 
 // Routing
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let printedConnected = false;
@@ -28,19 +28,21 @@ io.on("connection", (socket: ClientToServerEvent) => {
   setTimeout(printConnectionMessage, 100);
   socket.emit("performers", getPerformersForBroadcast());
 
-  socket.on("join", (person) => {
-    findOrCreatePerformer(person);
+  // When a client connects, find or create a performer with the given data.
+  socket.on("join", (client) => {
+    findOrCreatePerformer(client);
     if (!username) {
-      console.log("connected", socket.id, "->", person.name);
+      console.log("connected", socket.id, "->", client.name);
     }
-    clientId = person.id;
-    username = person.name;
+    clientId = client.id;
+    username = client.name;
     logConnectedUsers();
     socket.emit("log", `Welcome ${username}`);
     socket.broadcast.emit("log", `${username} joined`);
     io.emit("performers", getPerformersForBroadcast());
   });
 
+  // When a client disconnects, set the connected property to false.
   socket.on("disconnect", () => {
     console.log("disconnected", username || socket.id);
     const performer = clientId && findPerformerById(clientId);
@@ -51,6 +53,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
     socket.broadcast.emit("performers", getPerformersForBroadcast());
   });
 
+  // When a client sends a pose, broadcast it to all clients.
   socket.on("pose", (person, pose) => {
     username = person.name;
     printConnectionMessage();
