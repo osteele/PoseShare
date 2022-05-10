@@ -5,7 +5,7 @@ function setOwnPose(pose) {
   updatePersonPose({
     id: clientId,
     name: username,
-    self: true,
+    isSelf: true,
     connected: true,
     hue: 0,
   }, pose);
@@ -41,8 +41,8 @@ function createPartnerSelector() {
   const showAllString = 'Show All';
 
   // get the name of the performer as an option for the selection element
-  function getOptionName({ name, self }) {
-    if (self) name += " (self)";
+  function getOptionName({ name, isSelf }) {
+    if (isSelf) name += " (self)";
     return name;
   }
 
@@ -82,7 +82,7 @@ function getPerformers({ includeSelf } = {}) {
     // If the user has specified a particular partner, show only that partner.
     ? [activePerformers.find(({ id }) => id === partnerId)]
     // else make a list of people who have been seen recently
-    : activePerformers.filter(({ self, timestamp }) => timestamp > millis() - 5000 && !self);
+    : activePerformers.filter(({ isSelf, timestamp }) => /*timestamp > millis() - 5000 &&*/ !isSelf);
   if (includeSelf) {
     const self = getOwnRecord();
     if (self) {
@@ -93,11 +93,11 @@ function getPerformers({ includeSelf } = {}) {
 }
 
 function getOtherPerformers() {
-  return performers.filter(({ self, pose }) => !self && pose);
+  return performers.filter(({ isSelf, pose }) => !isSelf && pose);
 }
 
 function getOwnRecord() {
-  return performers.find(({ self, pose }) => self && pose);
+  return performers.find(({ isSelf, pose }) => isSelf && pose);
 }
 
 function getPerformersForGallery() {

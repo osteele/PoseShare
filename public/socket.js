@@ -16,6 +16,7 @@ function connectWebsocket() {
 
   socket.on('room', (performers) => {
     room.performers = performers;
+    updateRoom();
   });
 
   socket.on("liveReload", (hash) => {

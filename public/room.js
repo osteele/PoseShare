@@ -8,6 +8,12 @@ function updateRoom() {
   room.rows = ceil(sqrt(n));
   room.cols = ceil(n / room.rows);
 
+  room.performers.forEach(person => {
+    if (person.id === clientId) {
+      person.isSelf = true;
+    }
+  });
+
   // Assign each extra performer that is not in the list of room performers to
   // the next unused position:
 

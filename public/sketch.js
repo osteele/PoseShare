@@ -39,7 +39,7 @@ function draw() {
 function drawScene() {
   const performers = getPerformers({ includeSelf: settings.showSelf });
   for (const person of performers) {
-    drawPerson(person, performers.length > 1 && person.self);
+    drawPerson(person, performers.length > 1 && person.isSelf);
   }
 }
 

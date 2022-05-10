@@ -17,8 +17,8 @@ function updateGallery() {
   for (const person of room.performers) {
     if (!person.pose) continue;
     const { row, col } = person;
-    const color = `hsl(${person.hue}, 100%, 50%)`;
-    const background = `hsla(${person.hue}, 100%, 50%, 10%)`;
+    const color = person.isSelf ? 'white' : `hsl(${person.hue}, 100%, 50%)`;
+    const background = person.isSelf ? 'hsla(0, 0%, 50%, 30%)' : `hsla(${person.hue}, 100%, 50%, 10%)`;
 
     const svg_id = `gallery-person-${person.id}`;
     let cell = svg.getElementById(svg_id);
@@ -27,6 +27,7 @@ function updateGallery() {
       cell.setAttribute('id', svg_id);
       svg.appendChild(cell);
     }
+    if (`translate(${col * cellWidth} ${row * cellHeight})`.match(/NaN/)) debugger;
     cell.setAttribute('transform', `translate(${col * cellWidth} ${row * cellHeight})`);
 
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -87,7 +88,6 @@ function updateGallery() {
     //   // .attr('stroke', 'transparent')
     //   .attr('width', cellWidth - 1)
     //   .attr('height', cellHeight - 1)
-
   }
 }
 
