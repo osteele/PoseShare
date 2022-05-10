@@ -5,33 +5,26 @@ function updateGallery() {
   d3.select(svg).style('cursor', 'pointer');
   svg.innerHTML = '';
 
-  let activePerformers = getPerformersForGallery();
-
-  const gridCount = Math.max(activePerformers.length, (room || []).length);
-
-  const rows = ceil(sqrt(gridCount));
-  const cols = ceil(gridCount / rows);
+  const { rows, cols } = room;
   const width = svg.width.animVal.value;
   const height = svg.height.animVal.value;
-  const scale = galleryScale = min(width / cols / 640, height / rows / 480);
-  const cellWidth = 640 * scale;
-  const cellHeight = 480 * scale;
+  const unscaledWidth = 640;
+  const unscaledHeight = 480;
+  const scale = galleryScale = min(width / cols / unscaledWidth, height / rows / unscaledHeight);
+  const cellWidth = unscaledWidth * scale;
+  const cellHeight = unscaledHeight * scale;
 
-  let row = -1, col = cols;
-  for (const person of activePerformers) {
-    if (++col >= cols) {
-      col = 0;
-      row++;
-    }
+  for (const person of room.performers) {
     if (!person.pose) continue;
-
+    const { row, col } = person;
     const color = `hsl(${person.hue}, 100%, 50%)`;
     const background = `hsla(${person.hue}, 100%, 50%, 10%)`;
 
-    let cell = svg.getElementById(person.id);
+    const svg_id = `gallery-person-${person.id}`;
+    let cell = svg.getElementById(svg_id);
     if (!cell) {
       cell = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      cell.setAttribute('id', person.id);
+      cell.setAttribute('id', svg_id);
       svg.appendChild(cell);
     }
     cell.setAttribute('transform', `translate(${col * cellWidth} ${row * cellHeight})`);
@@ -44,14 +37,22 @@ function updateGallery() {
       d3.select(cell).attr('filter', 'saturate(5%) blur(1px)');
     }
 
-    // add text for the person.name
+    // add a rectangle for the pose outline
     d3.select(cell)
+      .append('rect')
+      .attr('fill', background)
+      .attr('stroke', color)
+      .attr('width', cellWidth - 1)
+      .attr('height', cellHeight - 1);
+
+    // add text for the person.name
+    d3.select(g)
       .append('text')
-      .attr('x', cellWidth / 2)
+      .attr('x', unscaledWidth / 2)
       .attr('y', '1em')
       .attr('text-anchor', 'middle')
       // .attr('dominant-baseline', 'text-top')
-      .attr('font-size', 20)
+      .attr('font-size', 140)
       .attr('fill', 'hsla(0, 0%, 100%, 25%)')
       .text(person.name);
 
@@ -78,15 +79,6 @@ function updateGallery() {
       .attr('display', d => Math.min(d[0].score, d[1].score) >= confidenceThreshold ? 'inline' : 'none')
       .attr('stroke', color)
       .attr('stroke-width', 2);
-
-    // add a rectangle for the pose outline
-    d3.select(cell)
-      .append('rect')
-      .attr('fill', background)
-      .attr('stroke', color)
-      .attr('width', cellWidth - 1)
-      .attr('height', cellHeight - 1);
-
 
     // // add a rectangle that removes the colors
     // d3.select(cell)

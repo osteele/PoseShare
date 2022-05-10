@@ -1,6 +1,5 @@
 const socket = io();
 let liveReloadHash;
-let room;
 
 function connectWebsocket() {
   socket.on('connect', () => {
@@ -15,8 +14,8 @@ function connectWebsocket() {
     updatePerformerData(performers);
   });
 
-  socket.on('room', (room_) => {
-    room = room_;
+  socket.on('room', (performers) => {
+    room.performers = performers;
   });
 
   socket.on("liveReload", (hash) => {

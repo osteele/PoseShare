@@ -1,4 +1,4 @@
-const performers = []; // each entry is {id, pose, timestamp}
+let performers = []; // each entry is {id, pose, timestamp}
 let partnerId = null; // if not null, show only the performer with that id
 
 function setOwnPose(pose) {
@@ -6,16 +6,22 @@ function setOwnPose(pose) {
     id: clientId,
     name: username,
     self: true,
+    connected: true,
+    hue: 0,
   }, pose);
   socket.emit('pose', { id: clientId, name: username }, pose);
 }
 
 function updatePersonPose(person, pose) {
   // find the index of the person in the list of performers
+  performers = room.performers;
   let ix = performers.findIndex(({ id }) => id === person.id);
   if (ix < 0) {
     ix = performers.length;
-    performers.push(person);
+    performers.push({ ...person, isLocal: true });
+    if (room.isLocal) {
+      updateRoom();
+    }
   }
   // update the record
   performers[ix] = {
