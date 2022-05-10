@@ -24,7 +24,6 @@ app.use(express.static("./public"));
 let clientHash = computeDirectoryHash("./public");
 fs.watch("./public", () => {
   clientHash = computeDirectoryHash("./public");
-  // console.info("clientHash", clientHash);
   io.emit("reload");
 });
 

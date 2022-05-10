@@ -1,17 +1,21 @@
 import * as fs from "fs";
 import { Performer } from "./types";
 
+type Room = {
+  row?: number;
+  col?: number;
+  performers: {
+    id: string;
+    name: string;
+    position: number;
+  }[];
+};
+
 let performers: Performer[] = [];
 
 const ROOMS_FILE = "./config/rooms.json";
-let rooms: Record<
-  string,
-  {
-    row?: number;
-    col?: number;
-    performers: [{ id: string; name: string; position: number }];
-  }
-> = {};
+
+let rooms: Record<string, Room> = {};
 
 // Read the json for data/rooms.json if this file exists.
 function readRoomConfig() {
@@ -72,7 +76,9 @@ export function findOrCreatePerformer(data: Performer) {
 }
 
 export function getPerformerRoom(performer: Performer) {
-  return rooms[performer.roomName || "default"] || rooms["default"];
+  const room = rooms[performer.roomName || "default"] || rooms["default"];
+  room.performers ||= [];
+  return room;
 }
 
 // If there's a entry with this id or name in the rooms.json file, copy the

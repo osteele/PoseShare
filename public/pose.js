@@ -3,6 +3,8 @@ let previousPose;
 
 let xOffset = 0;
 let yOffset = 0;
+let targetXOffset = 0;
+let targetYOffset = 0;
 let rowOffset = 0;
 let colOffset = 0;
 
@@ -35,15 +37,23 @@ function smoothPose(pose) {
 }
 
 // Add xOffset and yOffset to all the keypoints in the pose
-function adjustPose(pose, xOffset, yOffset) {
-  for (const keypoint of pose.pose.keypoints) {
-    keypoint.position.x += xOffset;
-    keypoint.position.y += yOffset;
-  }
-  for (const [p1, p2] of pose.skeleton) {
-    p1.position.x += xOffset;
-    p1.position.y += yOffset;
-    p2.position.x += xOffset;
-    p2.position.y += yOffset;
+function translatePose(pose, xOffset, yOffset) {
+  return {
+    ...pose,
+    pose: {
+      ...pose.pose,
+      keypoints: pose.pose.keypoints.map(translateKeypoint)
+    },
+    skeleton: pose.skeleton.map(pts => pts.map(translateKeypoint))
+  };
+
+  function translateKeypoint(keypoint) {
+    return {
+      ...keypoint,
+      position: {
+        x: keypoint.position.x + xOffset,
+        y: keypoint.position.y + yOffset,
+      }
+    }
   }
 }

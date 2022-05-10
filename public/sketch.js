@@ -21,6 +21,9 @@ function draw() {
   background(0, 1 / (1 + 2 * settings.trail));
   pop();
 
+  xOffset = lerp(xOffset, targetXOffset, 0.1);
+  yOffset = lerp(yOffset, targetYOffset, 0.1);
+
   if (drawVideoOnCanvas) {
     push();
     if (settings.mirrorVideo) {
@@ -48,20 +51,26 @@ function keyPressed() {
     [UP_ARROW]: [0, -1],
     [DOWN_ARROW]: [0, 1],
   }[mappedKeyCode] || [0, 0];
-  const { row, col } = getOwnRecord();
+  const { row, col } = getOwnRecord() || {};
   if (dRow || dCol && row >= 0 && col >= 0) {
     rowOffset = min(max(row + rowOffset + dRow, 0), room.rows - 1) - row;
     colOffset = min(max(col + colOffset + dCol, 0), room.cols - 1) - col;
-    xOffset = colOffset * 640;
-    yOffset = rowOffset * 480;
+    targetXOffset = colOffset * 640;
+    targetYOffset = rowOffset * 480;
   }
 }
 
 // Does not draw the background. draw() does that before it calls this function.
 function drawScene() {
   const performers = getPerformers({ includeSelf: settings.showSelf });
+  const self = getOwnRecord();
   for (const person of performers) {
+    push();
+    if (self && self.row >= 0 && person.row >= 0) {
+      translate(640 * (person.col - self.col), 480 * (person.row - self.row));
+    }
     drawPerson(person, performers.length > 1 && person.isSelf);
+    pop();
   }
 }
 
@@ -76,7 +85,7 @@ function initializePosenet() {
 
   poseNet.on("pose", ([pose]) => {
     if (pose) {
-      adjustPose(pose, xOffset, yOffset);
+      pose = translatePose(pose, xOffset, yOffset);
       pose = smoothPose(pose);
       setOwnPose(pose);
     }
