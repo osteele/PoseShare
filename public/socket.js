@@ -3,7 +3,8 @@ let liveReloadHash;
 
 function connectWebsocket() {
   socket.on('connect', () => {
-    socket.emit('join', { id: clientId, name: username });
+    const roomName = getQueryString('room');
+    socket.emit('join', { id: clientId, name: username, roomName });
   });
 
   socket.on('pose', (person, pose) => {
@@ -14,8 +15,9 @@ function connectWebsocket() {
     updatePerformerData(performers);
   });
 
-  socket.on('room', (performers) => {
-    room.performers = performers;
+  socket.on('room', (room_) => {
+    room.settings = room_;
+    room.performers = room_.performers;
     updateRoom();
   });
 
@@ -36,4 +38,11 @@ function connectWebsocket() {
       document.querySelector('#log code').remove();
     }
   });
+}
+
+function getQueryString(key) {
+  const entry = window.location.search.substring(1)
+    .split('&')
+    .find(pair => pair.split('=')[0] === key);
+  return entry ? entry.split('=')[1] : null;
 }

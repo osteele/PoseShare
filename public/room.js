@@ -1,12 +1,18 @@
 // {size, rows, cols, isLocal, Record<clientId: string, positon: Number>}
-let room = { isLocal: true, rows: 0, cols: 0, performers: [], positions: {} };
+let room = {
+  isLocal: true,
+  rows: 0,
+  cols: 0,
+  performers: [],
+  settings: {}
+};
 
 // Update the room dimensions based on the number of performers.
 function updateRoom() {
   const sharedPerformers = room.performers.filter(({ isLocal }) => !isLocal);
   const n = max(sharedPerformers.length, 1);
-  room.rows = ceil(sqrt(n));
-  room.cols = ceil(n / room.rows);
+  room.rows = room.settings?.rows ?? ceil(sqrt(n));
+  room.cols = room.settings?.cols ?? ceil(n / room.rows);
 
   room.performers.forEach(person => {
     if (person.id === clientId) {

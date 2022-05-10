@@ -1,6 +1,7 @@
 export interface Performer {
   id: string;
   name: string;
+  roomName?: string;
   connected: boolean;
   hue: number;
   position?: number;

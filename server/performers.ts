@@ -4,8 +4,14 @@ import { Performer } from "./types";
 let performers: Performer[] = [];
 
 const ROOMS_FILE = "./config/rooms.json";
-let rooms: Record<string, [{ id: string; name: string; position: number }]> =
-  {};
+let rooms: Record<
+  string,
+  {
+    row?: number;
+    col?: number;
+    performers: [{ id: string; name: string; position: number }];
+  }
+> = {};
 
 // Read the json for data/rooms.json if this file exists.
 function readRoomConfig() {
@@ -64,7 +70,7 @@ export function findOrCreatePerformer(data: Performer) {
 }
 
 export function getPerformerRoom(performer: Performer) {
-  return rooms["default"];
+  return rooms[performer.roomName || "default"] || rooms["default"];
 }
 
 // If there's a entry with this id or name in the rooms.json file, copy the
@@ -73,8 +79,8 @@ function updatePerformerFromRoom(data: Performer, performer: Performer) {
   const room = getPerformerRoom(data);
   if (room) {
     const roomPerformer =
-      room.find(({ id }) => id === data.id) ||
-      room.find(({ name }) => name === data.name);
+      room.performers.find(({ id }) => id === data.id) ||
+      room.performers.find(({ name }) => name === data.name);
     if (roomPerformer) {
       performer.position = roomPerformer.position;
     }
