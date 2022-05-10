@@ -38,7 +38,9 @@ export function logConnectedUsers() {
   const msg = [
     `Active: ${connected.length ? names(connected) : "none"}`,
     disconnected.length > 0 ? `Disconnected: ${names(disconnected)}` : "",
-  ].join("; ");
+  ]
+    .filter(Boolean)
+    .join("; ");
   console.log(msg);
 
   function names(people: Performer[]) {

@@ -3,6 +3,8 @@ let previousPose;
 
 let xOffset = 0;
 let yOffset = 0;
+let rowOffset = 0;
+let colOffset = 0;
 
 function smoothPose(pose) {
   const { smoothing } = settings;

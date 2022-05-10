@@ -35,6 +35,28 @@ function draw() {
   updateGallery();
 }
 
+function keyPressed() {
+  const mappedKeyCode = {
+    'W': UP_ARROW,
+    'A': LEFT_ARROW,
+    'S': DOWN_ARROW,
+    'D': RIGHT_ARROW,
+  }[key.toUpperCase()] || keyCode;
+  const [dCol, dRow] = {
+    [LEFT_ARROW]: [-1, 0],
+    [RIGHT_ARROW]: [1, 0],
+    [UP_ARROW]: [0, -1],
+    [DOWN_ARROW]: [0, 1],
+  }[mappedKeyCode] || [0, 0];
+  const { row, col } = getOwnRecord();
+  if (dRow || dCol && row >= 0 && col >= 0) {
+    rowOffset = min(max(row + rowOffset + dRow, 0), room.rows - 1) - row;
+    colOffset = min(max(col + colOffset + dCol, 0), room.cols - 1) - col;
+    xOffset = colOffset * 640;
+    yOffset = rowOffset * 480;
+  }
+}
+
 // Does not draw the background. draw() does that before it calls this function.
 function drawScene() {
   const performers = getPerformers({ includeSelf: settings.showSelf });

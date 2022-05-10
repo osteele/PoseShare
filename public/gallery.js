@@ -53,7 +53,7 @@ function updateGallery() {
       .attr('y', '1em')
       .attr('text-anchor', 'middle')
       // .attr('dominant-baseline', 'text-top')
-      .attr('font-size', 140)
+      .attr('font-size', 100)
       .attr('fill', 'hsla(0, 0%, 100%, 25%)')
       .text(person.name);
 
