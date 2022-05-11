@@ -6,13 +6,13 @@ function initializeWebcam() {
     video = createCapture(VIDEO, () => resolve(video));
     video.size(880, 500);
     video.parent('sketch-container');
-    video.hide();
+    //video.hide();
 
     updateMirror();
     guiControllers.mirrorVideo.onFinishChange(updateMirror);
   });
   cameraReadyPromise.then(setupChooseCamera);
-  image(video, 0, 0);
+  
 
   function updateMirror() {
     if (settings.mirrorVideo) {
