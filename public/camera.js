@@ -12,7 +12,7 @@ function initializeWebcam() {
     guiControllers.mirrorVideo.onFinishChange(updateMirror);
   });
   cameraReadyPromise.then(setupChooseCamera);
-  image(cameraReadyPromise, 0, 0);
+  image(video, 0, 0);
 
   function updateMirror() {
     if (settings.mirrorVideo) {
