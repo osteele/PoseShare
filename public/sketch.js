@@ -8,9 +8,10 @@ const drawVideoOnCanvas = false;
 
 function setup() {
   // The webcam is initialized to this
-  createCanvas(640, 360).parent('sketch-container');
+  createCanvas(880, 500).parent('sketch-container');
   colorMode(HSB);
   initializeWebcam();
+
   connectWebsocket();
   createPartnerSelector();
   cameraReadyPromise.then(initializePosenet);
