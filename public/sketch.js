@@ -7,6 +7,7 @@ let poseNet;
 const drawVideoOnCanvas = false;
 
 function setup() {
+  // The webcam is initialized to this
   createCanvas(640, 480).parent('sketch-container');
   colorMode(HSB);
   initializeWebcam();
@@ -55,8 +56,8 @@ function keyPressed() {
   if (dRow || dCol && row >= 0 && col >= 0) {
     rowOffset = min(max(row + rowOffset + dRow, 0), room.rows - 1) - row;
     colOffset = min(max(col + colOffset + dCol, 0), room.cols - 1) - col;
-    targetXOffset = colOffset * 640;
-    targetYOffset = rowOffset * 480;
+    targetXOffset = colOffset * width;
+    targetYOffset = rowOffset * height;
   }
 }
 
@@ -67,7 +68,7 @@ function drawScene() {
   for (const person of performers) {
     push();
     if (self && self.row >= 0 && person.row >= 0) {
-      translate(640 * (person.col - self.col), 480 * (person.row - self.row));
+      translate(width * (person.col - self.col), height * (person.row - self.row));
     }
     drawPerson(person, performers.length > 1 && person.isSelf);
     pop();

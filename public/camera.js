@@ -4,7 +4,7 @@ let cameraSel;
 function initializeWebcam() {
   cameraReadyPromise = new Promise(resolve => {
     video = createCapture(VIDEO, () => resolve(video));
-    video.size(640, 480);
+    video.size(width, height);
     video.parent('sketch-container');
     // video.hide();
 

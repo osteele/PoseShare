@@ -6,11 +6,11 @@ function updateGallery() {
   svg.innerHTML = '';
 
   const { rows, cols } = room;
-  const width = svg.width.animVal.value;
-  const height = svg.height.animVal.value;
-  const unscaledWidth = 640;
-  const unscaledHeight = 480;
-  const scale = galleryScale = min(width / cols / unscaledWidth, height / rows / unscaledHeight);
+  const galleryWidth = svg.width.animVal.value;
+  const galleryHeight = svg.height.animVal.value;
+  const unscaledWidth = width;
+  const unscaledHeight = height;
+  const scale = galleryScale = min(galleryWidth / cols / unscaledWidth, galleryHeight / rows / unscaledHeight);
   const cellWidth = unscaledWidth * scale;
   const cellHeight = unscaledHeight * scale;
 
