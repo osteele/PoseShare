@@ -8,6 +8,7 @@ const settings = {
   appearance: startAppearance,
   smoothing: 0.8,
   trail: 5,
+  metaballRadius: 0.5,
 
   // These don't have GUI settings at the moment
   width: 880,
@@ -27,6 +28,7 @@ const guiControllers = {
   outlineSelf: gui.add(settings, 'outlineSelf').name('Outline Self'),
   appearance: gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba', 'metaballs']),
 }
+gui.add(settings, 'metaballRadius', 0.25, 2).name('Metaball Radius');
 gui.add(settings, 'smoothing', 0, 0.95, 0.05);
 gui.add(settings, 'trail', 0, 10);
 

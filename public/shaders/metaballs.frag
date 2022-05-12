@@ -13,7 +13,7 @@ uniform float millis;
 uniform float mouseX;
 uniform float mouseY;
 uniform float hue;
-uniform float sat;
+uniform float radius;
 
 // TODO: replace this by an array
 uniform float nose_x;
@@ -110,7 +110,7 @@ void main() {
     contributionConfidenceWeight(leftHip) + contributionConfidenceWeight(rightHip) +
     contributionConfidenceWeight(leftAnkle) + contributionConfidenceWeight(rightAnkle) +
     contributionConfidenceWeight(leftKnee) + contributionConfidenceWeight(rightKnee);
-  v /= 2.0;
+  v *= radius;
 
   float threshold = 0.9;
   if(v > threshold) {
