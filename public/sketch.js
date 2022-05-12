@@ -24,6 +24,8 @@ function setup() {
 }
 
 function draw() {
+  // Fade out the previous canvas pixels towards transparency.
+  // This leaves a ghostly trail.
   push();
   drawingContext.globalCompositeOperation = 'destination-out';
   background(0, 1 / (1 + 2 * settings.trail));
@@ -32,6 +34,9 @@ function draw() {
   xOffset = lerp(xOffset, targetXOffset, 0.1);
   yOffset = lerp(yOffset, targetYOffset, 0.1);
 
+  // Draw the video onto the canvas. This is incompatible with the fading
+  // functionality above; if it is disabled, the video is displayed in the
+  // <video> HTML element, instead of being drawn onto each frame of the canvas.
   if (settings.drawVideoOnCanvas) {
     push();
     if (settings.mirrorVideo) {
@@ -63,9 +68,12 @@ function drawScene() {
   for (const person of performers) {
     push();
     if (self && self.row >= 0 && person.row >= 0) {
+      // translate the canvas by the displacement between the performer's home
+      // position (person.row, person.col) and the position assigned to this
+      // client's performer (self.row, self.col).
       translate(width * (person.col - self.col), height * (person.row - self.row));
     }
-    drawPerson(person, performers.length > 1 && person.isSelf);
+    drawPerson(person, settings.outlineSelf && person.isSelf);
     pop();
   }
 }

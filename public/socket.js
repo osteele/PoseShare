@@ -10,7 +10,7 @@ function connectWebsocket() {
   let sentJoinEvent = false;
 
   socket.on('connect', () => {
-    log('Connected to websocket!');
+    if (logSocketEvents) console.log('Connected to websocket!');
     sendJoinEvent();
   });
 
@@ -19,12 +19,12 @@ function connectWebsocket() {
   });
 
   socket.on('performers', (performers) => {
-    log('performers', performers);
+    if (logSocketEvents) console.log('performers', performers);
     updatePerformerData(performers);
   });
 
   socket.on('room', (roomData) => {
-    log('room', roomData);
+    if (logSocketEvents) console.log('room', roomData);
     updateRoomFromServer(roomData);
   });
 
@@ -32,19 +32,20 @@ function connectWebsocket() {
     // If this is the first time, set the hash
     liveReloadHash = liveReloadHash || hash;
     // If the hash has changed, display the splash
+    const outdated = liveReloadHash !== hash;
     document.getElementById('reload-splash').style.display =
-      (liveReloadHash === hash) ? null : 'block';
+      outdated ? 'block' : null;
   });
 
   socket.on('log', (message) => {
-    // This is always logged to the console, regardless of the value of
-    // logSocket.
+    // Always log the message to the JavaScript console, regardless of the value
+    // of logSocketEvents.
     console.log(message);
 
     // Append it to the HTML log
     const elt = document.querySelector('#log');
     const line = document.createElement('code');
-    const ts = (new Date()).toISOString().replace(/.+T(.{5}).+/, '$1');
+    const ts = new Date().toISOString().replace(/.+T(.{5}).+/, '$1');
     line.innerText = `${ts} — ${message}\n`;
     elt.appendChild(line);
     // Prune the HTML log
@@ -54,7 +55,7 @@ function connectWebsocket() {
   });
 
   socket.on('requestJoinEvent', () => {
-    log('requestJoinEvent');
+    if (logSocketEvents) console.log('requestJoinEvent');
     // Prevent a race condition
     if (!sentJoinEvent) {
       sendJoinEvent();
@@ -67,6 +68,7 @@ function connectWebsocket() {
     sentJoinEvent = true;
   }
 
+  // TODO: I think this doesn't work on Edge?
   function log(message, ...args) {
     if (logSocketEvents) { console.debug(message, ...args); }
   }

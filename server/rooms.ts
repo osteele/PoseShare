@@ -27,7 +27,7 @@ function readRoomConfig() {
   let rooms = { default: DEFAULT_ROOM };
   if (fs.existsSync(ROOM_CONFIG_PATH)) {
     const data = fs.readFileSync(ROOM_CONFIG_PATH, "utf8");
-    return JSON.parse(data);
+    rooms = JSON.parse(data);
   }
   Object.entries(rooms).forEach(([name, room]) => {
     room.name = name;
@@ -45,5 +45,10 @@ if (fs.existsSync(ROOM_CONFIG_PATH)) {
 }
 
 export function getNamedRoom(roomName?: string): Room {
-  return rooms[roomName || "default"] || rooms["default"];
+  const room = rooms[roomName || "default"];
+  if (!room) {
+    console.error(`Uknown room: ${roomName}`);
+    return rooms["default"];
+  }
+  return room;
 }

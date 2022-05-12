@@ -10,6 +10,7 @@ import {
 } from "./performers";
 import { ClientToServerEvent } from "./types";
 import { computeDirectoryHash } from "./utils";
+import { getNamedRoom } from "./rooms";
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -50,6 +51,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
       printedConnected = true;
     }
 
+    // This sets the connected flag on the performer.
     const performer = findOrCreatePerformer(client);
     clientId = client.id;
     username = client.name;
@@ -59,7 +61,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
     io.emit("performers", getPerformersForBroadcast());
 
     // Send the client room data and its id
-    socket.emit("room", getPerformerRoom(performer));
+    socket.emit("room", getNamedRoom(client.roomName));
     socket.emit("liveReload", (clientVersion = clientHash));
 
     // Welcome the client; tell everyone else the client has joined
@@ -108,6 +110,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
   }
 
   function requestJoinEvent() {
+    // console.debug("requestJoinEvent", username);
     if (!username) {
       socket.emit("requestJoinEvent");
     }

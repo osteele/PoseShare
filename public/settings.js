@@ -3,6 +3,7 @@ const settings = {
   name: '',
   mirrorVideo: true,
   showSelf: true,
+  outlineSelf: false,
   appearance: getHashParameter('appearance') || 'bouba',
   smoothing: 0.8,
   trail: 5,
@@ -21,7 +22,7 @@ const settings = {
 const guiControllers = {
   username: gui.add(settings, 'name').name('User Name').listen(),
   mirrorVideo: gui.add(settings, 'mirrorVideo').name('Mirror Video'),
-  showSelf: gui.add(settings, 'showSelf').name('Show Self'),
+  outlineSelf: gui.add(settings, 'outlineSelf').name('Outline Self'),
   appearance: gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba', 'metaballs']),
 }
 gui.add(settings, 'smoothing', 0, 0.95, 0.05);
