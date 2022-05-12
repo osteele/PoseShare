@@ -2,10 +2,6 @@
 let video; // p5.js Video instance
 let poseNet;
 
-// Enable the following to draw the image on the canQvas. Currently it is
-// rendered via a <video> element placed behind theQ canvas.
-const drawVideoOnCanvas = false;
-
 function preload() {
   preloadMetaballs();
 }
@@ -36,7 +32,7 @@ function draw() {
   xOffset = lerp(xOffset, targetXOffset, 0.1);
   yOffset = lerp(yOffset, targetYOffset, 0.1);
 
-  if (drawVideoOnCanvas) {
+  if (settings.drawVideoOnCanvas) {
     push();
     if (settings.mirrorVideo) {
       translate(video.width, 0);

@@ -10,85 +10,44 @@ function drawPoseMetaballs(pose) {
 
   metaballShader.setUniform('w', width)
   metaballShader.setUniform('h', height)
-
-  setMetaballPoints(pose);
-  metaballShader.setUniform('u_time', (millis() / 1000) * 1)
-  // meta.setUniform('points', use_points)
-  metaballShader.setUniform('mouseX', 0.2)
-  metaballShader.setUniform('mouseY', 2.0)
+  metaballShader.setUniform('mouseX', mouseX / width);
+  metaballShader.setUniform('mouseY', mouseY / height);
+  metaballShader.setUniform('u_time', (millis() / 1000) * 1);
+  const shaderProxy = {
+    setUniform(name, value) {
+      metaballShader.setUniform(name, value);
+      // console.info(`${name}: ${value}`);
+    }
+  }
+  setMetaballPoints(shaderProxy, pose);
   quad(-1, -1, 1, -1, 1, 1, -1, 1);
 }
 
-function setMetaballPoints(pose) {
+function setMetaballPoints(shader, pose) {
+  let [xRangeMin, xRangeMax] = [-3, 3];
+  const [yRangeMin, yRangeMax] = [3, -3];
+  // if (settings.mirrorVideo) {
+  //   [xRangeMin, xRangeMax] = [xRangeMax, xRangeMin];
+  // }
+  let hip_x = 0, hip_y = 0, hip_score = 1;
   for (let keypoint of pose.keypoints) {
-    if (keypoint.name == "nose") {
-      metaballShader.setUniform('nose0', map((video.width - keypoint.x), 0, video.width, 0, 3))
-      metaballShader.setUniform('nose1', map((keypoint.y), 0, video.height, 0, 3))
-      // print(map((video.width - keypoint.x), 0, video.width, 0, 3));
-      // print(map((keypoint.y), 0, video.height, 0, 3));
-
-      // let nose=[];
-      // nose[0]= map((video.width - keypoint.x), 0, video.width, 0, 3);
-      // nose[1]=map((keypoint.y), 0, video.height, 0, 3);
-      // use_points[0]=nose;
+    if (keypoint.name.match(/^nose|(left|right)_(index|knee)$/)) {
+      shader.setUniform(`${keypoint.name}_x`, map(video.width - keypoint.x, 0, video.width, xRangeMin, xRangeMax));
+      shader.setUniform(`${keypoint.name}_y`, map(keypoint.y, 0, video.height, yRangeMin, yRangeMax));
+      if (keypoint.score < confidenceThreshold) {
+        shader.setUniform(`${keypoint.name}_x`, -1);
+        shader.setUniform(`${keypoint.name}_y`, -1);
+      }
+    } else if (keypoint.name.match(/^(left|right)_hip/)) {
+      hip_x += keypoint.x;
+      hip_y += keypoint.y;
+      hip_score = min(hip_score, keypoint.score);
     }
-
-    if (keypoint.name == "left_index") {
-      metaballShader.setUniform('left_index0', map((video.width - keypoint.x), 0, video.width, 0, 3))
-      metaballShader.setUniform('left_index1', map((keypoint.y), 0, video.height, 0, 3))
-
-      // let left_index=[];
-      // left_index[0]=map((video.width - keypoint.x), 0, video.width, 0, 3);
-      // left_index[1]=map((keypoint.y), 0, video.height, 0, 3);
-      // use_points[1]=left_index;
-    }
-
-    if (keypoint.name == "right_index") {
-      metaballShader.setUniform('right_index0', map((video.width - keypoint.x), 0, video.width, 0, 3))
-      metaballShader.setUniform('right_index1', map((keypoint.y), 0, video.height, 0, 3))
-
-      // let right_index=[];
-      // right_index[0]=map((video.width - keypoint.x), 0, video.width, 0, 3);
-      // right_index[1]=map((keypoint.y), 0, video.height, 0, 3);
-      // use_points[2]=right_index;
-    }
-
-    if (keypoint.name == "left_knee") {
-      metaballShader.setUniform('left_knee0', map((video.width - keypoint.x), 0, video.width, 0, 3))
-      metaballShader.setUniform('left_knee1', map((keypoint.y), 0, video.height, 0, 3))
-
-      // let left_ankle=[];
-      // left_ankle[0]=map((video.width - keypoint.x), 0, video.width, 0, 3);
-      // left_ankle[1]=map((keypoint.y), 0, video.height, 0, 3);
-      // use_points[3]=left_ankle;
-    }
-
-    if (keypoint.name == "right_knee") {
-      metaballShader.setUniform('right_knee0', map((video.width - keypoint.x), 0, video.width, 0, 3))
-      metaballShader.setUniform('right_knee1', map((keypoint.y), 0, video.height, 0, 3))
-
-      // let right_ankle=[];
-      // right_ankle[0]=map((video.width - keypoint.x), 0, video.width, 0, 3);
-      // right_ankle[1]=map((keypoint.y), 0, video.height, 0, 3);
-      // use_points[4]=right_ankle;
-    }
-
-    let right_hip = [];
-    let left_hip = [];
-    if (keypoint.name == "right_hip") {
-      right_hip[0] = map((video.width - keypoint.x), 0, video.width, 0, 3);
-      right_hip[1] = map((keypoint.y), 0, video.height, 0, 3);
-    }
-    if (keypoint.name == "left_hip") {
-      left_hip[0] = map((video.width - keypoint.x), 0, video.width, 0, 3);
-      left_hip[1] = map((keypoint.y), 0, video.height, 0, 3);
-    }
-
-    metaballShader.setUniform('hip0', map(((right_hip[0] + left_hip[0]) / 2), 0, video.width, 0, 3))
-    metaballShader.setUniform('hip1', map(((right_hip[1] + left_hip[1]) / 2), 0, video.height, 0, 3))
-    // let hip=[];
-    // hip[0]=(right_hip[0]+left_hip[0])/2;
-    // hip[1]=(right_hip[1]+left_hip[1])/2;
-    // use_points[5]=hip;
+  }
+  shader.setUniform('hip_x', map(hip_x / 2, 0, video.width - video.width, xRangeMin, xRangeMax));
+  shader.setUniform('hip_y', map(hip_y / 2, 0, video.height, yRangeMin, yRangeMax));
+  if (hip_score < confidenceThreshold) {
+    shader.setUniform('hip_x', -1);
+    shader.setUniform('hip_y', -1);
   }
 }
