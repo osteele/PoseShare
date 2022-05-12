@@ -19,7 +19,7 @@ function setup() {
   initializeWebcam();
 
   connectWebsocket();
-  createPartnerSelector();
+  // createPartnerSelector();
   cameraReadyPromise.then(initializePosenet);
 }
 
