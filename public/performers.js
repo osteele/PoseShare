@@ -7,7 +7,7 @@ function setOwnPose(pose) {
     name: username,
     isSelf: true,
     connected: true,
-    hue: 0,
+    // hue: 0,
   }, pose);
   socket.emit('pose', { id: clientId, name: username }, pose);
 }
@@ -30,10 +30,17 @@ function updatePersonPose(person, pose) {
     pose: pose || performers[ix].pose,
     timestamp: millis(),
   };
+  if (person.hue >= 0) {
+    performers[ix].hue = person.hue;
+    // console.info('hue', person.name, person.hue);
+  } else {
+    // console.info('no hue', person.name)
+  }
 }
 
 // Update the performer data with properties from the server
 function updatePerformerData(performerData) {
+  // console.info('update performer data');
   performerData.forEach(person => updatePersonPose(person));
 }
 

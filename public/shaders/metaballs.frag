@@ -9,9 +9,11 @@ precision mediump float;
 
 uniform float w;
 uniform float h;
+uniform float millis;
 uniform float mouseX;
 uniform float mouseY;
 uniform float hue;
+uniform float sat;
 
 uniform float nose_x;
 uniform float nose_y;
@@ -59,10 +61,10 @@ void main() {
   vec2 p2 = vec2(rightWrist_x, rightWrist_y);
   vec2 p3 = vec2(leftKnee_x, leftKnee_y);
   vec2 p4 = vec2(rightKnee_x, rightKnee_y);
-  vec2 p5 = vec2(hip0, hip1);
+  // vec2 p5 = vec2(hip0, hip1);
 
   float v = 0.0;
-  v += contribution(p0, st);
+  v += contribution(p0, st) / 3.0;
   v += contribution(p1, st);
   v += contribution(p2, st);
   v += contribution(p3, st);
@@ -72,9 +74,11 @@ void main() {
     contributionConfidenceWeight(p1) + contributionConfidenceWeight(p2) + contributionConfidenceWeight(p3) + contributionConfidenceWeight(p4);
   v /= 2.0;
 
-  if(v > 1.0) {
-    // gl_FragColor = vec4(st.x, st.y, 0.0, 1.0);
-    gl_FragColor = vec4(hsv2rgb(vec3(hue, st.y, 1.0)), 1.0);
+  float threshold = 0.9;
+  if(v > threshold) {
+    float opacity = v >= 1.0 ? 1.0 : (v - 0.9) * 10.0;
+    float sat2 = 0.75 + 0.2 * cos(15.0 * st.y + millis / 200.0);
+    gl_FragColor = vec4(hsv2rgb(vec3(hue, sat2, 1.0)), 0.75 * opacity);
   } else {
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
   }

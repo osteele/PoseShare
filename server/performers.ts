@@ -32,14 +32,18 @@ export function findOrCreatePerformer(data: Performer): Performer {
     performers.push(performer);
     updatePerformerFromRoom(data, performer);
     // re-assign the hues
-    performers.forEach(
-      (performer, i) => (performer.hue = (360 * i) / performers.length)
-    );
+    reassignPerformerColors();
   }
   performer.connected = true;
   performer.timestamp = new Date();
   removeExpiredPerformers();
   return performer;
+}
+
+function reassignPerformerColors() {
+  performers.forEach(
+    (performer, i) => (performer.hue = (360 * i) / performers.length)
+  );
 }
 
 export function getPerformerRoom(performer: Performer): Room {
@@ -54,16 +58,15 @@ function updatePerformerFromRoom(data: Performer, performer: Performer) {
     const roomPerformer =
       room.performers.find(({ id }) => id === data.id) ||
       room.performers.find(({ name }) => name === data.name);
-    // console.info("update", data.id, data.name, roomPerformer, room);
     if (roomPerformer) {
       performer.position = roomPerformer.position;
-      // console.info("set position", performer.position);
     }
   }
 }
 
 // Returns a list of performers to be broadcast to clients.
 export function getPerformersForBroadcast() {
+  reassignPerformerColors();
   return performers.map(({ room, timestamp, ...performer }) => performer);
 }
 

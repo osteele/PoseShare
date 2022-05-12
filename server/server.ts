@@ -100,7 +100,14 @@ io.on("connection", (socket: ClientToServerEvent) => {
     if (clientVersion !== clientHash) {
       io.emit("liveReload", (clientVersion = clientHash));
     }
+
+    // FIXME: kludge
+    if (++broadcastPerformerData % 100 === 0) {
+      // console.info("Broadcasting performer data...");
+      socket.emit("performers", getPerformersForBroadcast());
+    }
   });
+  let broadcastPerformerData = 0;
 
   function printConnectionMessage() {
     if (!printedConnected) {

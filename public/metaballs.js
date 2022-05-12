@@ -13,6 +13,8 @@ function drawPoseMetaballs(pose, hue) {
   metaballShader.setUniform('mouseX', mouseX / width);
   metaballShader.setUniform('mouseY', mouseY / height);
   metaballShader.setUniform('hue', hue / 360);
+  metaballShader.setUniform('millis', millis());
+  metaballShader.setUniform('sat', map(sin(millis() / 1000), -1, 1, 0.5, 0.9));
   const shaderProxy = {
     setUniform(name, value) {
       metaballShader.setUniform(name, value);
