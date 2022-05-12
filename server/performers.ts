@@ -7,7 +7,7 @@ export function logConnectedUsers(): void {
   const connected = performers.filter(({ connected }) => connected);
   const disconnected = performers.filter(({ connected }) => !connected);
   const msg = [
-    `Active: ${connected.length ? names(connected) : "none"}`,
+    `Active performers: ${connected.length ? names(connected) : "none"}`,
     disconnected.length > 0 ? `Disconnected: ${names(disconnected)}` : "",
   ]
     .filter(Boolean)
@@ -54,8 +54,10 @@ function updatePerformerFromRoom(data: Performer, performer: Performer) {
     const roomPerformer =
       room.performers.find(({ id }) => id === data.id) ||
       room.performers.find(({ name }) => name === data.name);
+    // console.info("update", data.id, data.name, roomPerformer, room);
     if (roomPerformer) {
       performer.position = roomPerformer.position;
+      // console.info("set position", performer.position);
     }
   }
 }
@@ -69,6 +71,6 @@ export function getPerformersForBroadcast() {
 function removeExpiredPerformers(): void {
   const now = new Date();
   performers = performers.filter(
-    ({ connected, timestamp }) => !connected && +now - +timestamp < 5000
+    ({ connected, timestamp }) => connected || +now - +timestamp < 5000
   );
 }

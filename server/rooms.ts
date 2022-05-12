@@ -1,6 +1,7 @@
 import * as fs from "fs";
 
 export type Room = {
+  name: string;
   row?: number;
   col?: number;
   performers: {
@@ -12,28 +13,37 @@ export type Room = {
 
 const ROOM_CONFIG_PATH = "./config/rooms.json";
 
-export let rooms: Record<string, Room> = readRoomConfig();
+const DEFAULT_ROOM = {
+  name: "default",
+  rows: 1,
+  cols: 1,
+  performers: [],
+};
+
+let rooms: Record<string, Room> = readRoomConfig();
 
 // Read the json for data/rooms.json if this file exists.
 function readRoomConfig() {
+  let rooms = { default: DEFAULT_ROOM };
   if (fs.existsSync(ROOM_CONFIG_PATH)) {
     const data = fs.readFileSync(ROOM_CONFIG_PATH, "utf8");
     return JSON.parse(data);
-  } else {
-    return { default: { performers: [] } };
   }
+  Object.entries(rooms).forEach(([name, room]) => {
+    room.name = name;
+    room.performers ||= [];
+  });
+  return rooms;
 }
 
 // Watch the ./data/rooms.json file for changes.
 if (fs.existsSync(ROOM_CONFIG_PATH)) {
   fs.watch(ROOM_CONFIG_PATH, () => {
-    console.info(`Updated: ${ROOM_CONFIG_PATH}`);
+    console.log(`Reloading ${ROOM_CONFIG_PATH}`);
     rooms = readRoomConfig();
   });
 }
 
 export function getNamedRoom(roomName?: string): Room {
-  const room = rooms[roomName || "default"] || rooms["default"];
-  room.performers ||= [];
-  return room;
+  return rooms[roomName || "default"] || rooms["default"];
 }
