@@ -1,5 +1,25 @@
 let previousPose;
 
+function translatePosenetToBlazePose(pose) {
+  return {
+    ...pose,
+    pose: {
+      ...pose.pose,
+      keypoints: pose.pose.keypoints.map(translateKeypoint),
+    },
+    skeleton: undefined,
+  };
+
+  function translateKeypoint(keypoint) {
+    const { part, position, score } = keypoint;
+    return {
+      name: part,
+      ...position,
+      score,
+    }
+  }
+}
+
 function smoothPose(pose) {
   const { smoothing } = settings;
   let smoothed = pose;

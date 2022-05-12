@@ -6,10 +6,20 @@ let poseNet;
 // rendered via a <video> element placed behind theQ canvas.
 const drawVideoOnCanvas = false;
 
+function preload() {
+  preloadMetaballs();
+}
+
 function setup() {
   // The webcam is initialized to this
-  createCanvas(settings.width, settings.height).parent('sketch-container');
+  const canvas = createCanvas(settings.width, settings.height, settings.useWebGL ? WEBGL : P2D);
+  // Move the canvas HTML element inside the container element. This posiitons
+  // the canavs at the same x and y location as the video element.
+  canvas.parent('sketch-container');
   colorMode(HSB);
+
+  // This calls createVideo(CAMERA). It also creates a Promise that resolves
+  // when the video is ready.
   initializeWebcam();
 
   connectWebsocket();

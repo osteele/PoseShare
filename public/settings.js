@@ -9,6 +9,7 @@ const settings = {
   width: 880,
   height: 500,
   toroidalMovement: true,
+  useWebGL: false,
 };
 
 const guiControllers = {
