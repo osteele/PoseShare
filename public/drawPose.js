@@ -6,8 +6,15 @@ function drawPerson(person, outline) {
 
   drawKeypoints(pose, keypointColor, outline);
   switch (settings.appearance) {
-    case 'metaballs':
-      drawPoseMetaballs(translatePosenetToBlazePose(pose).pose, hue);
+    case 'metaballs': {
+      let xpose = pose;
+      const self = getOwnRecord();
+      if (self && self.row >= 0 && person.row >= 0) {
+        xpose = translatePose(pose, -width * (person.col - self.col), -height * (person.row - self.row));
+      }
+      xpose = translatePosenetToBlazePose(pose);
+      drawPoseMetaballs(xpose.pose, hue);
+    }
       break;
     case 'skeleton':
       drawSkeleton(pose, skeletonColor);
