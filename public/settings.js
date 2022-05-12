@@ -6,6 +6,9 @@ const settings = {
   appearance: 'bouba',
   smoothing: 0.8,
   trail: 5,
+  width: 880,
+  height: 500,
+  toroidalMovement: true,
 };
 
 const guiControllers = {

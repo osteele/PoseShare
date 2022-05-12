@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { createHash } from "crypto";
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import {
@@ -10,6 +9,7 @@ import {
   logConnectedUsers,
 } from "./performers";
 import { ClientToServerEvent } from "./types";
+import { computeDirectoryHash } from "./utils";
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -28,9 +28,9 @@ fs.watch("./public", () => {
 });
 
 io.on("connection", (socket: ClientToServerEvent) => {
-  let printedConnected = false;
   let clientId: string | null = null;
   let clientVersion: string | null = null;
+  let printedConnected = false;
   let username: string | null = null;
 
   setTimeout(printConnectionMessage, 100);
@@ -90,25 +90,6 @@ io.on("connection", (socket: ClientToServerEvent) => {
     }
   }
 });
-
-function computeDirectoryHash(dir: string) {
-  const h = createHash("sha256");
-  visit(dir);
-  return h.digest("hex");
-
-  function visit(dir: string) {
-    if (fs.statSync(dir).isDirectory()) {
-      fs.readdirSync(dir)
-        .filter((file) => !file.startsWith("."))
-        .forEach((file) => {
-          visit(`${dir}/${file}`);
-        });
-    } else {
-      // update the hash with the contents of the file
-      h.update(fs.readFileSync(dir));
-    }
-  }
-}
 
 instrument(io, {
   auth: false,

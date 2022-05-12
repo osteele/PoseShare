@@ -4,7 +4,7 @@ let cameraSel;
 function initializeWebcam() {
   cameraReadyPromise = new Promise(resolve => {
     video = createCapture(VIDEO, () => resolve(video));
-    video.size(880, 500);
+    video.size(settings.width, settings.height);
     video.parent('sketch-container');
     //video.hide();
 
@@ -12,7 +12,6 @@ function initializeWebcam() {
     guiControllers.mirrorVideo.onFinishChange(updateMirror);
   });
   cameraReadyPromise.then(setupChooseCamera);
-  
 
   function updateMirror() {
     if (settings.mirrorVideo) {

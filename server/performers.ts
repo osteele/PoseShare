@@ -1,42 +1,9 @@
-import * as fs from "fs";
+import { getNamedRoom, Room } from "./rooms";
 import { Performer } from "./types";
-
-type Room = {
-  row?: number;
-  col?: number;
-  performers: {
-    id: string;
-    name: string;
-    position: number;
-  }[];
-};
 
 let performers: Performer[] = [];
 
-const ROOMS_FILE = "./config/rooms.json";
-
-let rooms: Record<string, Room> = {};
-
-// Read the json for data/rooms.json if this file exists.
-function readRoomConfig() {
-  if (fs.existsSync(ROOMS_FILE)) {
-    const data = fs.readFileSync(ROOMS_FILE, "utf8");
-    rooms = JSON.parse(data);
-  } else {
-    rooms = {};
-  }
-}
-
-if (fs.existsSync(ROOMS_FILE)) {
-  readRoomConfig();
-  // Watch the ./data/rooms.json file for changes.
-  fs.watch(ROOMS_FILE, () => {
-    console.info(`${ROOMS_FILE} updated`);
-    readRoomConfig();
-  });
-}
-
-export function logConnectedUsers() {
+export function logConnectedUsers(): void {
   const connected = performers.filter(({ connected }) => connected);
   const disconnected = performers.filter(({ connected }) => !connected);
   const msg = [
@@ -53,12 +20,12 @@ export function logConnectedUsers() {
 }
 
 // Find a performer by id.
-export function findPerformerById(clientId: string) {
+export function findPerformerById(clientId: string): Performer | undefined {
   return performers.find(({ id }) => id === clientId);
 }
 
 // Find or create a performer with the given data.
-export function findOrCreatePerformer(data: Performer) {
+export function findOrCreatePerformer(data: Performer): Performer {
   let performer = findPerformerById(data.id);
   if (!performer) {
     performer = { ...data };
@@ -75,10 +42,8 @@ export function findOrCreatePerformer(data: Performer) {
   return performer;
 }
 
-export function getPerformerRoom(performer: Performer) {
-  const room = rooms[performer.roomName || "default"] || rooms["default"];
-  room.performers ||= [];
-  return room;
+export function getPerformerRoom(performer: Performer): Room {
+  return getNamedRoom(performer.roomName);
 }
 
 // If there's a entry with this id or name in the rooms.json file, copy the
@@ -101,7 +66,9 @@ export function getPerformersForBroadcast() {
 }
 
 // Remove performers that haven't been connected for a while.
-function removeExpiredPerformers() {
+function removeExpiredPerformers(): void {
   const now = new Date();
-  performers = performers.filter(({ timestamp }) => +now - +timestamp < 5000);
+  performers = performers.filter(
+    ({ connected, timestamp }) => !connected && +now - +timestamp < 5000
+  );
 }
