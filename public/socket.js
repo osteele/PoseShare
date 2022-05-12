@@ -40,9 +40,4 @@ function connectWebsocket() {
   });
 }
 
-function getQueryString(key) {
-  const entry = window.location.search.substring(1)
-    .split('&')
-    .find(pair => pair.split('=')[0] === key);
-  return entry ? entry.split('=')[1] : null;
 }

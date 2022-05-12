@@ -4,7 +4,7 @@ let room = {
   rows: 0,
   cols: 0,
   performers: [],
-  settings: {}
+  settings: {}, // The server room data
 };
 
 // Update the room dimensions based on the number of performers.
@@ -51,4 +51,10 @@ function updateRoom() {
   // enlarge the room to accomodate any extra rows
   room.rows = Math.max(room.rows,
     (1 + Math.max(...room.performers.map(({ row }) => row))))
+}
+
+function updateRoomFromServer(roomData) {
+  room.settings = roomData;
+  room.performers = roomData.performers;
+  updateRoom();
 }

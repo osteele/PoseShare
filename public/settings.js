@@ -3,7 +3,7 @@ const settings = {
   name: '',
   mirrorVideo: true,
   showSelf: true,
-  appearance: getQueryParameter('appearance') || 'bouba',
+  appearance: getHashParameter('appearance') || 'bouba',
   smoothing: 0.8,
   trail: 5,
 
@@ -32,18 +32,17 @@ document.querySelector('#dat-container').appendChild(gui.domElement)
 guiControllers.appearance.onChange(appearance => {
   const useWebGL = appearanceRequiresWebGL(appearance);
   if (useWebGL != settings.useWebGL) {
-    // Add or remove the webgl query parameter from the document URL and reload the page
     const url = new URL(window.location.href);
-    url.searchParams.set('appearance', appearance);
-    url.searchParams.set('webgl', useWebGL ? 'true' : null);
+    setHashParameter(url, 'appearance', appearance);
+    // Add or remove the webgl query parameter from the document URL and reload the page
+    if (useWebGL) {
+      url.searchParams.set('webgl', useWebGL);
+    } else {
+      url.searchParams.delete('webgl');
+    }
     window.location.href = url.href;
   }
 });
-
-function getQueryParameter(name) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
 
 function appearanceRequiresWebGL(appearance) {
   return appearance === 'metaballs';

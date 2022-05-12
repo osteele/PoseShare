@@ -4,13 +4,11 @@ function drawPerson(person, outline) {
   const skeletonColor = color(hue, 50, 50);
   const outlineColor = color(hue, 50, 50, 0.50);
 
-  if (settings.useWebGL) {
-    drawPoseMetaballs(translatePosenetToBlazePose(pose).pose);
-    return;
-  }
-
   drawKeypoints(pose, keypointColor, outline);
   switch (settings.appearance) {
+    case 'metaballs':
+      drawPoseMetaballs(translatePosenetToBlazePose(pose).pose, hue);
+      break;
     case 'skeleton':
       drawSkeleton(pose, skeletonColor);
       break;
