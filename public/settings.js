@@ -1,10 +1,11 @@
 const gui = new dat.GUI({ autoPlace: false });
+const startAppearance = getHashParameter('appearance') || 'metaballs';
 const settings = {
   name: '',
   mirrorVideo: true,
   showSelf: true,
   outlineSelf: false,
-  appearance: getHashParameter('appearance') || 'bouba',
+  appearance: startAppearance,
   smoothing: 0.8,
   trail: 5,
 
@@ -12,7 +13,8 @@ const settings = {
   width: 880,
   height: 500,
   toroidalMovement: true,
-  useWebGL: getQueryParameter('webgl') === 'true',
+  useWebGL: appearanceRequiresWebGL(startAppearance),
+  // useWebGL: getQueryParameter('webgl') === 'true',
 
   // Enable the following to draw the image on the canQvas. Currently it is
   // rendered via a <video> element placed behind theQ canvas.
@@ -36,12 +38,14 @@ guiControllers.appearance.onChange(appearance => {
     const url = new URL(window.location.href);
     setHashParameter(url, 'appearance', appearance);
     // Add or remove the webgl query parameter from the document URL and reload the page
-    if (useWebGL) {
-      url.searchParams.set('webgl', useWebGL);
-    } else {
-      url.searchParams.delete('webgl');
-    }
+    // if (useWebGL) {
+    //   url.searchParams.set('webgl', useWebGL);
+    // } else {
+    //   url.searchParams.delete('webgl');
+    // }
     window.location.href = url.href;
+    // reload the page
+    window.location.reload();
   }
 });
 

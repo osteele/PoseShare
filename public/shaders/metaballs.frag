@@ -11,26 +11,30 @@ uniform float w;
 uniform float h;
 uniform float mouseX;
 uniform float mouseY;
-uniform float u_time;
+uniform float hue;
 
 uniform float nose_x;
 uniform float nose_y;
-uniform float left_index_x;
-uniform float left_index_y;
-uniform float right_index_x;
-uniform float right_index_y;
-uniform float left_knee_x;
-uniform float left_knee_y;
-uniform float right_knee_x;
-uniform float right_knee_y;
+uniform float leftWrist_x;
+uniform float leftWrist_y;
+uniform float rightWrist_x;
+uniform float rightWrist_y;
+uniform float leftKnee_x;
+uniform float leftKnee_y;
+uniform float rightKnee_x;
+uniform float rightKnee_y;
 uniform float hip0;
 uniform float hip1;
 
-float contribution(vec2 p0, vec2 st) {
-  if(p0.x == -1.0 && p0.y == -1.0) {
+float contributionConfidenceWeight(vec2 pt) {
+  return (pt.x == -1.0 && pt.y == -1.0) ? 0.0 : 1.0;
+}
+
+float contribution(vec2 pt, vec2 st) {
+  if(pt.x == -1.0 && pt.y == -1.0) {
     return 0.0;
   }
-  return 1.0 / dot(p0 - st, p0 - st);
+  return 1.0 / dot(pt - st, pt - st) / 2.0;
 }
 
 float smoothen(float d1, float d2) {
@@ -38,15 +42,23 @@ float smoothen(float d1, float d2) {
   return -log(exp(-k * d1) + exp(-k * d2)) / k;
 }
 
+// C code to convert hsv to rgb
+// https://www.rapidtables.com/convert/color/hsv-to-rgb.html
+vec3 hsv2rgb(vec3 c) {
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+}
+
 void main() {
   vec2 u_resolution = vec2(w, h);
   vec2 st = gl_FragCoord.xy / u_resolution.xy;
 
   vec2 p0 = vec2(nose_x, nose_y);
-  vec2 p1 = vec2(left_index_x, left_index_y);
-  vec2 p2 = vec2(right_index_x, right_index_y);
-  vec2 p3 = vec2(left_knee_x, left_knee_y);
-  vec2 p4 = vec2(right_knee_x, right_knee_y);
+  vec2 p1 = vec2(leftWrist_x, leftWrist_y);
+  vec2 p2 = vec2(rightWrist_x, rightWrist_y);
+  vec2 p3 = vec2(leftKnee_x, leftKnee_y);
+  vec2 p4 = vec2(rightKnee_x, rightKnee_y);
   vec2 p5 = vec2(hip0, hip1);
 
   float v = 0.0;
@@ -54,12 +66,15 @@ void main() {
   v += contribution(p1, st);
   v += contribution(p2, st);
   v += contribution(p3, st);
-  // v += contribution(p4, st);
+  v += contribution(p4, st);
   // v += contribution(p5, st);
-  v /= 10.0;
+  v /= contributionConfidenceWeight(p0) +
+    contributionConfidenceWeight(p1) + contributionConfidenceWeight(p2) + contributionConfidenceWeight(p3) + contributionConfidenceWeight(p4);
+  v /= 2.0;
 
   if(v > 1.0) {
-    gl_FragColor = vec4(st.x, st.y, 0.0, 1.0);
+    // gl_FragColor = vec4(st.x, st.y, 0.0, 1.0);
+    gl_FragColor = vec4(hsv2rgb(vec3(hue, st.y, 1.0)), 1.0);
   } else {
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
   }
