@@ -21,7 +21,7 @@ export interface ClientToServerEvent {
       emit(name: string, person: Performer, pose: unknown): void;
     };
   };
-  emit(name: string, event: ServerToClientEvent): void;
+  emit(name: string, event?: ServerToClientEvent): void;
   on(name: string, handler: (person: Performer, pose: unknown) => void): void;
   id: string;
 }

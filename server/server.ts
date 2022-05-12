@@ -33,29 +33,43 @@ io.on("connection", (socket: ClientToServerEvent) => {
   let printedConnected = false;
   let username: string | null = null;
 
-  setTimeout(printConnectionMessage, 100);
+  setTimeout(printConnectionMessage, 150);
+
+  // When a page is reloaded, the client doesn't receive the "connect" event.
+  // Use this to request that it send the "join" event.
+  setTimeout(requestJoinEvent, 100);
+
   socket.emit("performers", getPerformersForBroadcast());
 
   // When a client connects, find or create a performer with the given data.
   socket.on("join", (client) => {
-    const performer = findOrCreatePerformer(client);
+    // If we haven't yet logged the client connection, or if we have already
+    // logged the client *without* a username, log it again *with* a username.
     if (!username) {
-      console.log("connected", socket.id, "->", client.name);
+      console.log("Connected:", socket.id, "->", client.name);
+      printedConnected = true;
     }
+
+    const performer = findOrCreatePerformer(client);
     clientId = client.id;
     username = client.name;
     logConnectedUsers();
+
+    // Send everyone a new list of performers
+    io.emit("performers", getPerformersForBroadcast());
+
+    // Send the client room data and its id
+    socket.emit("room", getPerformerRoom(performer));
+    socket.emit("liveReload", (clientVersion = clientHash));
+
+    // Welcome the client; tell everyone else the client has joined
     socket.emit("log", `Welcome ${username}`);
     socket.broadcast.emit("log", `${username} joined`);
-    // Send the client the list of performers and room data.
-    io.emit("performers", getPerformersForBroadcast());
-    io.emit("room", getPerformerRoom(performer));
-    io.emit("liveReload", (clientVersion = clientHash));
   });
 
   // When a client disconnects, set the connected property to false.
   socket.on("disconnect", () => {
-    console.log("disconnected", username || socket.id);
+    console.log("Disconnected:", username || socket.id);
     const performer = clientId && findPerformerById(clientId);
     if (performer) {
       performer.connected = false;
@@ -66,6 +80,9 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
   // When a client sends a pose, broadcast it to all clients.
   socket.on("pose", (person, pose) => {
+    if (!username) {
+      requestJoinEvent();
+    }
     username = person.name;
     printConnectionMessage();
 
@@ -85,8 +102,14 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
   function printConnectionMessage() {
     if (!printedConnected) {
-      console.log("connected", username || socket.id);
+      console.log("Connected:", username || socket.id);
       printedConnected = true;
+    }
+  }
+
+  function requestJoinEvent() {
+    if (!username) {
+      socket.emit("requestJoinEvent");
     }
   }
 });

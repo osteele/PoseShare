@@ -28,3 +28,11 @@ function getQueryParameter(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
+
+// TODO: Replace by getQueryParameter
+function getQueryString(key) {
+  const entry = window.location.search.substring(1)
+    .split('&')
+    .find(pair => pair.split('=')[0] === key);
+  return entry ? entry.split('=')[1] : null;
+}
