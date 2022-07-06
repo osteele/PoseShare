@@ -1,3 +1,4 @@
 node_modules/
 data/
 config/rooms.json
+yarn-error.log

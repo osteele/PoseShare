@@ -9,11 +9,11 @@ In support of the Movement Practices choreography project.
 
 Install npm.
 
-Run `npm install`.
+Run `yarn install`.
 
 ## Development
 
-Run `npm start`.
+Run `yarn start`.
 
 Visit <http://localhost:3000>.
 

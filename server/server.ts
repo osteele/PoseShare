@@ -22,11 +22,19 @@ server.listen(port, () => {
 
 // Routing
 app.use(express.static("./public"));
-let clientHash = computeDirectoryHash("./public");
-fs.watch("./public", () => {
-  clientHash = computeDirectoryHash("./public");
-  io.emit("reload");
-});
+app.use(express.static("./build"));
+
+const watchPaths = ["./build", "./public"];
+function computeWatchHash() {
+  return watchPaths.map(computeDirectoryHash).join("");
+}
+let clientHash = computeWatchHash();
+watchPaths.forEach((dirPath) =>
+  fs.watch(dirPath, () => {
+    clientHash = computeWatchHash();
+    io.emit("reload");
+  })
+);
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let clientId: string | null = null;

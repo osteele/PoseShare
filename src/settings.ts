@@ -1,7 +1,10 @@
+import { getHashParameter, setHashParameter } from "./utils";
+import dat from "dat.gui";
+
 const gui = new dat.GUI({ autoPlace: false });
-const startAppearance = getHashParameter('appearance') || 'metaballs';
-const settings = {
-  name: '',
+const startAppearance = getHashParameter("appearance") || "metaballs";
+export const settings = {
+  name: "",
   mirrorVideo: true,
   showSelf: true,
   outlineSelf: false,
@@ -22,23 +25,25 @@ const settings = {
   drawVideoOnCanvas: false,
 };
 
-const guiControllers = {
-  username: gui.add(settings, 'name').name('User Name').listen(),
-  mirrorVideo: gui.add(settings, 'mirrorVideo').name('Mirror Video'),
-  outlineSelf: gui.add(settings, 'outlineSelf').name('Outline Self'),
-  appearance: gui.add(settings, 'appearance').options(['skeleton', 'kiki', 'bouba', 'metaballs']),
-}
-gui.add(settings, 'metaballRadius', 0.25, 2).name('Metaball Radius');
-gui.add(settings, 'smoothing', 0, 0.95, 0.05);
-gui.add(settings, 'trail', 0, 10);
+export const guiControllers = {
+  username: gui.add(settings, "name").name("User Name").listen(),
+  mirrorVideo: gui.add(settings, "mirrorVideo").name("Mirror Video"),
+  outlineSelf: gui.add(settings, "outlineSelf").name("Outline Self"),
+  appearance: gui
+    .add(settings, "appearance")
+    .options(["skeleton", "kiki", "bouba", "metaballs"]),
+};
+gui.add(settings, "metaballRadius", 0.25, 2).name("Metaball Radius");
+gui.add(settings, "smoothing", 0, 0.95, 0.05);
+gui.add(settings, "trail", 0, 10);
 
-document.querySelector('#dat-container').appendChild(gui.domElement)
+document.querySelector("#dat-container")!.appendChild(gui.domElement);
 
-guiControllers.appearance.onChange(appearance => {
+guiControllers.appearance.onChange((appearance) => {
   const useWebGL = appearanceRequiresWebGL(appearance);
   if (useWebGL != settings.useWebGL) {
     const url = new URL(window.location.href);
-    setHashParameter(url, 'appearance', appearance);
+    setHashParameter(url, "appearance", appearance);
     // Add or remove the webgl query parameter from the document URL and reload the page
     // if (useWebGL) {
     //   url.searchParams.set('webgl', useWebGL);
@@ -52,5 +57,5 @@ guiControllers.appearance.onChange(appearance => {
 });
 
 function appearanceRequiresWebGL(appearance) {
-  return appearance === 'metaballs';
+  return appearance === "metaballs";
 }

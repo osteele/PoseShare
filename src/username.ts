@@ -1,13 +1,15 @@
-const POSE_SHARE_PERSON_ID_KEY = 'poseSharePersonId';
-const POSE_SHARE_USERNAME_KEY = 'poseShareUsername';
+import { settings, guiControllers } from "./settings";
 
-const clientId = getClientId();
-let username = getUsername();
+const POSE_SHARE_PERSON_ID_KEY = "poseSharePersonId";
+const POSE_SHARE_USERNAME_KEY = "poseShareUsername";
+
+export const clientId = getClientId();
+export let username = getUsername();
 
 function getClientId() {
   let id = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
   if (!id) {
-    id = createClientId(id);
+    id = createClientId();
     localStorage.setItem(POSE_SHARE_PERSON_ID_KEY, id);
   }
   return id;
@@ -20,20 +22,20 @@ function createClientId() {
   // collisions.
   return Array.from({ length: 20 })
     .map(() => floor(16 * random()).toString(16))
-    .join('');
+    .join("");
 }
 
 function getUsername() {
   let name = localStorage.getItem(POSE_SHARE_USERNAME_KEY);
-  for (; !name;) {
-    name = prompt("Enter your user name", name || '');
+  for (; !name; ) {
+    name = prompt("Enter your user name", name || "");
   }
   localStorage.setItem(POSE_SHARE_USERNAME_KEY, name);
   settings.name = name;
   return name;
 }
 
-guiControllers.username.onFinishChange(value => {
+guiControllers.username.onFinishChange((value) => {
   value = value.trim();
   if (value) {
     username = value;
