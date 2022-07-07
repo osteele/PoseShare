@@ -1,22 +1,29 @@
-import * as fs from "fs";
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
+import { createServer as createViteServer } from "vite";
 import {
   findOrCreatePerformer,
   findPerformerById,
-  getPerformerRoom,
   getPerformersForBroadcast,
   logConnectedUsers,
 } from "./performers";
-import { ClientToServerEvent } from "./types";
-import { computeDirectoryHash } from "./utils";
 import { getNamedRoom } from "./rooms";
+import { ClientToServerEvent } from "./types";
+
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 
-server.listen(port, () => {
+async function attachViteMiddleware() {
+  const vite = await createViteServer({
+    server: { middlewareMode: "html" },
+  });
+  app.use(vite.middlewares);
+}
+
+server.listen(port, async () => {
+  await attachViteMiddleware();
   console.log("Server listening at http://localhost:%d", port);
 });
 
@@ -24,17 +31,17 @@ server.listen(port, () => {
 app.use(express.static("./public"));
 app.use(express.static("./build"));
 
-const watchPaths = ["./build", "./public"];
-function computeWatchHash() {
-  return watchPaths.map(computeDirectoryHash).join("");
-}
-let clientHash = computeWatchHash();
-watchPaths.forEach((dirPath) =>
-  fs.watch(dirPath, () => {
-    clientHash = computeWatchHash();
-    io.emit("reload");
-  })
-);
+// const watchPaths = ["./build", "./public"];
+// function computeWatchHash() {
+//   return watchPaths.map(computeDirectoryHash).join("");
+// }
+// let clientHash = computeWatchHash();
+// watchPaths.forEach((dirPath) =>
+//   fs.watch(dirPath, () => {
+//     clientHash = computeWatchHash();
+//     io.emit("reload");
+//   })
+// );
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let clientId: string | null = null;
@@ -70,7 +77,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
     // Send the client room data and its id
     socket.emit("room", getNamedRoom(client.roomName));
-    socket.emit("liveReload", (clientVersion = clientHash));
+    // socket.emit("liveReload", (clientVersion = clientHash));
 
     // Welcome the client; tell everyone else the client has joined
     socket.emit("log", `Welcome ${username}`);
@@ -105,9 +112,9 @@ io.on("connection", (socket: ClientToServerEvent) => {
     socket.broadcast.volatile.emit("pose", performer, pose);
 
     // Use this as an excuse to tell the client whether to reload.
-    if (clientVersion !== clientHash) {
-      io.emit("liveReload", (clientVersion = clientHash));
-    }
+    // if (clientVersion !== clientHash) {
+    //   io.emit("liveReload", (clientVersion = clientHash));
+    // }
 
     // FIXME: kludge
     if (++broadcastPerformerData % 100 === 0) {

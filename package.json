@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "author": "Oliver Steele <steele@osteele.com>",
   "scripts": {
-    "build": "esbuild ./src/sketch.js --bundle --outdir=build --sourcemap",
-    "start": "nodemon ./server/server.ts"
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "nodemon -w server ./server/server.ts"
   },
   "dependencies": {
     "@mediapipe/pose": "^0.5.1635988162",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/d3": "^7.4.0",
     "@types/dat.gui": "^0.7.7",
-    "@types/p5": "^1.4.2"
+    "@types/p5": "^1.4.2",
+    "vite": "^2.9.9"
   }
 }
