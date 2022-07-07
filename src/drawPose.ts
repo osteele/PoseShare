@@ -4,8 +4,9 @@ import { confidenceThreshold } from "./pose";
 import { translatePose } from "./pose-utils";
 import { translatePosenetToBlazePose } from "./pose-translation";
 import { settings } from "./settings";
+import { Performer, Posenet } from "./types";
 
-export function drawPerson(p5, person, outline) {
+export function drawPerson(p5, person: Performer, outline: boolean) {
   const { pose, hue } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
@@ -15,8 +16,8 @@ export function drawPerson(p5, person, outline) {
   switch (settings.appearance) {
     case "metaballs":
       {
-        let xpose = pose;
         const self = getOwnRecord();
+        let xpose = pose;
         if (self && self.row >= 0 && person.row >= 0) {
           xpose = translatePose(
             pose,
@@ -24,8 +25,8 @@ export function drawPerson(p5, person, outline) {
             -p5.height * (person.row - self.row)
           );
         }
-        xpose = translatePosenetToBlazePose(pose);
-        drawPoseMetaballs(p5, xpose.pose, hue);
+        const pose3D = translatePosenetToBlazePose(pose);
+        drawPoseMetaballs(p5, pose3D, hue);
       }
       break;
     case "skeleton":
@@ -44,7 +45,7 @@ export function drawPerson(p5, person, outline) {
   }
 }
 
-function drawKeypoints(p5, pose, c, outline) {
+function drawKeypoints(p5, pose: Posenet.Pose, c, outline: boolean) {
   p5.fill(c);
   p5.noStroke();
   if (outline) {
@@ -59,7 +60,7 @@ function drawKeypoints(p5, pose, c, outline) {
   }
 }
 
-function drawSkeleton(p5, pose, c) {
+function drawSkeleton(p5, pose: Posenet.Pose, c) {
   p5.stroke(c);
   p5.strokeWeight(2);
   for (const [p1, p2] of pose.skeleton) {
@@ -87,7 +88,13 @@ const partNames = [
   "leftShoulder",
 ];
 
-function drawPoseOutline(p5, pose, c, curved, outlineOnly) {
+function drawPoseOutline(
+  p5,
+  pose: Posenet.Pose,
+  c,
+  curved,
+  outlineOnly: boolean
+) {
   const keypoints = pose.pose.keypoints;
 
   function findPart(partName) {
@@ -104,7 +111,7 @@ function drawPoseOutline(p5, pose, c, curved, outlineOnly) {
     return keypoints.find(({ part }) => part === partName);
   }
 
-  function drawOutline(partNames) {
+  function drawOutline(partNames: string[]) {
     p5.beginShape();
     for (const name of partNames) {
       const keypoint = findPart(name);

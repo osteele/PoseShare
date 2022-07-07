@@ -1,6 +1,7 @@
 import { video } from "./camera";
 import { confidenceThreshold } from "./pose";
 import { settings } from "./settings";
+import { BlazePose } from "./types";
 
 let metaballShader;
 
@@ -11,7 +12,7 @@ export function preloadMetaballs(p5) {
   );
 }
 
-export function drawPoseMetaballs(p5, pose, hue) {
+export function drawPoseMetaballs(p5, pose: BlazePose.Pose, hue) {
   p5.shader(metaballShader);
   p5.noStroke();
 
@@ -22,6 +23,7 @@ export function drawPoseMetaballs(p5, pose, hue) {
   metaballShader.setUniform("hue", hue / 360);
   metaballShader.setUniform("millis", p5.millis());
   metaballShader.setUniform("radius", settings.metaballRadius);
+
   const shaderProxy = {
     setUniform(name, value) {
       // console.info(`${name}: ${value}`);
@@ -32,7 +34,7 @@ export function drawPoseMetaballs(p5, pose, hue) {
   p5.quad(-1, -1, 1, -1, 1, 1, -1, 1);
 }
 
-function setMetaballPoints(p5, shader, pose) {
+function setMetaballPoints(p5, shader, pose: BlazePose.Pose) {
   let [xRangeMin, xRangeMax] = [2, 0];
   const [yRangeMin, yRangeMax] = [2, 0];
   if (settings.mirrorVideo) {
