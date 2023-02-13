@@ -22,7 +22,7 @@ const DEFAULT_ROOM = {
 
 let rooms: Record<string, Room> = readRoomConfig();
 
-// Read the json for data/rooms.json if this file exists.
+// Read the JSON data from ./config/rooms.json if this file exists.
 function readRoomConfig() {
   let rooms = { default: DEFAULT_ROOM };
   if (fs.existsSync(ROOM_CONFIG_PATH)) {
@@ -36,7 +36,7 @@ function readRoomConfig() {
   return rooms;
 }
 
-// Watch the ./data/rooms.json file for changes.
+// Watch the ./config/rooms.json file for changes.
 if (fs.existsSync(ROOM_CONFIG_PATH)) {
   fs.watch(ROOM_CONFIG_PATH, () => {
     console.log(`Reloading ${ROOM_CONFIG_PATH}`);

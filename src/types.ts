@@ -1,15 +1,15 @@
 export type Performer = {
-  id: string;
-  name: string;
-  connected: boolean;
-  row: number;
   col: number;
-  position: number;
-  pose: Posenet.Pose;
-  timestamp: never;
+  connected: boolean;
   hue: number;
+  id: string;
   isLocal: boolean;
   isSelf: boolean;
+  name: string;
+  pose: Posenet.Pose;
+  position: number;
+  row: number;
+  timestamp: never;
 };
 
 export type Room = {

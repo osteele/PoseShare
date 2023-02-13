@@ -1,0 +1,82 @@
+{
+  "solo": {
+    "rows": 3,
+    "cols": 3
+  },
+  "practice": {
+    "rows": 3,
+    "cols": 3
+  },
+  "test": {
+    "rows": 3,
+    "cols": 3,
+    "performers": [
+      {
+        "id": "042795e7-f3f4-4a6d-a491-7195f3191923",
+        "name": "Developer (Edge)",
+        "position": 1
+      },
+      {
+        "id": "ab2a8888-8f53-49fb-806b-7414e5952dff",
+        "name": "Developer (Chrome)",
+        "position": 2
+      },
+      {
+        "id": "b0139af8-c973-49c3-9744-0f76a2a80903",
+        "name": "Developer (Safari)",
+        "position": 3
+      }
+    ]
+  },
+  "default": {
+    "rows": 3,
+    "cols": 3,
+    "performers": [
+      {
+        "id": "bb3d7ea9-e73e-4ffc-8e67-48dbc9a697b4",
+        "name": "Shawna",
+        "position": 4
+      },
+      {
+        "id": "abd228e6-f3dd-45e5-9cef-fa3a16e700dd",
+        "name": "Esperanza",
+        "position": 2
+      },
+      {
+        "id": "e7106721-16bc-4af2-a4ff-32a762e6d512",
+        "name": "Danika",
+        "position": 0
+      },
+      {
+        "id": "f890b003-898b-4d0a-a645-fce0c1faaf29",
+        "name": "Ashly",
+        "position": 1
+      },
+      {
+        "id": "d0d70737-ae55-496e-89fc-10260cb69a1e",
+        "name": "Kitty",
+        "position": 5
+      },
+      {
+        "id": "778e094c-e865-4c70-a081-e1c8d13bf4ce",
+        "name": "Madison",
+        "position": 7
+      },
+      {
+        "id": "0a793676-e16d-44fc-aacf-d1bec668cfaf",
+        "name": "Dejah",
+        "position": 3
+      },
+      {
+        "id": "74e70ba8-2951-4a96-a3fe-0599309d6246",
+        "name": "Geovany",
+        "position": 8
+      },
+      {
+        "id": "1bb307ad-95a7-48b5-88b3-411a7ad50e67",
+        "name": "Felix",
+        "position": 6
+      }
+    ]
+  }
+}

@@ -1,11 +1,11 @@
 export interface Performer {
-  id: string;
-  name: string;
-  roomName?: string;
   connected: boolean;
   hue: number;
+  id: string;
+  name: string;
   position?: number;
   room: Room;
+  roomName?: string;
   timestamp: Date;
 }
 
