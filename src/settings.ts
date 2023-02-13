@@ -2,7 +2,8 @@ import { getHashParameter, setHashParameter } from "./utils";
 import dat from "dat.gui";
 
 const gui = new dat.GUI({ autoPlace: false });
-const startAppearance = getHashParameter("appearance") || "metaballs";
+const DEFAULT_APPEARANCE = "skeleton";
+const startAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 export const settings = {
   name: "",
   mirrorVideo: true,
