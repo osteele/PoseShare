@@ -1,4 +1,3 @@
-import { min } from "d3";
 import { getOwnRecord } from "./performers";
 import { room } from "./room";
 import { settings } from "./settings";
@@ -12,12 +11,13 @@ export let targetYOffset = 0;
 let rowOffset = 0;
 let colOffset = 0;
 
-export function setOffset(x, y) {
+export function setOffset(x, y): void {
   xOffset = x;
   yOffset = y;
 }
 
-export function movePoseInDirection(p5, keyCode) {
+/** Move the pose in the given direction. */
+export function movePoseInDirection(p5, keyCode): void {
   const [dCol, dRow] = {
     [p5.LEFT_ARROW]: [-1, 0],
     [p5.RIGHT_ARROW]: [1, 0],

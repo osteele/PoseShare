@@ -1,10 +1,19 @@
+/**
+ * This module manages the list of performers, and the partner selector.
+ * It also handles the "performers" event, which is sent when the client
+ * should update its list of performers.
+ */
+
 import { room, updateRoom } from "./room";
 import { socket } from "./socket";
 import { Performer } from "./types";
 import { clientId, username } from "./username";
 
+/** The list of performers. */
 let performers: Performer[] = [];
-let partnerId: string | null = null; // if not null, show only the performer with that id
+
+/** If not null, show only the performer with the specified id. */
+let partnerId: string | null = null;
 
 export function setOwnPose(pose) {
   updatePersonPose(
@@ -46,7 +55,7 @@ export function updatePersonPose(person, pose = null) {
   }
 }
 
-// Update the performer data with properties from the server
+/** Update the performer data with properties from the server. */
 export function updatePerformerData(performerData) {
   // console.info('update performer data');
   performerData.forEach((person) => updatePersonPose(person));

@@ -1,3 +1,9 @@
+/**
+ * This module keeps track of performers and their positions.
+ * It also handles the "performers" event, which is sent when the client
+ * should update its list of performers.
+ */
+
 import { getNamedRoom, Room } from "./rooms";
 import { Performer } from "./types";
 

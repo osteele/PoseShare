@@ -1,3 +1,9 @@
+/**
+ * @fileoverview This file contains the code for initializing and using the
+ * BlazePose model.
+ *
+ */
+
 import * as poseDetection from "@tensorflow-models/pose-detection";
 // import * as tf from "@tensorflow/tfjs-core";
 // Register WebGL backend.

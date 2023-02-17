@@ -4,6 +4,7 @@ import dat from "dat.gui";
 const gui = new dat.GUI({ autoPlace: false });
 const DEFAULT_APPEARANCE = "skeleton";
 const startAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
+
 export const settings = {
   name: "",
   mirrorVideo: true,

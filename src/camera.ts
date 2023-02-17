@@ -1,3 +1,7 @@
+/**
+ * This module handles the webcam.
+ */
+
 import { guiControllers, settings } from "./settings";
 
 export let video; // p5.js Video instance

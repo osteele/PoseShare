@@ -1,3 +1,9 @@
+/**
+ * This module handles the websocket connection to the server.
+  * It also handles the "liveReload" event, which is sent when the client
+  * should reload the page.
+ */
+
 import { io } from "socket.io-client";
 import { updatePersonPose, updatePerformerData } from "./performers";
 import { updateRoomFromServer } from "./room";

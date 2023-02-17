@@ -1,3 +1,7 @@
+/**
+ * This file contains the code for drawing the pose on the canvas.
+  */
+
 import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
 import { confidenceThreshold } from "./pose";

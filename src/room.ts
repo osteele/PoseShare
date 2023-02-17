@@ -1,3 +1,8 @@
+/**
+ * This module contains the room state, which is the state of the room that is
+ * shared between all clients.
+ */
+
 import { Room } from "./types";
 import { clientId } from "./username";
 
@@ -10,8 +15,8 @@ export let room: Room = {
   settings: {}, // The server room data
 };
 
-// Update the room dimensions based on the number of performers.
-export function updateRoom() {
+/** Update the room dimensions based on the number of performers. */
+export function updateRoom(): void {
   const sharedPerformers = room.performers.filter(({ isLocal }) => !isLocal);
   const n = Math.max(sharedPerformers.length, 1);
   room.rows = room.settings?.rows ?? Math.ceil(Math.sqrt(n));
@@ -58,7 +63,8 @@ export function updateRoom() {
   );
 }
 
-export function updateRoomFromServer(roomData) {
+/** Update the room data with properties from the server. */
+export function updateRoomFromServer(roomData): void {
   room.settings = roomData;
   room.performers = roomData.performers;
   updateRoom();

@@ -1,7 +1,12 @@
+/** Translate between Posenet and BlazePose poses. */
+
 import { BlazePose, Posenet } from "./types";
 import { capitalize } from "./utils";
 
-// NOTE: does not add the missing keypoints; the order ends up being different
+/** Translate a Posenet pose to a BlazePose pose.
+ *
+ * NOTE: does not add the missing keypoints; the order ends up being different
+ */
 export function translatePosenetToBlazePose(
   pose: Posenet.Pose
 ): BlazePose.Pose {
@@ -27,8 +32,11 @@ export function translatePosenetToBlazePose(
   }
 }
 
-// NOTE: does not remove BlazePose keypoints that aren't in PoseNet; the order
-// ends up being different
+/** Translate a BlazePose pose to a Posenet pose.
+ *
+ * NOTE: does not remove BlazePose keypoints that aren't in PoseNet; the order
+ * ends up being different.
+ */
 export function translateBlazePoseToPosenet(
   pose: BlazePose.Pose
 ): Posenet.Pose {
@@ -59,8 +67,10 @@ export function translateBlazePoseToPosenet(
   }
 }
 
+/** The joint pairs that make up the skeleton. */
 const skeletonJointPairs = createSkeletonJointPairs();
 
+/** Create the joint pairs that make up the skeleton. */
 function createSkeletonJointPairs() {
   const tuples: [Posenet.PartName, Posenet.PartName][] = [];
   const sides = ["left", "right"];

@@ -1,3 +1,14 @@
+/**
+ * This is the main entry point for the server.
+ * It sets up the websocket connection and the HTTP server.
+ * It also handles the "join" event, which is sent when the client
+ * connects to the server.
+ * It also handles the "pose" event, which is sent when the client
+ * should update the pose of a person.
+ * It also handles the "room" event, which is sent when the client
+ * should update the room data.
+ */
+
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import { createServer as createViteServer } from "vite";
@@ -66,18 +77,17 @@ io.on("connection", (socket: ClientToServerEvent) => {
       printedConnected = true;
     }
 
-    // This sets the connected flag on the performer.
-    const performer = findOrCreatePerformer(client);
+    // This has the side effect of setting the connected flag on the performer.
+    findOrCreatePerformer(client);
     clientId = client.id;
     username = client.name;
     logConnectedUsers();
 
-    // Send everyone a new list of performers
+    // Broadcast the updated list of performers
     io.emit("performers", getPerformersForBroadcast());
 
     // Send the client room data and its id
     socket.emit("room", getNamedRoom(client.roomName));
-    // socket.emit("liveReload", (clientVersion = clientHash));
 
     // Welcome the client; tell everyone else the client has joined
     socket.emit("log", `Welcome ${username}`);
@@ -113,7 +123,6 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
     // Use this as an excuse to tell the client whether to reload.
     // if (clientVersion !== clientHash) {
-    //   io.emit("liveReload", (clientVersion = clientHash));
     // }
 
     // FIXME: kludge

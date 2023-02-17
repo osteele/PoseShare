@@ -1,3 +1,7 @@
+/**
+ * This module contains the code for drawing the pose as metaballs.
+ */
+
 import { video } from "./camera";
 import { confidenceThreshold } from "./pose";
 import { settings } from "./settings";

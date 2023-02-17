@@ -1,12 +1,19 @@
+/**
+ * This file contains utility functions for working with poses.
+ */
+
 import { settings } from "./settings";
 import { Posenet } from "./types";
 import { lerp } from "./utils";
 
+/** The previous pose, used for smoothing. */
 let previousPose: Posenet.Pose;
 
-export function smoothPose(pose) {
+/** Smooth the pose by interpolating between the previous pose and the current pose. */
+export function smoothPose(pose: Posenet.Pose): Posenet.Pose {
   const { smoothing } = settings;
   let smoothed = pose;
+
   if (previousPose) {
     const keypoints = pose.pose.keypoints.map((keypoint, i) => {
       let prev = previousPose.pose.keypoints[i];
@@ -20,7 +27,11 @@ export function smoothPose(pose) {
   previousPose = pose;
   return smoothed;
 
-  function smoothKeypoint(keypoint, prev) {
+  // Smooth a single keypoint
+  function smoothKeypoint(
+    keypoint: Posenet.Keypoint,
+    prev: Posenet.Keypoint
+  ): Posenet.Keypoint {
     return {
       ...keypoint,
       score: lerp(prev.score, keypoint.score, 1 - smoothing),
@@ -32,18 +43,26 @@ export function smoothPose(pose) {
   }
 }
 
-// Add xOffset and yOffset to all the keypoints in the pose
-export function translatePose(pose, xOffset, yOffset) {
+/** Add xOffset and yOffset to all the keypoints in the pose */
+export function translatePose(
+  pose: Posenet.Pose,
+  xOffset: number,
+  yOffset: number
+): Posenet.Pose {
   return {
     ...pose,
     pose: {
       ...pose.pose,
       keypoints: pose.pose.keypoints.map(translateKeypoint),
     },
-    skeleton: pose.skeleton.map((pts) => pts.map(translateKeypoint)),
+    skeleton: pose.skeleton.map((pts) => pts.map(translateKeypoint)) as [
+      Posenet.Keypoint,
+      Posenet.Keypoint
+    ][],
   };
 
-  function translateKeypoint(keypoint) {
+  // Translate a single keypoint
+  function translateKeypoint(keypoint: Posenet.Keypoint): Posenet.Keypoint {
     return {
       ...keypoint,
       position: {

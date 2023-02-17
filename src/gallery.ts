@@ -1,3 +1,8 @@
+/**
+ * This module handles the gallery view.
+ * It displays the current state of the room, with each person's pose.
+ */
+
 import { room } from "./room";
 import * as d3 from "d3";
 import { confidenceThreshold, setOffset } from "./pose";

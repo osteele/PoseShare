@@ -1,4 +1,4 @@
-export function getHashParameter(name) {
+export function getHashParameter(name: string) {
   const url = new URL(window.location.href);
   // If the URL has contains contains a substring of the form 'name=value' or 'name',
   // separated by a '&' character, then return the value of the 'name' parameter
@@ -12,7 +12,7 @@ export function getHashParameter(name) {
   return null;
 }
 
-export function setHashParameter(url, name, value) {
+export function setHashParameter(url: URL, name: string, value: any): void {
   // Replace the value of the 'name' parameter in the URL with the given value.
   // If the URL does not contain such a substring, add it.
   const regex = new RegExp(`${name}(=([^&]*))?`);
@@ -24,13 +24,13 @@ export function setHashParameter(url, name, value) {
   }
 }
 
-function getQueryParameter(name) {
+function getQueryParameter(name: string) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
 
 // TODO: Replace by getQueryParameter
-export function getQueryString(key) {
+export function getQueryString(key: string) {
   const entry = window.location.search
     .substring(1)
     .split("&")
@@ -39,10 +39,11 @@ export function getQueryString(key) {
 }
 
 /** Linear interpolate between a and b */
-export function lerp(a, b, t) {
+export function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-export function capitalize(str) {
+/** Capitalize the first letter of a string */
+export function capitalize(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

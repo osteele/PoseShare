@@ -6,6 +6,7 @@ const POSE_SHARE_USERNAME_KEY = "poseShareUsername";
 export const clientId = getClientId();
 export let username = getUsername();
 
+/** Get the client id from local storage, or create a new one. */
 function getClientId() {
   let id = localStorage.getItem(POSE_SHARE_PERSON_ID_KEY);
   if (!id) {
@@ -15,6 +16,7 @@ function getClientId() {
   return id;
 }
 
+/** Create a new client id. */
 function createClientId() {
   const { floor, random } = Math;
   // The following statement doesn't necessarily generate two characters for
@@ -25,6 +27,7 @@ function createClientId() {
     .join("");
 }
 
+/** Get the user name from local storage, or prompt for one. */
 function getUsername() {
   let name = localStorage.getItem(POSE_SHARE_USERNAME_KEY);
   for (; !name; ) {
