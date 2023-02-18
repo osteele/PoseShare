@@ -39,8 +39,17 @@ new p5((sk: p5) => {
       // initializeWebcam calls createVideo(CAMERA). It returns a Promise that
       // resolves when the video stream is ready.
       await initializeWebcam(sk);
+
+      const loadingMessage = document.getElementById("loading-message");
+      const initializingModelMessage = document.getElementById(
+        "initializing-model-message"
+      );
+      loadingMessage!.style.display = "none";
+      initializingModelMessage!.style.display = "block";
+
       // createPartnerSelector();
-      initializeBlazePose(video);
+      await initializeBlazePose(video.elt);
+      initializingModelMessage!.style.display = "none";
     },
 
     draw() {

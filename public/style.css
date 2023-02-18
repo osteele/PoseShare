@@ -101,3 +101,10 @@ video.mirror {
   padding: 5px;
   box-shadow: 1px 2px gray;
 }
+
+#alerts {
+  position: absolute;
+  x: 0;
+  y: 0;
+  z-index: 100;
+}
