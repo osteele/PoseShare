@@ -22,9 +22,9 @@ export function initializePosenet(p5: p5): void {
     () => p5.select("#loading").hide()
   );
 
-  poseNet.on("pose", ([pnPose]) => {
-    if (pnPose) {
-      let pose = translatePose(pnPose, xOffset, yOffset);
+  poseNet.on("pose", ([pose]) => {
+    if (pose) {
+      pose = translatePose(pose, xOffset, yOffset);
       pose = smoothPose(pose);
       setOwnPose(pose);
     }
