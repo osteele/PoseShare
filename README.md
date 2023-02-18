@@ -31,7 +31,8 @@ The browser page needs to be manually reloaded.
 
 ### Server development
 
-Additional development docs are in the `docs/` directory.
+Additional development documentation is in this repository's `docs/` directory,
+and the [project wiki](https://github.com/osteele/PoseShare/wiki/).
 
 ### Directory Organization
 
@@ -50,6 +51,9 @@ Top-level files:
   [package](https://docs.npmjs.com/cli/v6/configuring-npm/package-json), that
   specifies library dependencies, build tools, and the build and development
   commands.
+
+The client source directory is named `src` instead of `client`, so that it will
+work with the default configuration of Vite.
 
 ## License
 
