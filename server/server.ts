@@ -56,7 +56,6 @@ app.use(express.static("./build"));
 
 io.on("connection", (socket: ClientToServerEvent) => {
   let clientId: string | null = null;
-  let clientVersion: string | null = null;
   let printedConnected = false;
   let username: string | null = null;
 

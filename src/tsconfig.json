@@ -12,16 +12,10 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noEmitOnError": true,
     "noEmit": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
   }
 }
