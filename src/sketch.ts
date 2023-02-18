@@ -15,9 +15,8 @@ import {
 } from "./pose";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
-import { P5 } from "./types";
 
-new p5((sk: P5) => {
+new p5((sk: p5) => {
   const sketch = {
     preload() {
       preloadMetaballs(sk);
@@ -94,7 +93,7 @@ new p5((sk: P5) => {
 });
 
 // Does not draw the background. draw() does that before it calls this function.
-function drawScene(sk: P5) {
+function drawScene(sk: p5) {
   const performers = getPerformers({ includeSelf: settings.showSelf });
   const self = getOwnRecord();
   for (const person of performers) {

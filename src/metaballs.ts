@@ -2,22 +2,22 @@
  * This module contains the code for drawing the pose as metaballs.
  */
 
-import { Shader } from "p5";
+import p5 from "p5";
 import { video } from "./camera";
 import { confidenceThreshold } from "./pose";
 import { settings } from "./settings";
-import { BlazePose, P5 } from "./types";
+import { BlazePose } from "./types";
 
-let metaballShader: Shader;
+let metaballShader: p5.Shader;
 
-export function preloadMetaballs(p5: P5) {
+export function preloadMetaballs(p5: p5) {
   metaballShader = p5.loadShader(
     "shaders/metaballs.vert",
     "shaders/metaballs.frag"
   );
 }
 
-export function drawPoseMetaballs(p5: P5, pose: BlazePose.Pose, hue: number) {
+export function drawPoseMetaballs(p5: p5, pose: BlazePose.Pose, hue: number) {
   p5.shader(metaballShader);
   p5.noStroke();
 
@@ -30,7 +30,7 @@ export function drawPoseMetaballs(p5: P5, pose: BlazePose.Pose, hue: number) {
   metaballShader.setUniform("radius", settings.metaballRadius);
 
   const shaderProxy = {
-    setUniform(name: string, value: number): Shader {
+    setUniform(name: string, value: number): p5.Shader {
       // console.info(`${name}: ${value}`);
       return metaballShader.setUniform(name, value);
     },
@@ -39,7 +39,7 @@ export function drawPoseMetaballs(p5: P5, pose: BlazePose.Pose, hue: number) {
   p5.quad(-1, -1, 1, -1, 1, 1, -1, 1);
 }
 
-function setMetaballPoints(p5: P5, shader: P5.Shader, pose: BlazePose.Pose) {
+function setMetaballPoints(p5: p5, shader: p5.Shader, pose: BlazePose.Pose) {
   let [xRangeMin, xRangeMax] = [2, 0];
   const [yRangeMin, yRangeMax] = [2, 0];
   if (settings.mirrorVideo) {

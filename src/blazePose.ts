@@ -10,9 +10,8 @@ import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl";
 import { setOwnPose } from "./performers";
 import { translateBlazePoseToPosenet } from "./pose-translation";
-import { P5 } from "./types";
 
-export function initializeBlazePose(video: P5.Video): void {
+export function initializeBlazePose(video: p5.Video): void {
   let model = poseDetection.SupportedModels.BlazePose;
   let detector: poseDetection.PoseDetector;
   let detectorConfig = {

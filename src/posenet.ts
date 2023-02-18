@@ -3,16 +3,16 @@
  * handling the pose data.
  */
 
+import p5 from "p5";
 import * as ml5 from "ml5";
 import { video } from "./camera";
 import { xOffset, yOffset } from "./pose";
 import { smoothPose, translatePose } from "./pose-utils";
 import { setOwnPose } from "./performers";
-import { P5 } from "./types";
 
 let poseNet: ml5.PoseNet;
 
-export function initializePosenet(p5: P5): void {
+export function initializePosenet(p5: p5): void {
   poseNet = ml5.poseNet(
     video,
     {

@@ -3,14 +3,14 @@
  * It displays the current state of the room, with each person's pose.
  */
 
+import p5 from "p5";
 import { room } from "./room";
 import * as d3 from "d3";
 import { confidenceThreshold, setOffset } from "./pose";
-import { P5 } from "./types";
 
 let galleryScale = 1;
 
-export function updateGallery(p5:P5):void {
+export function updateGallery(p5: p5): void {
   const svg = document.getElementById("gallery")! as unknown as SVGSVGElement;
   d3.select(svg).style("cursor", "pointer");
   svg.innerHTML = "";

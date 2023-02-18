@@ -2,15 +2,15 @@
  * This module handles the webcam.
  */
 
+import p5 from "p5";
 import { guiControllers, settings } from "./settings";
-import { P5 } from "./types";
 
-export let video: P5.Video; // p5.js Video instance
+export let video: p5.Video;
 
-export let cameraReadyPromise: Promise<P5.Video>;
-let cameraSel: P5.Element;
+export let cameraReadyPromise: Promise<p5.Video>;
+let cameraSel: p5.Element;
 
-export function initializeWebcam(p5: P5) {
+export function initializeWebcam(p5: p5) {
   cameraReadyPromise = new Promise((resolve) => {
     video = p5.createCapture(p5.VIDEO, () => resolve(video));
     video.size(settings.width, settings.height);
@@ -33,7 +33,7 @@ export function initializeWebcam(p5: P5) {
   }
 }
 
-async function setupChooseCamera(p5: P5) {
+async function setupChooseCamera(p5: p5) {
   const devices = await navigator.mediaDevices.enumerateDevices();
   const cameras = devices
     .filter((d) => d.kind === "videoinput")
