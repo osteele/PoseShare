@@ -30,17 +30,16 @@ new p5((sk: p5) => {
         settings.useWebGL ? sk.WEBGL : sk.P2D
       );
       // Move the canvas HTML element inside the container element. This posiitons
-      // the canavs at the same x and y location as the video element.
+      // the canvas at the same x and y location as the video element.
       canvas.parent("sketch-container");
       sk.colorMode(sk.HSB);
 
       connectWebsocket();
 
-      // This calls createVideo(CAMERA). It also creates a Promise that resolves
-      // when the video is ready.
+      // initializeWebcam calls createVideo(CAMERA). It returns a Promise that
+      // resolves when the video stream is ready.
       await initializeWebcam(sk);
       // createPartnerSelector();
-      // initializePosenet(sk);
       initializeBlazePose(video);
     },
 
