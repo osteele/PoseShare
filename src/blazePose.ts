@@ -11,27 +11,20 @@ import "@tensorflow/tfjs-backend-webgl";
 import { setOwnPose } from "./performers";
 import { translateBlazePoseToPosenet } from "./pose-translation";
 
-export function initializeBlazePose(video: p5.Video): void {
-  let model = poseDetection.SupportedModels.BlazePose;
-  let detector: poseDetection.PoseDetector;
-  let detectorConfig = {
+export async function initializeBlazePose(video: p5.Video): Promise<void> {
+  const model = poseDetection.SupportedModels.BlazePose;
+  const detectorConfig = {
     runtime: "tfjs", // 'mediapipe', 'tfjs'
     modelType: "full", // 'lite', 'full', 'heavy'
   };
-  poseDetection.createDetector(model, detectorConfig).then((_detector) => {
-    detector = _detector;
-    getPose();
-  });
-
-  function getPose() {
-    detector.estimatePoses(video.elt).then(([bpPose]) => {
-      if (bpPose) {
-        // FIXME remove the any cast
-        const pnPose = translateBlazePoseToPosenet(bpPose as any);
-        // pose = smoothPose(pose);
-        setOwnPose(pnPose);
-      }
-      getPose();
-    });
+  const detector = await poseDetection.createDetector(model, detectorConfig);
+  while (true) {
+    const [bpPose] = await detector.estimatePoses(video.elt);
+    if (bpPose) {
+      // FIXME remove the any cast
+      const pnPose = translateBlazePoseToPosenet(bpPose as any);
+      // pose = smoothPose(pose);
+      setOwnPose(pnPose);
+    }
   }
 }

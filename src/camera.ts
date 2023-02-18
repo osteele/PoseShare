@@ -7,22 +7,22 @@ import { guiControllers, settings } from "./settings";
 
 export let video: p5.Video;
 
-export let cameraReadyPromise: Promise<p5.Video>;
 let cameraSel: p5.Element;
 
-export function initializeWebcam(p5: p5) {
-  cameraReadyPromise = new Promise((resolve) => {
+export async function initializeWebcam(p5: p5): Promise<void> {
+  const streamLoaded = new Promise((resolve) => {
     video = p5.createCapture(p5.VIDEO, () => resolve(video));
-    video.size(settings.width, settings.height);
-    video.parent("sketch-container");
-    if (settings.drawVideoOnCanvas) {
-      video.hide();
-    }
-
-    updateMirror();
-    guiControllers.mirrorVideo.onFinishChange(updateMirror);
   });
-  cameraReadyPromise.then(() => setupChooseCamera(p5));
+  video.size(settings.width, settings.height);
+  video.parent("sketch-container");
+  if (settings.drawVideoOnCanvas) {
+    video.hide();
+  }
+
+  updateMirror();
+  guiControllers.mirrorVideo.onFinishChange(updateMirror);
+  await streamLoaded;
+  await setupChooseCamera(p5);
 
   function updateMirror() {
     if (settings.mirrorVideo) {
@@ -33,7 +33,7 @@ export function initializeWebcam(p5: p5) {
   }
 }
 
-async function setupChooseCamera(p5: p5) {
+async function setupChooseCamera(p5: p5): Promise<void> {
   const devices = await navigator.mediaDevices.enumerateDevices();
   const cameras = devices
     .filter((d) => d.kind === "videoinput")

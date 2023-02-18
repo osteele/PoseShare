@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { initializeBlazePose } from "./blazePose";
-import { cameraReadyPromise, initializeWebcam, video } from "./camera";
+import { initializeWebcam, video } from "./camera";
 import { drawPerson } from "./drawPose";
 import { updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
@@ -22,7 +22,7 @@ new p5((sk: p5) => {
       preloadMetaballs(sk);
     },
 
-    setup() {
+    async setup() {
       // The webcam is initialized to this
       const canvas = sk.createCanvas(
         settings.width,
@@ -34,14 +34,14 @@ new p5((sk: p5) => {
       canvas.parent("sketch-container");
       sk.colorMode(sk.HSB);
 
+      connectWebsocket();
+
       // This calls createVideo(CAMERA). It also creates a Promise that resolves
       // when the video is ready.
-      initializeWebcam(sk);
-
-      connectWebsocket();
+      await initializeWebcam(sk);
       // createPartnerSelector();
-      // cameraReadyPromise.then(() => initializePosenet(sk));
-      cameraReadyPromise.then(() => initializeBlazePose(video));
+      // initializePosenet(sk);
+      initializeBlazePose(video);
     },
 
     draw() {
