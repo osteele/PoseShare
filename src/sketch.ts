@@ -13,11 +13,11 @@ import {
   xOffset,
   yOffset,
 } from "./pose";
-import { initializePosenet } from "./posenet";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
+import { P5 } from "./types";
 
-new p5((sk) => {
+new p5((sk: P5) => {
   const sketch = {
     preload() {
       preloadMetaballs(sk);
@@ -86,13 +86,15 @@ new p5((sk) => {
       movePoseInDirection(sk, mappedKeyCode);
     },
   };
+
+  // Copy the functions from the p5 instance into sketch.
   Object.entries(sketch).forEach(([key, value]) => {
-    sk[key] = value;
+    (sk as Record<string, any>)[key] = value;
   });
 });
 
 // Does not draw the background. draw() does that before it calls this function.
-function drawScene(sk) {
+function drawScene(sk: P5) {
   const performers = getPerformers({ includeSelf: settings.showSelf });
   const self = getOwnRecord();
   for (const person of performers) {

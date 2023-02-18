@@ -1,6 +1,7 @@
 import { getOwnRecord } from "./performers";
 import { room } from "./room";
 import { settings } from "./settings";
+import { P5 } from "./types";
 
 export let confidenceThreshold = 0.2;
 
@@ -11,13 +12,13 @@ export let targetYOffset = 0;
 let rowOffset = 0;
 let colOffset = 0;
 
-export function setOffset(x, y): void {
+export function setOffset(x:number, y:number): void {
   xOffset = x;
   yOffset = y;
 }
 
 /** Move the pose in the given direction. */
-export function movePoseInDirection(p5, keyCode): void {
+export function movePoseInDirection(p5:P5, keyCode:number): void {
   const [dCol, dRow] = {
     [p5.LEFT_ARROW]: [-1, 0],
     [p5.RIGHT_ARROW]: [1, 0],

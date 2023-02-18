@@ -2,21 +2,22 @@
  * This module contains the code for drawing the pose as metaballs.
  */
 
+import { Shader } from "p5";
 import { video } from "./camera";
 import { confidenceThreshold } from "./pose";
 import { settings } from "./settings";
-import { BlazePose } from "./types";
+import { BlazePose, P5 } from "./types";
 
-let metaballShader;
+let metaballShader: Shader;
 
-export function preloadMetaballs(p5) {
+export function preloadMetaballs(p5: P5) {
   metaballShader = p5.loadShader(
     "shaders/metaballs.vert",
     "shaders/metaballs.frag"
   );
 }
 
-export function drawPoseMetaballs(p5, pose: BlazePose.Pose, hue) {
+export function drawPoseMetaballs(p5: P5, pose: BlazePose.Pose, hue: number) {
   p5.shader(metaballShader);
   p5.noStroke();
 
@@ -29,16 +30,16 @@ export function drawPoseMetaballs(p5, pose: BlazePose.Pose, hue) {
   metaballShader.setUniform("radius", settings.metaballRadius);
 
   const shaderProxy = {
-    setUniform(name, value) {
+    setUniform(name: string, value: number): Shader {
       // console.info(`${name}: ${value}`);
-      metaballShader.setUniform(name, value);
+      return metaballShader.setUniform(name, value);
     },
   };
   setMetaballPoints(p5, shaderProxy, pose);
   p5.quad(-1, -1, 1, -1, 1, 1, -1, 1);
 }
 
-function setMetaballPoints(p5, shader, pose: BlazePose.Pose) {
+function setMetaballPoints(p5: P5, shader: P5.Shader, pose: BlazePose.Pose) {
   let [xRangeMin, xRangeMax] = [2, 0];
   const [yRangeMin, yRangeMax] = [2, 0];
   if (settings.mirrorVideo) {
@@ -49,7 +50,7 @@ function setMetaballPoints(p5, shader, pose: BlazePose.Pose) {
     hip_score = 1;
   for (let keypoint of pose.keypoints) {
     if (
-      keypoint.name.match(
+      keypoint.name?.match(
         /^nose|(left|right)(Shoulder|Elbow|Wrist|Hip|Knee|Ankle)$/
       )
     ) {
@@ -66,7 +67,7 @@ function setMetaballPoints(p5, shader, pose: BlazePose.Pose) {
         shader.setUniform(`${keypoint.name}_x`, -1);
         shader.setUniform(`${keypoint.name}_y`, -1);
       }
-    } else if (keypoint.name.match(/^(left|right)_hip/)) {
+    } else if (keypoint.name?.match(/^(left|right)_hip/)) {
       hip_x += keypoint.x;
       hip_y += keypoint.y;
       hip_score = p5.min(hip_score, keypoint.score);

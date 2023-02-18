@@ -15,7 +15,7 @@ export const socket = io();
 const logSocketEvents = false; // console.log received messages, if true
 
 // remembers the initial hash, in order to display the splash if it changes
-let liveReloadHash;
+let liveReloadHash: string | null = null;
 
 export function connectWebsocket() {
   log("Connecting to websocket...");
@@ -82,7 +82,7 @@ export function connectWebsocket() {
   }
 
   // TODO: I think this doesn't work on Edge?
-  function log(message, ...args) {
+  function log(message: string, ...args: unknown[]) {
     if (logSocketEvents) {
       console.debug(message, ...args);
     }

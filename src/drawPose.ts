@@ -1,6 +1,6 @@
 /**
  * This file contains the code for drawing the pose on the canvas.
-  */
+ */
 
 import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
@@ -8,9 +8,9 @@ import { confidenceThreshold } from "./pose";
 import { translatePose } from "./pose-utils";
 import { translatePosenetToBlazePose } from "./pose-translation";
 import { settings } from "./settings";
-import { Performer, Posenet } from "./types";
+import { P5, Performer, Posenet } from "./types";
 
-export function drawPerson(p5, person: Performer, outline: boolean) {
+export function drawPerson(p5: P5, person: Performer, outline: boolean): void {
   const { pose, hue } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
@@ -49,11 +49,16 @@ export function drawPerson(p5, person: Performer, outline: boolean) {
   }
 }
 
-function drawKeypoints(p5, pose: Posenet.Pose, c, outline: boolean) {
+function drawKeypoints(
+  p5: P5,
+  pose: Posenet.Pose,
+  c: P5.Color,
+  outline: boolean
+): void {
   p5.fill(c);
   p5.noStroke();
   if (outline) {
-    p5.noFill(c);
+    p5.noFill();
     p5.stroke(c);
     p5.strokeWeight(1);
   }
@@ -64,7 +69,7 @@ function drawKeypoints(p5, pose: Posenet.Pose, c, outline: boolean) {
   }
 }
 
-function drawSkeleton(p5, pose: Posenet.Pose, c) {
+function drawSkeleton(p5: P5, pose: Posenet.Pose, c: P5.Color): void {
   p5.stroke(c);
   p5.strokeWeight(2);
   for (const [p1, p2] of pose.skeleton) {
@@ -93,27 +98,13 @@ const partNames = [
 ];
 
 function drawPoseOutline(
-  p5,
+  p5: P5,
   pose: Posenet.Pose,
-  c,
-  curved,
+  c: P5.Color,
+  curved: boolean,
   outlineOnly: boolean
-) {
+): void {
   const keypoints = pose.pose.keypoints;
-
-  function findPart(partName) {
-    if (partName.match(/\+/)) {
-      const [p1, p2] = partName.split("+").map(findPart);
-      return {
-        score: (p1.score + p2.score) / 2,
-        position: {
-          x: p1.position.x + p2.position.x,
-          y: p1.position.x + p2.position.x,
-        },
-      };
-    }
-    return keypoints.find(({ part }) => part === partName);
-  }
 
   function drawOutline(partNames: string[]) {
     p5.beginShape();
@@ -139,4 +130,24 @@ function drawPoseOutline(
 
   drawOutline(partNames);
   drawOutline(["leftEye", "rightEye", "nose"]);
+
+  /** Find a part by name, or the midpoint of two parts. */
+  function findPart(
+    partName: string
+  ): { score: number; position: { x: number; y: number } } | undefined {
+    if (partName.match(/\+/)) {
+      const [p1, p2] = partName.split("+").map(findPart);
+      if (!p1 || !p2) {
+        return undefined;
+      }
+      return {
+        score: (p1.score + p2.score) / 2,
+        position: {
+          x: p1.position.x + p2.position.x,
+          y: p1.position.x + p2.position.x,
+        },
+      };
+    }
+    return keypoints.find(({ part }) => part === partName);
+  }
 }

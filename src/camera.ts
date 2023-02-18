@@ -3,13 +3,14 @@
  */
 
 import { guiControllers, settings } from "./settings";
+import { P5 } from "./types";
 
-export let video; // p5.js Video instance
+export let video: P5.Video; // p5.js Video instance
 
-export let cameraReadyPromise;
-let cameraSel;
+export let cameraReadyPromise: Promise<P5.Video>;
+let cameraSel: P5.Element;
 
-export function initializeWebcam(p5) {
+export function initializeWebcam(p5: P5) {
   cameraReadyPromise = new Promise((resolve) => {
     video = p5.createCapture(p5.VIDEO, () => resolve(video));
     video.size(settings.width, settings.height);
@@ -32,7 +33,7 @@ export function initializeWebcam(p5) {
   }
 }
 
-async function setupChooseCamera(p5) {
+async function setupChooseCamera(p5: P5) {
   const devices = await navigator.mediaDevices.enumerateDevices();
   const cameras = devices
     .filter((d) => d.kind === "videoinput")
@@ -44,7 +45,10 @@ async function setupChooseCamera(p5) {
     const optionName = getCameraName(camera);
     cameraSel.option(optionName);
   }
-  cameraSel.selected(getCameraName(video.elt.srcObject.getVideoTracks()[0]));
+  // FIXME remove the cast to any
+  cameraSel.selected(
+    getCameraName((video.elt.srcObject as any).getVideoTracks()[0])
+  );
 
   cameraSel.changed(async () => {
     const optionName = cameraSel.value();
@@ -56,7 +60,7 @@ async function setupChooseCamera(p5) {
     video.elt.srcObject = mediaStream;
   });
 
-  function getCameraName(camera) {
+  function getCameraName(camera: MediaDeviceInfo) {
     return camera.label.replace(/\(.*\)$/g, "");
   }
 }

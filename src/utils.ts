@@ -24,10 +24,10 @@ export function setHashParameter(url: URL, name: string, value: any): void {
   }
 }
 
-function getQueryParameter(name: string) {
-  const url = new URL(window.location.href);
-  return url.searchParams.get(name);
-}
+// function getQueryParameter(name: string) {
+//   const url = new URL(window.location.href);
+//   return url.searchParams.get(name);
+// }
 
 // TODO: Replace by getQueryParameter
 export function getQueryString(key: string) {

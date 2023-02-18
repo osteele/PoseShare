@@ -3,14 +3,14 @@ import dat from "dat.gui";
 
 const gui = new dat.GUI({ autoPlace: false });
 const DEFAULT_APPEARANCE = "skeleton";
-const startAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
+const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 
 export const settings = {
   name: "",
   mirrorVideo: true,
   showSelf: true,
   outlineSelf: false,
-  appearance: startAppearance,
+  appearance: initialAppearance,
   smoothing: 0.8,
   trail: 5,
   metaballRadius: 0.5,
@@ -19,7 +19,7 @@ export const settings = {
   width: 880,
   height: 500,
   toroidalMovement: true,
-  useWebGL: appearanceRequiresWebGL(startAppearance),
+  useWebGL: appearanceRequiresWebGL(initialAppearance),
   // useWebGL: getQueryParameter('webgl') === 'true',
 
   // Enable the following to draw the image on the canQvas. Currently it is
@@ -58,6 +58,6 @@ guiControllers.appearance.onChange((appearance) => {
   }
 });
 
-function appearanceRequiresWebGL(appearance) {
+function appearanceRequiresWebGL(appearance: string | true): boolean {
   return appearance === "metaballs";
 }

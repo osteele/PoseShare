@@ -11,7 +11,7 @@ export function translatePosenetToBlazePose(
   pose: Posenet.Pose
 ): BlazePose.Pose {
   const keypoints = pose.pose.keypoints.map(translateKeypoint);
-  const keypoints3D = [];
+  const keypoints3D = new Array<BlazePose.Keypoint>();
   return { keypoints, keypoints3D, score: pose.pose.score };
 
   function translateKeypoint(keypoint: Posenet.Keypoint) {
@@ -40,7 +40,11 @@ export function translatePosenetToBlazePose(
 export function translateBlazePoseToPosenet(
   pose: BlazePose.Pose
 ): Posenet.Pose {
-  const keypoints = pose.keypoints.map(translateKeypoint);
+  const keypoints = pose.keypoints
+    .filter((kp): kp is BlazePose.Keypoint & { name: BlazePose.PartName } =>
+      Boolean(kp.name)
+    )
+    .map(translateKeypoint);
   const keypointsByIndex = Object.fromEntries(
     keypoints.map((keypoint) => [keypoint.part, keypoint])
   );
@@ -51,7 +55,9 @@ export function translateBlazePoseToPosenet(
   });
   return { pose: { keypoints, score: pose.score }, skeleton };
 
-  function translateKeypoint(keypoint: BlazePose.Keypoint) {
+  function translateKeypoint(
+    keypoint: BlazePose.Keypoint & { name: BlazePose.PartName }
+  ) {
     const { score, x, y } = keypoint;
     return {
       part: translatePartName(keypoint.name),
@@ -97,4 +103,10 @@ function createSkeletonJointPairs() {
   function makeName(leftOrRight: string, baseName: string) {
     return `${leftOrRight}${capitalize(baseName)}` as Posenet.PartName;
   }
+}
+
+export function createEmptyPose(): Posenet.Pose {
+  const keypoints = new Array<Posenet.Keypoint>();
+  const skeleton = new Array<[Posenet.Keypoint, Posenet.Keypoint]>();
+  return { pose: { keypoints, score: 0 }, skeleton };
 }

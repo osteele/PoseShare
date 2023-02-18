@@ -6,10 +6,11 @@
 import { room } from "./room";
 import * as d3 from "d3";
 import { confidenceThreshold, setOffset } from "./pose";
+import { P5 } from "./types";
 
 let galleryScale = 1;
 
-export function updateGallery(p5) {
+export function updateGallery(p5:P5):void {
   const svg = document.getElementById("gallery")! as unknown as SVGSVGElement;
   d3.select(svg).style("cursor", "pointer");
   svg.innerHTML = "";
@@ -120,7 +121,7 @@ export function updateGallery(p5) {
 function initGallery() {
   const svg = document.getElementById("gallery")!;
   let dragging = false;
-  svg.onmousedown = (e) => {
+  svg.onmousedown = () => {
     dragging = true;
   };
   svg.onmousemove = (e) => {

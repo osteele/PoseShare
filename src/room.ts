@@ -64,7 +64,7 @@ export function updateRoom(): void {
 }
 
 /** Update the room data with properties from the server. */
-export function updateRoomFromServer(roomData): void {
+export function updateRoomFromServer(roomData: typeof room.settings): void {
   room.settings = roomData;
   room.performers = roomData.performers;
   updateRoom();
