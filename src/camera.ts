@@ -2,6 +2,7 @@
  * This module handles the webcam.
  */
 
+/// <reference path="p5.d.ts" />
 import p5 from "p5";
 import { guiControllers, settings } from "./settings";
 

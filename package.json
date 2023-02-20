@@ -4,6 +4,9 @@
   "author": "Oliver Steele <steele@osteele.com>",
   "scripts": {
     "build": "vite build",
+    "check:client": "tsc --noEmit --esModuleInterop src/sketch.ts",
+    "check:server": "tsc --noEmit --esModuleInterop server/server.ts",
+    "check": "yarn check:client && yarn check:server",
     "preview": "vite preview",
     "start": "nodemon -w server ./server/server.ts"
   },
