@@ -9,7 +9,12 @@ import { lerp } from "./utils";
 /** The previous pose, used for smoothing. */
 let previousPose: Posenet.Pose;
 
-/** Smooth the pose by interpolating between the previous pose and the current pose. */
+/** Smooth the pose by interpolating between the previous pose and the current
+ * pose.
+ *
+ * This function can only be used on one stream of poses at a time.
+ * The previous pose is stored as a global variable.
+ */
 export function smoothPose(pose: Posenet.Pose): Posenet.Pose {
   const { smoothing } = settings;
   let smoothed = pose;

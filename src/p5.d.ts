@@ -4,42 +4,23 @@
 declare module "p5" {
   export default class p5 {
     constructor(f: (instance: p5) => void);
-    background(c: p5.Color | number, g?: number, b?: number): void;
-    beginShape(): void;
-    circle(x: number, y: number, r: number): void;
+
+    //Environment
+    width: number;
+    height: number;
+    // Creating & Reading
     color: (r: number, g?: number, b?: number, a?: number) => any;
-    colorMode(mode: string, max?: number): void;
-    createCanvas(w: number, h: number, mode: string): p5.Canvas;
-    createCapture(type: string, callback: () => void): p5.Video;
-    createDiv(content: string): p5.Element;
-    createSelect(): p5.Element;
-    curveVertex(x: number, y: number): void;
-    endShape(e: number): void;
-    fill(c: p5.Color): void;
-    lerp(a: number, b: number, amt: number): number;
-    loadShader(
-      vertFilename: string,
-      fragFilename: string,
-      callback?: (shader: p5.Shader) => void,
-      errorCallback?: (err: any) => void
-    ): p5.Shader;
     lerpColor(c1: p5.Color, c2: p5.Color, amt: number): p5.Color;
-    line(x1: number, y1: number, x2: number, y2: number): void;
-    map(
-      n: number,
-      start1: number,
-      stop1: number,
-      start2: number,
-      stop2: number
-    ): number;
-    millis(): number;
-    abs(a: number): number;
-    max(a: number, b: number): number;
-    min(a: number, b: number): number;
+    // Setting
+    background(c: p5.Color | number, g?: number, b?: number): void;
+    colorMode(mode: string, max?: number): void;
+    fill(c: p5.Color): void;
     noFill(): void;
     noStroke(): void;
-    pop(): void;
-    push(): void;
+
+    // Shape
+    // 2D Primitive
+    circle(x: number, y: number, r: number): void;
     quad(
       x1: number,
       y1: number,
@@ -50,15 +31,65 @@ declare module "p5" {
       x4: number,
       y4: number
     ): void;
-    random(min: number, max: number): number;
-    select(selector: string): any;
-    shader(shader: p5.Shader): void;
+    line(x1: number, y1: number, x2: number, y2: number): void;
+    // Attributes
     stroke(c: any): void;
     strokeWeight(w: number): void;
+    // Vertex
+    beginShape(): void;
+    curveVertex(x: number, y: number): void;
+    endShape(mode?: string): void;
+    vertex(x: number, y: number): void;
+
+    // Structure
+    push(): void;
+    pop(): void;
+
+    // DOM
+    select(selector: string): any;
+    createDiv(content: string): p5.Element;
+    createSelect(): p5.Element;
+    createCapture(type: string, callback: () => void): p5.Video;
+
+    // Rendering
+    createCanvas(w: number, h: number, mode: string): p5.Canvas;
+
+    // Transform
     translate(x: number, y: number): void;
     scale(x: number, y: number): void;
+
+    // Image
+    // Loading & Displaying Pixels
     image(img: any, x: number, y: number, w?: number, h?: number): void;
-    vertex(x: number, y: number): void;
+
+    // IO
+    // Time & Date
+    millis(): number;
+
+    // Math
+    // Calculation
+    abs(a: number): number;
+    map(
+      n: number,
+      start1: number,
+      stop1: number,
+      start2: number,
+      stop2: number
+    ): number;
+    max(a: number, b: number): number;
+    min(a: number, b: number): number;
+    lerp(a: number, b: number, amt: number): number;
+    // Random
+    random(min: number, max: number): number;
+
+    // 3D
+    loadShader(
+      vertFilename: string,
+      fragFilename: string,
+      callback?: (shader: p5.Shader) => void,
+      errorCallback?: (err: any) => void
+    ): p5.Shader;
+    shader(shader: p5.Shader): void;
 
     // Constants
     CLOSE: string;
@@ -77,8 +108,6 @@ declare module "p5" {
     keyCode: number;
     mouseX: number;
     mouseY: number;
-    width: number;
-    height: number;
     useWebGL: boolean;
   }
 

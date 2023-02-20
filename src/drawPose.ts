@@ -2,15 +2,16 @@
  * This file contains the code for drawing the pose on the canvas.
  */
 
+import p5 from "p5";
 import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
 import { confidenceThreshold } from "./pose";
 import { translatePose } from "./pose-utils";
 import { translatePosenetToBlazePose } from "./pose-translation";
 import { settings } from "./settings";
-import { P5, Performer, Posenet } from "./types";
+import { Performer, Posenet } from "./types";
 
-export function drawPerson(p5: P5, person: Performer, outline: boolean): void {
+export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
   const { pose, hue } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
@@ -50,9 +51,9 @@ export function drawPerson(p5: P5, person: Performer, outline: boolean): void {
 }
 
 function drawKeypoints(
-  p5: P5,
+  p5: p5,
   pose: Posenet.Pose,
-  c: P5.Color,
+  c: p5.Color,
   outline: boolean
 ): void {
   p5.fill(c);
@@ -69,7 +70,7 @@ function drawKeypoints(
   }
 }
 
-function drawSkeleton(p5: P5, pose: Posenet.Pose, c: P5.Color): void {
+function drawSkeleton(p5: p5, pose: Posenet.Pose, c: p5.Color): void {
   p5.stroke(c);
   p5.strokeWeight(2);
   for (const [p1, p2] of pose.skeleton) {
@@ -98,9 +99,9 @@ const partNames = [
 ];
 
 function drawPoseOutline(
-  p5: P5,
+  p5: p5,
   pose: Posenet.Pose,
-  c: P5.Color,
+  c: p5.Color,
   curved: boolean,
   outlineOnly: boolean
 ): void {
