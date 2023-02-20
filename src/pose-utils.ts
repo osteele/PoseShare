@@ -76,3 +76,47 @@ export function translatePose(
     };
   }
 }
+
+export type PartNameOrPair =
+  | BlazePose.PartName
+  | `${BlazePose.PartName}+${BlazePose.PartName}`;
+
+export const partNames: PartNameOrPair[] = [
+  "right_shoulder",
+  "right_elbow",
+  "right_wrist",
+  "right_shoulder",
+  "right_hip",
+  "right_knee",
+  "right_ankle",
+  "right_hip+left_hip",
+  "left_knee",
+  "left_ankle",
+  "left_hip",
+  "left_shoulder",
+  "left_elbow",
+  "left_wrist",
+  "left_shoulder",
+];
+
+/** Find a part by name, or the midpoint of two parts. */
+export function findPart(
+  pose: BlazePose.Pose,
+  partName: PartNameOrPair
+): BlazePose.Keypoint | undefined {
+  if (partName.match(/\+/)) {
+    const [p1, p2] = (partName.split("+") as BlazePose.PartName[]).map((name) =>
+      findPart(pose, name)
+    );
+    if (!p1 || !p2) {
+      return undefined;
+    }
+    return {
+      score: (p1.score + p2.score) / 2,
+      x: p1.x + p2.x,
+      y: p1.x + p2.x,
+    };
+  } else {
+    return pose.keypoints.find(({ name }) => name === partName);
+  }
+}

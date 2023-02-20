@@ -6,7 +6,12 @@ import p5 from "p5";
 import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
 import { confidenceThreshold } from "./pose";
-import { translatePose } from "./pose-utils";
+import {
+  findPart,
+  PartNameOrPair,
+  partNames,
+  translatePose,
+} from "./pose-utils";
 import { settings } from "./settings";
 import { createSkeleton } from "./skeleton";
 import { BlazePose, Performer } from "./types";
@@ -79,24 +84,6 @@ function drawSkeleton(p5: p5, pose: BlazePose.Pose, c: p5.Color): void {
   }
 }
 
-const partNames = [
-  "rightShoulder",
-  "rightElbow",
-  "rightWrist",
-  "rightShoulder",
-  "rightHip",
-  "rightKnee",
-  "rightAnkle",
-  "rightHip+leftHip",
-  "leftKnee",
-  "leftAnkle",
-  "leftHip",
-  "leftShoulder",
-  "leftElbow",
-  "leftWrist",
-  "leftShoulder",
-];
-
 function drawPoseOutline(
   p5: p5,
   pose: BlazePose.Pose,
@@ -104,12 +91,10 @@ function drawPoseOutline(
   curved: boolean,
   outlineOnly: boolean
 ): void {
-  const keypoints = pose.keypoints;
-
-  function drawOutline(partNames: string[]) {
+  function drawOutline(partNames: PartNameOrPair[]) {
     p5.beginShape();
     for (const name of partNames) {
-      const keypoint = findPart(name);
+      const keypoint = findPart(pose, name);
       if (keypoint && keypoint.score >= confidenceThreshold) {
         if (curved && name.match(/elbow|knee/i)) {
           p5.curveVertex(keypoint.x, keypoint.y);
@@ -129,21 +114,5 @@ function drawPoseOutline(
   }
 
   drawOutline(partNames);
-  drawOutline(["leftEye", "rightEye", "nose"]);
-
-  /** Find a part by name, or the midpoint of two parts. */
-  function findPart(partName: string): BlazePose.Keypoint | undefined {
-    if (partName.match(/\+/)) {
-      const [p1, p2] = partName.split("+").map(findPart);
-      if (!p1 || !p2) {
-        return undefined;
-      }
-      return {
-        score: (p1.score + p2.score) / 2,
-        x: p1.x + p2.x,
-        y: p1.x + p2.x,
-      };
-    }
-    return keypoints.find(({ name }) => name === partName);
-  }
+  drawOutline(["left_eye", "right_eye", "nose"]);
 }
