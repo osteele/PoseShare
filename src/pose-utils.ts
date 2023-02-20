@@ -3,11 +3,17 @@
  */
 
 import { settings } from "./settings";
-import { Posenet } from "./types";
+import { BlazePose } from "./types";
 import { lerp } from "./utils";
 
+export function createEmptyPose(): BlazePose.Pose {
+  const keypoints = new Array<BlazePose.Keypoint>();
+  const keypoints3D = new Array<BlazePose.Keypoint>();
+  return { keypoints, keypoints3D, score: 0 };
+}
+
 /** The previous pose, used for smoothing. */
-let previousPose: Posenet.Pose;
+let previousPose: BlazePose.Pose;
 
 /** Smooth the pose by interpolating between the previous pose and the current
  * pose.
@@ -15,65 +21,58 @@ let previousPose: Posenet.Pose;
  * This function can only be used on one stream of poses at a time.
  * The previous pose is stored as a global variable.
  */
-export function smoothPose(pose: Posenet.Pose): Posenet.Pose {
+export function smoothPose(pose: BlazePose.Pose): BlazePose.Pose {
   const { smoothing } = settings;
-  let smoothed = pose;
-
   if (previousPose) {
-    const keypoints = pose.pose.keypoints.map((keypoint, i) => {
-      let prev = previousPose.pose.keypoints[i];
+    const keypoints = pose.keypoints.map((keypoint, i) => {
+      let prev = previousPose.keypoints[i];
       return smoothKeypoint(keypoint, prev);
     });
-    smoothed = {
-      ...pose,
-      pose: { ...pose.pose, keypoints },
-    };
+    const keypoints3D = pose.keypoints.map((keypoint, i) => {
+      let prev = previousPose.keypoints[i];
+      return smoothKeypoint(keypoint, prev);
+    });
+    pose = { ...pose, keypoints, keypoints3D };
   }
   previousPose = pose;
-  return smoothed;
+  return pose;
 
   // Smooth a single keypoint
   function smoothKeypoint(
-    keypoint: Posenet.Keypoint,
-    prev: Posenet.Keypoint
-  ): Posenet.Keypoint {
+    keypoint: BlazePose.Keypoint,
+    prev: BlazePose.Keypoint
+  ): BlazePose.Keypoint {
     return {
       ...keypoint,
       score: lerp(prev.score, keypoint.score, 1 - smoothing),
-      position: {
-        x: lerp(prev.position.x, keypoint.position.x, 1 - smoothing),
-        y: lerp(prev.position.y, keypoint.position.y, 1 - smoothing),
-      },
+      x: lerp(prev.x, keypoint.x, 1 - smoothing),
+      y: lerp(prev.y, keypoint.y, 1 - smoothing),
+      z:
+        prev.z !== undefined && keypoint.z !== undefined
+          ? lerp(prev.z, keypoint.z, 1 - smoothing)
+          : undefined,
     };
   }
 }
 
 /** Add xOffset and yOffset to all the keypoints in the pose */
 export function translatePose(
-  pose: Posenet.Pose,
+  pose: BlazePose.Pose,
   xOffset: number,
   yOffset: number
-): Posenet.Pose {
+): BlazePose.Pose {
   return {
     ...pose,
-    pose: {
-      ...pose.pose,
-      keypoints: pose.pose.keypoints.map(translateKeypoint),
-    },
-    skeleton: pose.skeleton.map((pts) => pts.map(translateKeypoint)) as [
-      Posenet.Keypoint,
-      Posenet.Keypoint
-    ][],
+    keypoints: pose.keypoints.map(translateKeypoint),
+    keypoints3D: pose.keypoints3D.map(translateKeypoint),
   };
 
   // Translate a single keypoint
-  function translateKeypoint(keypoint: Posenet.Keypoint): Posenet.Keypoint {
+  function translateKeypoint(keypoint: BlazePose.Keypoint): BlazePose.Keypoint {
     return {
       ...keypoint,
-      position: {
-        x: keypoint.position.x + xOffset,
-        y: keypoint.position.y + yOffset,
-      },
+      x: keypoint.x + xOffset,
+      y: keypoint.y + yOffset,
     };
   }
 }

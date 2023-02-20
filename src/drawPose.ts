@@ -7,9 +7,9 @@ import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
 import { confidenceThreshold } from "./pose";
 import { translatePose } from "./pose-utils";
-import { translatePosenetToBlazePose } from "./pose-translation";
 import { settings } from "./settings";
-import { Performer, Posenet } from "./types";
+import { createSkeleton } from "./skeleton";
+import { BlazePose, Performer } from "./types";
 
 export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
   const { pose, hue } = person;
@@ -30,8 +30,7 @@ export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
             -p5.height * (person.row - self.row)
           );
         }
-        const pose3D = translatePosenetToBlazePose(pose);
-        drawPoseMetaballs(p5, pose3D, hue);
+        drawPoseMetaballs(p5, pose, hue);
       }
       break;
     case "skeleton":
@@ -52,7 +51,7 @@ export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
 
 function drawKeypoints(
   p5: p5,
-  pose: Posenet.Pose,
+  pose: BlazePose.Pose,
   c: p5.Color,
   outline: boolean
 ): void {
@@ -63,19 +62,19 @@ function drawKeypoints(
     p5.stroke(c);
     p5.strokeWeight(1);
   }
-  for (const keypoint of pose.pose.keypoints) {
+  for (const keypoint of pose.keypoints) {
     if (keypoint.score >= confidenceThreshold) {
-      p5.circle(keypoint.position.x, keypoint.position.y, 10);
+      p5.circle(keypoint.x, keypoint.y, 10);
     }
   }
 }
 
-function drawSkeleton(p5: p5, pose: Posenet.Pose, c: p5.Color): void {
+function drawSkeleton(p5: p5, pose: BlazePose.Pose, c: p5.Color): void {
   p5.stroke(c);
   p5.strokeWeight(2);
-  for (const [p1, p2] of pose.skeleton) {
+  for (const [p1, p2] of createSkeleton(pose)) {
     if (p5.min(p1.score, p2.score) >= confidenceThreshold) {
-      p5.line(p1.position.x, p1.position.y, p2.position.x, p2.position.y);
+      p5.line(p1.x, p1.y, p2.x, p2.y);
     }
   }
 }
@@ -100,12 +99,12 @@ const partNames = [
 
 function drawPoseOutline(
   p5: p5,
-  pose: Posenet.Pose,
+  pose: BlazePose.Pose,
   c: p5.Color,
   curved: boolean,
   outlineOnly: boolean
 ): void {
-  const keypoints = pose.pose.keypoints;
+  const keypoints = pose.keypoints;
 
   function drawOutline(partNames: string[]) {
     p5.beginShape();
@@ -113,9 +112,9 @@ function drawPoseOutline(
       const keypoint = findPart(name);
       if (keypoint && keypoint.score >= confidenceThreshold) {
         if (curved && name.match(/elbow|knee/i)) {
-          p5.curveVertex(keypoint.position.x, keypoint.position.y);
+          p5.curveVertex(keypoint.x, keypoint.y);
         } else {
-          p5.vertex(keypoint.position.x, keypoint.position.y);
+          p5.vertex(keypoint.x, keypoint.y);
         }
       }
     }
@@ -133,9 +132,7 @@ function drawPoseOutline(
   drawOutline(["leftEye", "rightEye", "nose"]);
 
   /** Find a part by name, or the midpoint of two parts. */
-  function findPart(
-    partName: string
-  ): { score: number; position: { x: number; y: number } } | undefined {
+  function findPart(partName: string): BlazePose.Keypoint | undefined {
     if (partName.match(/\+/)) {
       const [p1, p2] = partName.split("+").map(findPart);
       if (!p1 || !p2) {
@@ -143,12 +140,10 @@ function drawPoseOutline(
       }
       return {
         score: (p1.score + p2.score) / 2,
-        position: {
-          x: p1.position.x + p2.position.x,
-          y: p1.position.x + p2.position.x,
-        },
+        x: p1.x + p2.x,
+        y: p1.x + p2.x,
       };
     }
-    return keypoints.find(({ part }) => part === partName);
+    return keypoints.find(({ name }) => name === partName);
   }
 }

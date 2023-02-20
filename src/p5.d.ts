@@ -1,5 +1,8 @@
-/* The type declarations in @types/p5 are incomplete. This file adds the missing
- * declarations. */
+/** Type declarations for p5.js.
+ *
+ * The type declarations in @types/p5 are incomplete. This file adds the missing
+ * declarations, so that code that uses p5.js passes type-checking.
+ */
 
 declare module "p5" {
   export default class p5 {

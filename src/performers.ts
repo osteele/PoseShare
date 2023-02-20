@@ -8,8 +8,8 @@ import { room, updateRoom } from "./room";
 import { socket } from "./socket";
 import { Performer, Person } from "./types";
 import { clientId, username } from "./username";
-import { Posenet } from "./types";
-import { createEmptyPose } from "./pose-translation";
+import { BlazePose } from "./types";
+import { createEmptyPose } from "./pose-utils";
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -17,7 +17,7 @@ let performers: Performer[] = [];
 /** If not null, show only the performer with the specified id. */
 let partnerId: string | null = null;
 
-export function setOwnPose(pose: Posenet.Pose) {
+export function setOwnPose(pose: BlazePose.Pose) {
   updatePersonPose(
     {
       id: clientId,
@@ -33,7 +33,7 @@ export function setOwnPose(pose: Posenet.Pose) {
 
 export function updatePersonPose(
   person: Person,
-  pose: Posenet.Pose | null = null
+  pose: BlazePose.Pose | null = null
 ) {
   // find the index of the person in the list of performers
   performers = room.performers;

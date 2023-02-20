@@ -5,7 +5,7 @@ export type Performer = {
   hue: number;
   isLocal: boolean;
   isSelf: boolean;
-  pose: Posenet.Pose;
+  pose: BlazePose.Pose;
   position: number;
   col: number;
   row: number;
@@ -29,46 +29,6 @@ export type Room = {
     [key: string]: any;
   };
 };
-
-export namespace Posenet {
-  export type PartName =
-    | "nose"
-    | "leftEye"
-    | "rightEye"
-    | "leftEar"
-    | "rightEar"
-    | "leftShoulder"
-    | "rightShoulder"
-    | "leftElbow"
-    | "rightElbow"
-    | "leftWrist"
-    | "rightWrist"
-    | "leftHip"
-    | "rightHip"
-    | "leftKnee"
-    | "rightKnee"
-    | "leftAnkle"
-    | "rightAnkle";
-
-  type Vector2D = {
-    x: number;
-    y: number;
-  };
-
-  export type Keypoint = {
-    part: PartName;
-    position: Vector2D;
-    score: number;
-  };
-
-  export type Pose = {
-    pose: {
-      keypoints: Keypoint[];
-      score: number;
-    };
-    skeleton: [Keypoint, Keypoint][];
-  };
-}
 
 export namespace BlazePose {
   export type PartName =

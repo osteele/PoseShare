@@ -1,16 +1,23 @@
 /**
- * @fileoverview This file contains the code for initializing and using the
- * BlazePose model.
+ * This file contains the code for initializing and configuring the BlazePose
+ * model.
  *
  */
 
 import * as poseDetection from "@tensorflow-models/pose-detection";
-// import * as tf from "@tensorflow/tfjs-core";
-// Register WebGL backend.
+// Register WebGL backend:
 import "@tensorflow/tfjs-backend-webgl";
 import { setOwnPose } from "./performers";
-import { translateBlazePoseToPosenet } from "./pose-translation";
+import { smoothPose } from "./pose-utils";
 
+const smoothPoses = false;
+
+/** Configured BlazePose. Returns a Promise that resolves once the model has
+ * loaded.
+ *
+ * This function also initiates an asynchronous loop that applies the
+ * model to the video and updates the ownPose variable.
+ */
 export async function initializeBlazePose(
   video: HTMLVideoElement
 ): Promise<void> {
@@ -25,11 +32,15 @@ export async function initializeBlazePose(
 
   async function loop() {
     while (true) {
-      const [bpPose] = await detector.estimatePoses(video);
+      let [bpPose] = await detector.estimatePoses(video);
       if (!bpPose) continue;
-      // FIXME remove the any cast
-      let pose = translateBlazePoseToPosenet(bpPose as any);
-      // pose = smoothPose(pose);
+      // TODO remove the any cast
+      // It is needed because the typescript definitions for the BlazePose
+      // model specify PartName instead of string
+      let pose = bpPose as any;
+      if (smoothPoses) {
+        pose = smoothPose(pose);
+      }
       setOwnPose(pose);
     }
   }

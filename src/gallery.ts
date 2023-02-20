@@ -7,6 +7,7 @@ import p5 from "p5";
 import { room } from "./room";
 import * as d3 from "d3";
 import { confidenceThreshold, setOffset } from "./pose";
+import { createSkeleton } from "./skeleton";
 
 let galleryScale = 1;
 
@@ -79,11 +80,11 @@ export function updateGallery(p5: p5): void {
     // add circles for the keypoints
     d3.select(g)
       .selectAll("circle")
-      .data(person.pose.pose.keypoints)
+      .data(person.pose.keypoints)
       .enter()
       .append("circle")
-      .attr("cx", (d) => d.position.x)
-      .attr("cy", (d) => d.position.y)
+      .attr("cx", (d) => d.x)
+      .attr("cy", (d) => d.y)
       .attr("r", 10)
       .attr("display", (d) =>
         d.score >= confidenceThreshold ? "inline" : "none"
@@ -93,13 +94,13 @@ export function updateGallery(p5: p5): void {
     // add lines for the bones
     d3.select(g)
       .selectAll("line")
-      .data(person.pose.skeleton)
+      .data(createSkeleton(person.pose))
       .enter()
       .append("line")
-      .attr("x1", (d) => d[0].position.x)
-      .attr("y1", (d) => d[0].position.y)
-      .attr("x2", (d) => d[1].position.x)
-      .attr("y2", (d) => d[1].position.y)
+      .attr("x1", (d) => d[0].x)
+      .attr("y1", (d) => d[0].y)
+      .attr("x2", (d) => d[1].x)
+      .attr("y2", (d) => d[1].y)
       .attr("display", (d) =>
         Math.min(d[0].score, d[1].score) >= confidenceThreshold
           ? "inline"
