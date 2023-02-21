@@ -39,6 +39,7 @@ export function updatePersonPose(
   performers = room.performers;
   let ix = performers.findIndex(({ id }) => id === person.id);
   if (ix < 0) {
+    // if not found, create a new performer and add it to the list
     ix = performers.length;
     performers.push({
       ...person,
@@ -46,18 +47,22 @@ export function updatePersonPose(
       position: 0,
       col: 0,
       row: 0,
-      // these are updated below
-      hue: 0,
       pose: createEmptyPose(),
+      // Supply these initial values to satisfy the typechecker. They will be
+      // overwritten by the statement that follows this conditional.
+      hue: 0,
       timestamp: 0,
     });
   }
+  const { position } = performers[ix];
   // update the record
   performers[ix] = {
     ...performers[ix],
     ...person,
     pose: pose || performers[ix].pose,
     timestamp: +new Date(),
+    col: position % room.cols,
+    row: Math.floor(position / room.cols),
   };
   if (person.hue && person.hue >= 0) {
     performers[ix].hue = person.hue;

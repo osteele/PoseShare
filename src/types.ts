@@ -4,7 +4,6 @@ export type Performer = Common.PerformerBase & {
   isLocal: boolean;
   isSelf: boolean;
   pose: BlazePose.Pose;
-  position: number; // This is optional in the base type
   timestamp: number; // This is a Date in the server
   col: number;
   row: number;

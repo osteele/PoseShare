@@ -6,7 +6,7 @@ export type PerformerBase = {
   name: string;
   connected: boolean;
   hue: number;
-  position?: number;
+  position: number;
 };
 
 export type RoomBase = {

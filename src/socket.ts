@@ -7,12 +7,13 @@
 import { io } from "socket.io-client";
 import { updatePersonPose, updatePerformerData } from "./performers";
 import { updateRoomFromServer } from "./room";
+import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
 import { getQueryString } from "./utils";
 
 export const socket = io();
 
-const logSocketEvents = false; // console.log received messages, if true
+const logSocketEvents = true; // console.log received messages, if true
 
 // remembers the initial hash, in order to display the splash if it changes
 let liveReloadHash: string | null = null;
@@ -28,22 +29,22 @@ export function connectWebsocket() {
     sendJoinEvent();
   });
 
-  socket.on("pose", (person, pose) => {
+  socket.on("pose", (person: Person, pose: BlazePose.Pose) => {
     updatePersonPose(person, pose);
   });
 
-  socket.on("performers", (performers) => {
+  socket.on("performers", (performers: Performer[]) => {
     if (logSocketEvents) console.log("performers", performers);
     updatePerformerData(performers);
   });
 
-  socket.on("room", (roomData) => {
+  socket.on("room", (roomData: Room) => {
     if (logSocketEvents) console.log("room", roomData);
     updateRoomFromServer(roomData);
   });
 
-  socket.on("liveReload", (hash) => {
-    // If this is the first time, set the hash
+  socket.on("liveReload", (hash: string) => {
+    // If this is the first time this message has been received, set the hash
     liveReloadHash = liveReloadHash || hash;
     // If the hash has changed, display the splash
     const outdated = liveReloadHash !== hash;

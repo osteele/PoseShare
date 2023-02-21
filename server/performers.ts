@@ -72,8 +72,36 @@ function updatePerformerFromRoom(data: Performer, performer: Performer) {
 
 // Returns a list of performers to be broadcast to clients.
 export function getPerformersForBroadcast() {
+  if (performers.length === 0) return [];
   reassignPerformerColors();
+  assignPerformerPositions(performers);
+  console.info(performers);
+  // remove the room and timestamp properties
   return performers.map(({ room, timestamp, ...performer }) => performer);
+}
+
+/** Make sure every performer has a position. Collect all the current
+ * positions, and for every performer with a null position, assign it the next
+ * available position.
+ */
+function assignPerformerPositions(performers: Performer[]) {
+  // collect the positions that are in use
+  const occupiedPositions = performers.map(({ position }) => position);
+  // create an array of all the positions, and then remove the ones that are
+  // already in use.
+  const room = getPerformerRoom(performers[0]);
+  const availablePositions = Array.from(
+    { length: room.rows * room.cols },
+    (_, i) => i
+  ).filter((p) => !occupiedPositions.includes(p));
+  performers
+    .filter(({ position }) => position === undefined)
+    .forEach((performer) => {
+      if (availablePositions.length === 0) {
+        availablePositions.push(Math.max(...occupiedPositions) + 1);
+      }
+      performer.position = availablePositions.shift()!;
+    });
 }
 
 // Remove performers that haven't been connected for a while.
