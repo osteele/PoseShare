@@ -11,6 +11,20 @@ import { createSkeleton } from "./skeleton";
 
 let galleryScale = 1;
 
+export function initializeGallery() {
+  const svg = document.getElementById("gallery")!;
+  let dragging = false;
+  svg.onmousedown = () => {
+    dragging = true;
+  };
+  svg.onmousemove = (e) => {
+    if (dragging) {
+      setOffset(e.offsetX / galleryScale, e.offsetY / galleryScale);
+    }
+  };
+  document.onmouseup = () => (dragging = false);
+}
+
 export function updateGallery(p5: p5): void {
   const svg = document.getElementById("gallery")! as unknown as SVGSVGElement;
   d3.select(svg).style("cursor", "pointer");
@@ -118,19 +132,3 @@ export function updateGallery(p5: p5): void {
     //   .attr('height', cellHeight - 1)
   }
 }
-
-function initGallery() {
-  const svg = document.getElementById("gallery")!;
-  let dragging = false;
-  svg.onmousedown = () => {
-    dragging = true;
-  };
-  svg.onmousemove = (e) => {
-    if (dragging) {
-      setOffset(e.offsetX / galleryScale, e.offsetY / galleryScale);
-    }
-  };
-  document.onmouseup = () => (dragging = false);
-}
-
-initGallery();

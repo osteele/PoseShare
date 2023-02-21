@@ -81,6 +81,8 @@ video.mirror {
   color: #aaa;
 }
 
+/* Splash and alerts */
+
 #reload-splash {
   display: none;
   animation: height 1s infinite;
@@ -107,4 +109,31 @@ video.mirror {
   x: 0;
   y: 0;
   z-index: 100;
+}
+
+body.video-initialized #loading-message {
+  display: none;
+}
+
+#initializing-model-message {
+  display: none;
+}
+
+body.video-initialized #initializing-model-message {
+  display: block;
+}
+
+body.video-initialized.detector-initialized #initializing-model-message {
+  display: none;
+}
+
+.loading-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 1px 2px gray;
 }

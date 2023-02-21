@@ -17,7 +17,7 @@ import { createSkeleton } from "./skeleton";
 import { BlazePose, Performer } from "./types";
 
 export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
-  const { pose, hue } = person;
+  let { pose, hue } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
   const outlineColor = p5.color(hue, 50, 50, 0.5);
@@ -27,9 +27,8 @@ export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
     case "metaballs":
       {
         const self = getOwnRecord();
-        let xpose = pose;
         if (self && self.row >= 0 && person.row >= 0) {
-          xpose = translatePose(
+          pose = translatePose(
             pose,
             -p5.width * (person.col - self.col),
             -p5.height * (person.row - self.row)

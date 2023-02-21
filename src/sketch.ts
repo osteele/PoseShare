@@ -2,7 +2,7 @@ import p5 from "p5";
 import { initializeBlazePose } from "./blazePose";
 import { initializeWebcam, video } from "./camera";
 import { drawPerson } from "./drawPose";
-import { updateGallery } from "./gallery";
+import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
 import { getOwnRecord, getPerformers } from "./performers";
 import {
@@ -16,6 +16,9 @@ import {
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
 
+// Create a new p5 instance. This uses the p5 constructor, which takes a
+// function that is called with the p5 instance as an argument.
+// See https://github.com/processing/p5.js/wiki/Global-and-instance-mode
 new p5((sk: p5) => {
   const sketch = {
     preload() {
@@ -23,33 +26,26 @@ new p5((sk: p5) => {
     },
 
     async setup() {
-      // The webcam is initialized to this
       const canvas = sk.createCanvas(
         settings.width,
         settings.height,
         settings.useWebGL ? sk.WEBGL : sk.P2D
       );
-      // Move the canvas HTML element inside the container element. This posiitons
-      // the canvas at the same x and y location as the video element.
+      // Move the canvas HTML element inside the container element. This
+      // positions the canvas at the same x and y location as the video element.
       canvas.parent("sketch-container");
       sk.colorMode(sk.HSB);
 
+      initializeGallery();
       connectWebsocket();
 
       // initializeWebcam calls createVideo(CAMERA). It returns a Promise that
       // resolves when the video stream is ready.
       await initializeWebcam(sk);
+      document.body.classList.add("video-initialized");
 
-      const loadingMessage = document.getElementById("loading-message");
-      const initializingModelMessage = document.getElementById(
-        "initializing-model-message"
-      );
-      loadingMessage!.style.display = "none";
-      initializingModelMessage!.style.display = "block";
-
-      // createPartnerSelector();
       await initializeBlazePose(video.elt);
-      initializingModelMessage!.style.display = "none";
+      document.body.classList.add("detector-initialized");
     },
 
     draw() {
