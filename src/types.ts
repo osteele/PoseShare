@@ -1,15 +1,13 @@
-export type Performer = {
-  id: string;
-  name: string;
-  connected: boolean;
-  hue: number;
+import * as Common from "@common/types";
+
+export type Performer = Common.PerformerBase & {
   isLocal: boolean;
   isSelf: boolean;
   pose: BlazePose.Pose;
-  position: number;
+  position: number; // This is optional in the base type
+  timestamp: number; // This is a Date in the server
   col: number;
   row: number;
-  timestamp: number;
 };
 
 export type Person = {

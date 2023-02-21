@@ -1,15 +1,35 @@
+// This is the server tsconfig.json file.
+//
+// It is used to typecheck the server sources.
+//
+// See https://www.typescriptlang.org/docs/handbook/tsconfig-json.html for more
+// information.
 {
   "compilerOptions": {
+    // Language and environment
     "target": "es6",
+    // Module options
     "module": "commonjs",
-    "rootDir": "./",
-    "outDir": "./build",
     "esModuleInterop": true,
-    "strict": true,
+    // Paths
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": [
+        "../common/*"
+      ],
+    },
+    "rootDirs": [
+      "./",
+      "../common"
+    ],
+    // Type checking
+    "strict": true, // implies other options: https://www.typescriptlang.org/tsconfig#strict
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    // Emit options
     "noEmit": true,
+    "outDir": "./build",
   }
 }

@@ -38,6 +38,7 @@ and the [project wiki](https://github.com/osteele/PoseShare/wiki/).
 
 Subdirectories:
 
+- `common/` — source files that are shared between the client and server
 - `config/` — configuration files for the client and server
 - `public/` — static files that are served by the embedded web server
 - `server/` — TypeScript source code for the http (web and API) server

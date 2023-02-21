@@ -1,18 +1,10 @@
-export interface Performer {
-  connected: boolean;
-  hue: number;
-  id: string;
-  name: string;
-  position?: number;
+import { PerformerBase, Room } from "@common/types";
+
+export type Performer = PerformerBase & {
   room: Room;
   roomName?: string;
   timestamp: Date;
-}
-
-export interface Room {
-  name: string;
-  size: number;
-}
+};
 
 export interface ClientToServerEvent {
   broadcast: {

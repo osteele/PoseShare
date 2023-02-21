@@ -1,21 +1,43 @@
+// This is the client tsconfig.json file.
+//
+// It is used to typecheck the the TypeScript files in the src folder, and to
+// configure their compile into JavaScript files that are used by the browser.
+//
+// See https://www.typescriptlang.org/docs/handbook/tsconfig-json.html for more
+// information.
 {
   "compilerOptions": {
+    // Language and environment
     "target": "es6",
-    "module": "system",
     "lib": [
       "es2015",
       "dom"
     ],
-    "sourceMap": true,
-    "rootDir": "./",
-    "outFile": "../static/app.js",
-    "esModuleInterop": true,
+    // Module options
+    "module": "system",
     "moduleResolution": "node",
-    "strict": true,
+    "esModuleInterop": true,
+    // Paths
+    "baseUrl": "./",
+    "paths": {
+      "@common/*": [
+        "../common/*"
+      ],
+    },
+    "rootDirs": [
+      "./",
+      "../common"
+    ],
+    // Type checking
+    "strict": true, // implies other options: https://www.typescriptlang.org/tsconfig#strict
+    "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    // Emit options
     "noEmit": true,
+    "outFile": "../static/app.js",
+    "sourceMap": true,
   }
 }
