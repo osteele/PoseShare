@@ -4,8 +4,7 @@
 
 import p5 from "p5";
 import { video } from "./camera";
-import { confidenceThreshold } from "./poseOffset";
-import { settings } from "./settings";
+import { confidenceThreshold, settings } from "./settings";
 import { BlazePose } from "./types";
 
 let metaballShader: p5.Shader;

@@ -9,7 +9,8 @@ export type PerformerBase = {
   position?: number;
 };
 
-export type Room = {
+export type RoomBase = {
   name: string;
-  size: number;
+  rows: number;
+  cols: number;
 };

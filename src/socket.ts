@@ -1,7 +1,7 @@
 /**
  * This module handles the websocket connection to the server.
-  * It also handles the "liveReload" event, which is sent when the client
-  * should reload the page.
+ * It also handles the "liveReload" event, which is sent when the client
+ * should reload the page.
  */
 
 import { io } from "socket.io-client";
@@ -21,6 +21,8 @@ export function connectWebsocket() {
   log("Connecting to websocket...");
   let sentJoinEvent = false;
 
+  // The "connect" event is sent when the client connects to the server.
+  // Send the "join" event to the server.
   socket.on("connect", () => {
     if (logSocketEvents) console.log("Connected to websocket!");
     sendJoinEvent();

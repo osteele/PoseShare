@@ -11,24 +11,14 @@
  * doesn't have a row or column, it returns the default room.
  */
 import * as fs from "fs";
+import { Room } from "./types";
 
 const ROOM_CONFIG_PATH = "./config/rooms.json";
 const DEFAULT_ROOM_NAME = "default";
 
-/** A room in the app. */
-export type Room = {
-  name: string;
-  row?: number;
-  col?: number;
-  performers: {
-    id: string;
-    name: string;
-    position: number;
-  }[];
-};
-
-/** The default room. */
-const DEFAULT_ROOM = {
+/** The default room. If the room configuration file isn't present or doesn't
+ * specify a default room, use this instead.  */
+const DEFAULT_ROOM: Room = {
   name: DEFAULT_ROOM_NAME,
   rows: 1,
   cols: 1,

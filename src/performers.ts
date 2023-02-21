@@ -4,7 +4,7 @@
  * should update its list of performers.
  */
 
-import { room, updateRoom } from "./room";
+import { room } from "./room";
 import { socket } from "./socket";
 import { Performer, Person } from "./types";
 import { clientId, username } from "./username";
@@ -51,9 +51,6 @@ export function updatePersonPose(
       pose: createEmptyPose(),
       timestamp: 0,
     });
-    if (room.isLocal) {
-      updateRoom();
-    }
   }
   // update the record
   performers[ix] = {

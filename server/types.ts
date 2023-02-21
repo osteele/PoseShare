@@ -1,9 +1,19 @@
-import { PerformerBase, Room } from "@common/types";
+import { PerformerBase, RoomBase } from "@common/types";
 
 export type Performer = PerformerBase & {
   room: Room;
   roomName?: string;
   timestamp: Date;
+};
+
+/** The server representation of a room. */
+export type Room = RoomBase & {
+  name: string;
+  performers: {
+    id: string;
+    name: string;
+    position: number;
+  }[];
 };
 
 export interface ClientToServerEvent {

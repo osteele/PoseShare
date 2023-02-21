@@ -4,8 +4,8 @@
  * should update its list of performers.
  */
 
-import { getNamedRoom, Room } from "./rooms";
-import { Performer } from "./types";
+import { getNamedRoom } from "./rooms";
+import { Performer, Room } from "./types";
 
 let performers: Performer[] = [];
 

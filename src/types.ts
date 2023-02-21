@@ -18,14 +18,8 @@ export type Person = {
   hue?: number;
 };
 
-export type Room = {
-  isLocal: boolean;
-  rows: number;
-  cols: number;
+export type Room = Common.RoomBase & {
   performers: Performer[];
-  settings: {
-    [key: string]: any;
-  };
 };
 
 export namespace BlazePose {

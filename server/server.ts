@@ -19,13 +19,15 @@ import {
   logConnectedUsers,
 } from "./performers";
 import { getNamedRoom } from "./rooms";
-import { ClientToServerEvent } from "./types";
+import { ClientToServerEvent, Performer } from "./types";
 
+// Create the HTTP server
 const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 
+// Vite transforms the TypeScript code into JavaScript code.
 async function attachViteMiddleware() {
   const vite = await createViteServer({
     server: { middlewareMode: "html" },
@@ -38,26 +40,27 @@ server.listen(port, async () => {
   console.log("Server listening at http://localhost:%d", port);
 });
 
-// Routing
+//
+// Static routes
+//
 app.use(express.static("./public"));
 app.use(express.static("./build"));
 
-// const watchPaths = ["./build", "./public"];
-// function computeWatchHash() {
-//   return watchPaths.map(computeDirectoryHash).join("");
-// }
-// let clientHash = computeWatchHash();
-// watchPaths.forEach((dirPath) =>
-//   fs.watch(dirPath, () => {
-//     clientHash = computeWatchHash();
-//     io.emit("reload");
-//   })
-// );
+//
+// Socket events
+//
 
+// The anonymous function here is the handler for the "connection" event.
+// It is called once for each client that connects to the server.
+// The local variables in this function are scoped to the connection.
+// They are not shared between connections.
+// They therefore act, so far as the function arguments to the `socket.on()`
+// calls are concerned, as if they were global variables.
 io.on("connection", (socket: ClientToServerEvent) => {
   let clientId: string | null = null;
-  let printedConnected = false;
   let username: string | null = null;
+  let printedConnected = false;
+  let broadcastPerformerData = 0;
 
   setTimeout(printConnectionMessage, 150);
 
@@ -67,8 +70,8 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
   socket.emit("performers", getPerformersForBroadcast());
 
-  // When a client connects, find or create a performer with the given data.
-  socket.on("join", (client) => {
+  // When a client connects, it sends this event.
+  socket.on("join", (client: Performer) => {
     // If we haven't yet logged the client connection, or if we have already
     // logged the client *without* a username, log it again *with* a username.
     if (!username) {
@@ -93,7 +96,9 @@ io.on("connection", (socket: ClientToServerEvent) => {
     socket.broadcast.emit("log", `${username} joined`);
   });
 
-  // When a client disconnects, set the connected property to false.
+  // When a client disconnects, set its `connected` property to false, and
+  // broadcast the list of performers to all the other clients so that they
+  // have the information that it is no longer connected.
   socket.on("disconnect", () => {
     console.log("Disconnected:", username || socket.id);
     const performer = clientId && findPerformerById(clientId);
@@ -104,8 +109,9 @@ io.on("connection", (socket: ClientToServerEvent) => {
     socket.broadcast.emit("performers", getPerformersForBroadcast());
   });
 
-  // When a client sends a pose, broadcast it to all clients.
-  socket.on("pose", (person, pose) => {
+  // When a client sends a pose, broadcast it to the other clients.
+  socket.on("pose", (person: Performer, pose: unknown) => {
+    // If the client hasn't yet sent a join event, request that it do so
     if (!username) {
       requestJoinEvent();
     }
@@ -120,17 +126,13 @@ io.on("connection", (socket: ClientToServerEvent) => {
     performer.timestamp = new Date();
     socket.broadcast.volatile.emit("pose", performer, pose);
 
-    // Use this as an excuse to tell the client whether to reload.
-    // if (clientVersion !== clientHash) {
-    // }
-
-    // FIXME: kludge
+    // FIXME: this works around a bug that I saw at some point.
+    // Re-broadcast the list of performers to a client after every 100 poses
+    // that it sends, to ensure that its list is up to date.
     if (++broadcastPerformerData % 100 === 0) {
-      // console.info("Broadcasting performer data...");
       socket.emit("performers", getPerformersForBroadcast());
     }
   });
-  let broadcastPerformerData = 0;
 
   function printConnectionMessage() {
     if (!printedConnected) {
@@ -140,7 +142,6 @@ io.on("connection", (socket: ClientToServerEvent) => {
   }
 
   function requestJoinEvent() {
-    // console.debug("requestJoinEvent", username);
     if (!username) {
       socket.emit("requestJoinEvent");
     }
