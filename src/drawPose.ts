@@ -5,18 +5,24 @@
 import p5 from "p5";
 import { drawPoseMetaballs } from "./metaballs";
 import { getOwnRecord } from "./performers";
-import { confidenceThreshold } from "./pose";
 import {
   findPart,
   PartNameOrPair,
   partNames,
   translatePose,
 } from "./pose-utils";
-import { settings } from "./settings";
+import { confidenceThreshold, settings } from "./settings";
 import { createSkeleton } from "./skeleton";
 import { BlazePose, Performer } from "./types";
 
-export function drawPerson(p5: p5, person: Performer, outline: boolean): void {
+/** Draw the pose onto the canvas, using the appearance settings.
+ *
+ * @param p5 The p5 instance
+ * @param person The person to draw
+ * @param outline Whether to draw just the outline, or (default) fill the
+ * interior
+ */
+export function drawPose(p5: p5, person: Performer, outline: boolean): void {
   let { pose, hue } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
@@ -83,6 +89,8 @@ function drawSkeleton(p5: p5, pose: BlazePose.Pose, c: p5.Color): void {
   }
 }
 
+/** The pose renderer for the bouba (curved=true) and kiki (curved=false)
+ * appearances. */
 function drawPoseOutline(
   p5: p5,
   pose: BlazePose.Pose,

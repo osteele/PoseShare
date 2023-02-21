@@ -1,7 +1,7 @@
 import p5 from "p5";
 import { initializeBlazePose } from "./blazePose";
 import { initializeWebcam, video } from "./camera";
-import { drawPerson } from "./drawPose";
+import { drawPose } from "./drawPose";
 import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
 import { getOwnRecord, getPerformers } from "./performers";
@@ -12,7 +12,7 @@ import {
   targetYOffset,
   xOffset,
   yOffset,
-} from "./pose";
+} from "./poseOffset";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
 
@@ -111,7 +111,7 @@ function drawScene(sk: p5) {
         sk.height * (person.row - self.row)
       );
     }
-    drawPerson(sk, person, settings.outlineSelf && person.isSelf);
+    drawPose(sk, person, settings.outlineSelf && person.isSelf);
     sk.pop();
   }
 }

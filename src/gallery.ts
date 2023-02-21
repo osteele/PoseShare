@@ -6,8 +6,9 @@
 import p5 from "p5";
 import { room } from "./room";
 import * as d3 from "d3";
-import { confidenceThreshold, setOffset } from "./pose";
+import { setOffset } from "./poseOffset";
 import { createSkeleton } from "./skeleton";
+import { confidenceThreshold } from "./settings";
 
 let galleryScale = 1;
 

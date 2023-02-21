@@ -1,9 +1,18 @@
 import { getHashParameter, setHashParameter } from "./utils";
 import dat from "dat.gui";
 
+// dat.GUI is a lightweight GUI library that can be used to create a GUI for
+// controlling the settings of the app.
+//
+// See https://github.com/dataarts/dat.gui#readme
 const gui = new dat.GUI({ autoPlace: false });
+
 const DEFAULT_APPEARANCE = "skeleton";
 const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
+
+// The confidence threshold is the minimum confidence score that a keypoint must
+// have in order to be used in the presentation.
+export let confidenceThreshold = 0.2;
 
 export const settings = {
   name: "",

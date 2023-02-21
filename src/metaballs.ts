@@ -4,7 +4,7 @@
 
 import p5 from "p5";
 import { video } from "./camera";
-import { confidenceThreshold } from "./pose";
+import { confidenceThreshold } from "./poseOffset";
 import { settings } from "./settings";
 import { BlazePose } from "./types";
 
