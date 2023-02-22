@@ -46,7 +46,8 @@ async function setupChooseCamera(p5: p5): Promise<void> {
     const optionName = getCameraName(camera);
     cameraSel.option(optionName);
   }
-  // FIXME remove the cast to any
+  // FIXME remove the cast to any. HTMLVideoElement.srcObject is typed as
+  // MediaProvider, but it actually implements MediaStream.
   cameraSel.selected(
     getCameraName((video.elt.srcObject as any).getVideoTracks()[0])
   );

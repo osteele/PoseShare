@@ -27,11 +27,26 @@ export async function initializeBlazePose(
     modelType: "full", // 'lite', 'full', 'heavy'
   };
   const detector = await poseDetection.createDetector(model, detectorConfig);
+
+  let loopIsRunning = false;
+  video.addEventListener("loadeddata", () => {
+    console.info("stream loaded", loopIsRunning);
+    if (!loopIsRunning) loop();
+  });
   loop(); // run asynchronously
   return;
 
   async function loop() {
+    loopIsRunning = true;
     while (true) {
+      let poses;
+      try {
+        poses = await detector.estimatePoses(video);
+      } catch (e) {
+        console.error("error while estimating poses", e);
+        loopIsRunning = false;
+        return;
+      }
       let [bpPose] = await detector.estimatePoses(video);
       if (!bpPose) continue;
       // TODO remove the any cast
