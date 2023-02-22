@@ -9,8 +9,9 @@ import { socket } from "./socket";
 import { Performer, Person } from "./types";
 import { clientId, username } from "./username";
 import { BlazePose } from "./types";
-import { createEmptyPose } from "./pose-utils";
+import { createEmptyPose, translatePose } from "./pose-utils";
 import * as Messages from "@common/messages";
+import { xOffset, yOffset } from "./poseOffset";
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -19,6 +20,7 @@ let performers: Performer[] = [];
 let partnerId: string | null = null;
 
 export function setOwnPose(pose: BlazePose.Pose) {
+  pose = translatePose(pose, xOffset, yOffset);
   updatePersonPose(
     {
       id: clientId,
@@ -103,6 +105,6 @@ export function getPerformers({ includeSelf }: { includeSelf?: boolean } = {}) {
   return result;
 }
 
-export function getOwnRecord() {
+export function getOwnRecord(): Performer {
   return performers.find(({ isSelf, pose }) => isSelf && pose)!;
 }

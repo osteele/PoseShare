@@ -6,12 +6,7 @@ import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
 import { getOwnRecord, getPerformers } from "./performers";
 import {
-  movePoseInDirection,
-  setOffset,
-  targetXOffset,
-  targetYOffset,
-  xOffset,
-  yOffset,
+  movePoseInDirection, updateOffset
 } from "./poseOffset";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
@@ -56,10 +51,7 @@ new p5((sk: p5) => {
       sk.background(0, 1 / (1 + 2 * settings.trail));
       sk.pop();
 
-      setOffset(
-        sk.lerp(xOffset, targetXOffset, 0.1),
-        sk.lerp(yOffset, targetYOffset, 0.1)
-      );
+      updateOffset();
 
       // Draw the video onto the canvas. This is incompatible with the fading
       // functionality above; if it is disabled, the video is displayed in the
@@ -79,6 +71,7 @@ new p5((sk: p5) => {
     },
 
     keyPressed() {
+      // Map WASD to arrow keys.
       const mappedKeyCode =
         {
           W: sk.UP_ARROW,
