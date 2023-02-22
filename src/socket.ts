@@ -4,16 +4,17 @@
  * should reload the page.
  */
 
+import * as Messages from "@common/messages";
 import { io } from "socket.io-client";
+import { poseEmitter } from "./blazePose";
 import { appendToLog } from "./htmlLog";
-import { updatePersonPose, updatePerformerData } from "./performers";
+import { updatePerformerData, updatePersonPose } from "./performers";
 import { updateRoomFromServer } from "./room";
 import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
 import { getQueryString } from "./utils";
-import * as Messages from "@common/messages";
 
-export const socket = io();
+const socket = io();
 
 const logSocketEvents = false; // console.log received messages, if true
 
@@ -81,11 +82,19 @@ export function connectWebsocket() {
     } as Messages.UserDetails);
     sentJoinEvent = true;
   }
+}
 
-  // TODO: I think this doesn't work on Edge?
-  function log(message: string, ...args: unknown[]) {
-    if (logSocketEvents) {
-      console.debug(message, ...args);
-    }
+poseEmitter.on("translatedPose", (pose: BlazePose.Pose) => {
+  socket.emit(
+    "pose",
+    { id: clientId, name: username } as Messages.UserDetails,
+    pose
+  );
+});
+
+// TODO: test whether this works in the Edge browser
+function log(message: string, ...args: unknown[]) {
+  if (logSocketEvents) {
+    console.debug(message, ...args);
   }
 }

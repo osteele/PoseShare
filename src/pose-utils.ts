@@ -1,5 +1,5 @@
 /**
- * This file contains utility functions for working with poses.
+ * This module contains utility functions for working with poses.
  */
 
 import { settings } from "./settings";

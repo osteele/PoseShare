@@ -4,14 +4,12 @@
  * should update its list of performers.
  */
 
-import { room } from "./room";
-import { socket } from "./socket";
-import { Performer, Person } from "./types";
-import { clientId, username } from "./username";
-import { BlazePose } from "./types";
+import { poseEmitter } from "./blazePose";
 import { createEmptyPose, translatePose } from "./pose-utils";
-import * as Messages from "@common/messages";
 import { xOffset, yOffset } from "./poseOffset";
+import { room } from "./room";
+import { BlazePose, Performer, Person } from "./types";
+import { clientId, username } from "./username";
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -19,7 +17,7 @@ let performers: Performer[] = [];
 /** If not null, show only the performer with the specified id. */
 let partnerId: string | null = null;
 
-export function setOwnPose(pose: BlazePose.Pose) {
+poseEmitter.on("pose", (pose: BlazePose.Pose) => {
   pose = translatePose(pose, xOffset, yOffset);
   updatePersonPose(
     {
@@ -31,12 +29,8 @@ export function setOwnPose(pose: BlazePose.Pose) {
     },
     pose
   );
-  socket.emit(
-    "pose",
-    { id: clientId, name: username } as Messages.UserDetails,
-    pose
-  );
-}
+  poseEmitter.emit("translatedPose", pose);
+});
 
 export function updatePersonPose(
   person: Person,

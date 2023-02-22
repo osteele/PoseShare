@@ -1,16 +1,35 @@
 /**
- * This file contains the code for initializing and configuring the BlazePose
+ * This module contains the code for initializing and configuring the BlazePose
  * model.
  *
+ * It also contains the code for emitting "pose" events.
+ *
+ * Usage:
+ *   import { poseEmitter } from "./blazePose";
+ *   poseEmitter.on("pose", (pose) => {
+ *     // do something with the pose
+ *  });
  */
 
 import * as poseDetection from "@tensorflow-models/pose-detection";
 // Register WebGL backend:
 import "@tensorflow/tfjs-backend-webgl";
-import { setOwnPose } from "./performers";
+import EventEmitter from "events";
 import { smoothPose } from "./pose-utils";
 
+/*
+ * Configuration
+ */
+
 const smoothPoses = false;
+
+const blazePoseDetectorConfig = {
+  runtime: "tfjs", // 'mediapipe', 'tfjs'
+  modelType: "full", // 'lite', 'full', 'heavy'
+};
+
+/** Emits "pose" events with the (optionally, smoothed) pose. */
+export const poseEmitter = new EventEmitter();
 
 /** Configured BlazePose. Returns a Promise that resolves once the model has
  * loaded.
@@ -22,11 +41,10 @@ export async function initializeBlazePose(
   video: HTMLVideoElement
 ): Promise<void> {
   const model = poseDetection.SupportedModels.BlazePose;
-  const detectorConfig = {
-    runtime: "tfjs", // 'mediapipe', 'tfjs'
-    modelType: "full", // 'lite', 'full', 'heavy'
-  };
-  const detector = await poseDetection.createDetector(model, detectorConfig);
+  const detector = await poseDetection.createDetector(
+    model,
+    blazePoseDetectorConfig
+  );
 
   let loopIsRunning = false;
   video.addEventListener("loadeddata", () => {
@@ -56,7 +74,7 @@ export async function initializeBlazePose(
       if (smoothPoses) {
         pose = smoothPose(pose);
       }
-      setOwnPose(pose);
+      poseEmitter.emit("pose", pose);
     }
   }
 }

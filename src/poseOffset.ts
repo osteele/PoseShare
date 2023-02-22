@@ -1,5 +1,5 @@
 /** The user can press the arrow keys in order to move the pose within the room.
- * This file stores the current offset, and handles the keypresses.
+ * This module stores the current offset, and handles the keypresses.
  */
 
 import p5 from "p5";

@@ -1,5 +1,5 @@
 /**
- * This file contains the code for drawing the pose on the canvas.
+ * This module contains the code for drawing the pose on the canvas.
  */
 
 import p5 from "p5";
