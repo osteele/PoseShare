@@ -25,7 +25,6 @@ poseEmitter.on("pose", (pose: BlazePose.Pose) => {
       name: username,
       isSelf: true,
       connected: true,
-      // hue: 0,
     },
     pose
   );
@@ -75,7 +74,6 @@ export function updatePersonPose(
 
 /** Update the performer data with properties from the server. */
 export function updatePerformerData(performerData: Performer[]) {
-  // console.info('update performer data');
   performerData.forEach((person) => updatePersonPose(person));
 }
 

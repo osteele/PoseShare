@@ -22,6 +22,15 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 
+//
+// Middleware
+//
+
+// Enable the Socket.io admin UI
+instrument(io, {
+  auth: false,
+});
+
 // Vite transforms the TypeScript code into JavaScript code.
 async function attachViteMiddleware() {
   const vite = await createViteServer({
@@ -30,14 +39,10 @@ async function attachViteMiddleware() {
   app.use(vite.middlewares);
 }
 
-server.listen(port, async () => {
-  await attachViteMiddleware();
-  console.log("Server listening at http://localhost:%d", port);
-});
-
 //
 // Static routes
 //
+
 app.use(express.static("./public"));
 app.use(express.static("./build"));
 
@@ -143,7 +148,8 @@ io.on("connection", (socket: ClientToServerEvent) => {
   }
 });
 
-// Enable the Socket.io admin UI
-instrument(io, {
-  auth: false,
+// Start the server
+server.listen(port, async () => {
+  await attachViteMiddleware();
+  console.log("Server listening at http://localhost:%d", port);
 });

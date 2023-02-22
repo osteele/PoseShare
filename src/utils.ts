@@ -38,12 +38,26 @@ export function getQueryString(key: string) {
   return entry ? entry.split("=")[1] : null;
 }
 
+/** Capitalize the first letter of a string */
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+//
+// Math functions
+//
+
 /** Linear interpolate between a and b */
 export function lerp(a: number, b: number, t: number) {
   return a + (b - a) * t;
 }
 
-/** Capitalize the first letter of a string */
-export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+/** Return m modulo n, but always positive */
+export function mod(m: number, n: number) {
+  return ((m % n) + n) % n;
+}
+
+/** Return clamped value between min and max, inclusive */
+export function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }

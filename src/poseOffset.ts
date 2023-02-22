@@ -6,7 +6,7 @@ import p5 from "p5";
 import { getOwnRecord } from "./performers";
 import { room } from "./room";
 import { settings } from "./settings";
-import { lerp } from "./utils";
+import { clamp, lerp, mod } from "./utils";
 
 // The (row, column) grid offset from the initial position of the performer,
 // which is stored in the performer's row and col properties.
@@ -56,15 +56,20 @@ export function movePoseInDirection(p5: p5, keyCode: number): void {
   let col1 = col + colOffset + dCol;
   if (settings.toroidalMovement) {
     // If toroidal movement is enabled, wrap around the edges of the room.
-    row1 %= room.rows;
-    col1 %= room.cols;
+    row1 = mod(row1, room.rows);
+    col1 = mod(col1, room.cols);
   } else {
     // If toroidal movement is disabled, clamp the pose to the edges of the room.
-    row1 = p5.min(p5.max(row, 0), room.rows - 1) - row;
-    col1 = p5.min(p5.max(col, 0), room.cols - 1) - col;
+    row1 = clamp(row, 0, room.rows);
+    col1 = clamp(col, 0, room.cols);
   }
   rowOffset = row1 - row;
   colOffset = col1 - col;
+  // If the user presses the 0 key, reset the pose to its initial position.
+  if (keyCode === 48) {
+    rowOffset = 0;
+    colOffset = 0;
+  }
   targetYOffset = rowOffset * p5.height;
   targetXOffset = colOffset * p5.width;
   // if moved by more than one square (toroidal movement), jump
