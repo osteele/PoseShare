@@ -1,6 +1,6 @@
-import * as Common from "@common/types";
+import * as Messages from "@common/messages";
 
-export type Performer = Common.PerformerBase & {
+export type Performer = Messages.Performer & {
   isLocal: boolean;
   isSelf: boolean;
   pose: BlazePose.Pose;
@@ -17,7 +17,7 @@ export type Person = {
   hue?: number;
 };
 
-export type Room = Common.RoomBase & {
+export type Room = Messages.Room & {
   performers: Performer[];
 };
 

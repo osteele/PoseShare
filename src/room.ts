@@ -3,7 +3,7 @@
  * shared between all clients.
  */
 
-import { RoomBase } from "@common/types";
+import * as Messages from "@common/messages";
 import { Room } from "./types";
 
 // Initialize the room to a 1x1 grid that will hold a single performer.
@@ -21,7 +21,7 @@ export let room: Room = {
 };
 
 /** Update the room data with properties from the server. */
-export function updateRoomFromServer(roomData: RoomBase): void {
+export function updateRoomFromServer(roomData: Messages.Room): void {
   // update the room global variable with new data from the server, which is in the parameter
   room = { ...room, ...roomData };
 }

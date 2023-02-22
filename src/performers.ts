@@ -10,6 +10,7 @@ import { Performer, Person } from "./types";
 import { clientId, username } from "./username";
 import { BlazePose } from "./types";
 import { createEmptyPose } from "./pose-utils";
+import * as Messages from "@common/messages";
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -28,7 +29,11 @@ export function setOwnPose(pose: BlazePose.Pose) {
     },
     pose
   );
-  socket.emit("pose", { id: clientId, name: username }, pose);
+  socket.emit(
+    "pose",
+    { id: clientId, name: username } as Messages.UserDetails,
+    pose
+  );
 }
 
 export function updatePersonPose(

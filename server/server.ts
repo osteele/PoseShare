@@ -1,14 +1,9 @@
 /**
  * This is the main entry point for the server.
  * It sets up the websocket connection and the HTTP server.
- * It also handles the "join" event, which is sent when the client
- * connects to the server.
- * It also handles the "pose" event, which is sent when the client
- * should update the pose of a person.
- * It also handles the "room" event, which is sent when the client
- * should update the room data.
  */
 
+import * as Messages from "@common/messages";
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import { createServer as createViteServer } from "vite";
@@ -19,7 +14,7 @@ import {
   logConnectedUsers,
 } from "./performers";
 import { getNamedRoom } from "./rooms";
-import { ClientToServerEvent, Performer } from "./types";
+import { ClientToServerEvent } from "./types";
 
 // Create the HTTP server
 const app = express();
@@ -71,7 +66,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
   socket.emit("performers", getPerformersForBroadcast());
 
   // When a client connects, it sends this event.
-  socket.on("join", (client: Performer) => {
+  socket.on("join", (client: Messages.UserDetails) => {
     // If we haven't yet logged the client connection, or if we have already
     // logged the client *without* a username, log it again *with* a username.
     if (!username) {
@@ -110,17 +105,17 @@ io.on("connection", (socket: ClientToServerEvent) => {
   });
 
   // When a client sends a pose, broadcast it to the other clients.
-  socket.on("pose", (person: Performer, pose: unknown) => {
+  socket.on("pose", (userDetails: Messages.UserDetails, pose: unknown) => {
     // If the client hasn't yet sent a join event, request that it do so
     if (!username) {
       requestJoinEvent();
     }
-    username = person.name;
+    username = userDetails.name; // update the local name, in case it has changed
     printConnectionMessage();
 
-    let performer = findPerformerById(person.id);
+    let performer = findPerformerById(userDetails.id);
     if (!performer) {
-      performer = findOrCreatePerformer(person);
+      performer = findOrCreatePerformer(userDetails);
       io.emit("performers", getPerformersForBroadcast());
     }
     performer.timestamp = new Date();
@@ -148,6 +143,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
   }
 });
 
+// Enable the Socket.io admin UI
 instrument(io, {
   auth: false,
 });

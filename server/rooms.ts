@@ -51,11 +51,26 @@ if (fs.existsSync(ROOM_CONFIG_PATH)) {
 }
 
 /** Get a room by name. */
-export function getNamedRoom(roomName?: string): Room {
+export function getNamedRoom(roomName: string | null | undefined): Room {
   const room = rooms[roomName || DEFAULT_ROOM_NAME];
   if (!room) {
     console.error(`Uknown room: ${roomName}`);
     return rooms[DEFAULT_ROOM_NAME];
   }
   return room;
+}
+
+export function findUnusedPosition(room: Room) {
+  // collect the positions that are in use
+  const occupiedPositions = room.performers.map(({ position }) => position);
+  // create an array of available positions, and then remove the ones that are
+  // already in use.
+  const availablePositions = Array.from(
+    { length: room.rows * room.cols },
+    (_, i) => i
+  ).filter((p) => !occupiedPositions.includes(p));
+  return (
+    availablePositions.shift() ??
+    availablePositions.push(Math.max(...occupiedPositions) + 1)
+  );
 }

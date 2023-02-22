@@ -4,8 +4,9 @@
  * should update its list of performers.
  */
 
-import { getNamedRoom } from "./rooms";
-import { Performer, Room } from "./types";
+import * as Messages from "@common/messages";
+import { findUnusedPosition, getNamedRoom } from "./rooms";
+import { Performer } from "./types";
 
 let performers: Performer[] = [];
 
@@ -31,12 +32,24 @@ export function findPerformerById(clientId: string): Performer | undefined {
 }
 
 // Find or create a performer with the given data.
-export function findOrCreatePerformer(data: Performer): Performer {
-  let performer = findPerformerById(data.id);
+export function findOrCreatePerformer(
+  userDetails: Messages.UserDetails
+): Performer {
+  let performer = findPerformerById(userDetails.id);
   if (!performer) {
-    performer = { ...data };
+    // Create a new performer from the data in data.
+    const room = getNamedRoom(userDetails.roomName);
+    performer = {
+      ...userDetails,
+      room,
+      // These are replaced later
+      connected: true,
+      hue: 0,
+      position: findUnusedPosition(room),
+      timestamp: new Date(),
+    };
     performers.push(performer);
-    updatePerformerFromRoom(data, performer);
+    updatePerformerFromRoom(performer);
     // re-assign the hues
     reassignPerformerColors();
   }
@@ -52,18 +65,15 @@ function reassignPerformerColors() {
   );
 }
 
-export function getPerformerRoom(performer: Performer): Room {
-  return getNamedRoom(performer.roomName);
-}
-
-// If there's a entry with this id or name in the rooms.json file, copy the
-// position over.
-function updatePerformerFromRoom(data: Performer, performer: Performer) {
-  const room = getPerformerRoom(data);
+/** If there's a entry with this id or name in the rooms.json file, copy its
+ * position to the Performer.
+ */
+function updatePerformerFromRoom(performer: Performer) {
+  const room = performer.room;
   if (room) {
     const roomPerformer =
-      room.performers.find(({ id }) => id === data.id) ||
-      room.performers.find(({ name }) => name === data.name);
+      room.performers.find(({ id }) => id === performer.id) ||
+      room.performers.find(({ name }) => name === performer.name);
     if (roomPerformer) {
       performer.position = roomPerformer.position;
     }
@@ -71,37 +81,10 @@ function updatePerformerFromRoom(data: Performer, performer: Performer) {
 }
 
 // Returns a list of performers to be broadcast to clients.
-export function getPerformersForBroadcast() {
-  if (performers.length === 0) return [];
+export function getPerformersForBroadcast(): Messages.Performer[] {
   reassignPerformerColors();
-  assignPerformerPositions(performers);
-  console.info(performers);
   // remove the room and timestamp properties
   return performers.map(({ room, timestamp, ...performer }) => performer);
-}
-
-/** Make sure every performer has a position. Collect all the current
- * positions, and for every performer with a null position, assign it the next
- * available position.
- */
-function assignPerformerPositions(performers: Performer[]) {
-  // collect the positions that are in use
-  const occupiedPositions = performers.map(({ position }) => position);
-  // create an array of all the positions, and then remove the ones that are
-  // already in use.
-  const room = getPerformerRoom(performers[0]);
-  const availablePositions = Array.from(
-    { length: room.rows * room.cols },
-    (_, i) => i
-  ).filter((p) => !occupiedPositions.includes(p));
-  performers
-    .filter(({ position }) => position === undefined)
-    .forEach((performer) => {
-      if (availablePositions.length === 0) {
-        availablePositions.push(Math.max(...occupiedPositions) + 1);
-      }
-      performer.position = availablePositions.shift()!;
-    });
 }
 
 // Remove performers that haven't been connected for a while.

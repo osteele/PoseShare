@@ -1,13 +1,13 @@
-import { PerformerBase, RoomBase } from "@common/types";
+import * as Messages from "@common/messages";
 
-export type Performer = PerformerBase & {
+/** The server-side representation of a performer */
+export type Performer = Messages.Performer & {
   room: Room;
-  roomName?: string;
   timestamp: Date;
 };
 
-/** The server representation of a room. */
-export type Room = RoomBase & {
+/** The server-side representation of a room. */
+export type Room = Messages.Room & {
   name: string;
   performers: {
     id: string;
@@ -24,7 +24,10 @@ export interface ClientToServerEvent {
     };
   };
   emit(name: string, event?: ServerToClientEvent): void;
-  on(name: string, handler: (person: Performer, pose: unknown) => void): void;
+  on(
+    name: string,
+    handler: (person: Messages.UserDetails, pose: unknown) => void
+  ): void;
   id: string;
 }
 

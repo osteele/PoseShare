@@ -5,15 +5,17 @@
  */
 
 import { io } from "socket.io-client";
+import { appendToLog } from "./htmlLog";
 import { updatePersonPose, updatePerformerData } from "./performers";
 import { updateRoomFromServer } from "./room";
 import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
 import { getQueryString } from "./utils";
+import * as Messages from "@common/messages";
 
 export const socket = io();
 
-const logSocketEvents = true; // console.log received messages, if true
+const logSocketEvents = false; // console.log received messages, if true
 
 // remembers the initial hash, in order to display the splash if it changes
 let liveReloadHash: string | null = null;
@@ -45,10 +47,10 @@ export function connectWebsocket() {
 
   socket.on("liveReload", (hash: string) => {
     // If this is the first time this message has been received, set the hash
-    liveReloadHash = liveReloadHash || hash;
+    liveReloadHash ||= hash;
     // If the hash has changed, display the splash
-    const outdated = liveReloadHash !== hash;
-    document.getElementById("reload-splash")!.style.display = outdated
+    const clientIsOutdated = liveReloadHash !== hash;
+    document.getElementById("reload-splash")!.style.display = clientIsOutdated
       ? "block"
       : "";
   });
@@ -58,16 +60,8 @@ export function connectWebsocket() {
     // of logSocketEvents.
     console.log(message);
 
-    // Append it to the HTML log
-    const elt = document.querySelector("#log")!;
-    const line = document.createElement("code");
-    const ts = new Date().toISOString().replace(/.+T(.{5}).+/, "$1");
-    line.innerText = `${ts} — ${message}\n`;
-    elt.appendChild(line);
-    // Prune the HTML log
-    while (document.querySelectorAll("#log code").length > 20) {
-      document.querySelector("#log code")!.remove();
-    }
+    // Append message to the HTML log
+    appendToLog(message);
   });
 
   socket.on("requestJoinEvent", () => {
@@ -80,7 +74,11 @@ export function connectWebsocket() {
 
   function sendJoinEvent() {
     const roomName = getQueryString("room");
-    socket.emit("join", { id: clientId, name: username, roomName });
+    socket.emit("join", {
+      id: clientId,
+      name: username,
+      roomName,
+    } as Messages.UserDetails);
     sentJoinEvent = true;
   }
 
