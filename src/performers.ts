@@ -53,6 +53,7 @@ export function updatePersonPose(
       // overwritten by the statement that follows this conditional.
       hue: 0,
       timestamp: 0,
+      previousPoses: [createEmptyPose()],
     });
   }
   const { position } = performers[ix];

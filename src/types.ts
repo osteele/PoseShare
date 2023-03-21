@@ -7,6 +7,7 @@ export type Performer = Messages.Performer & {
   timestamp: number; // This is a Date in the server
   col: number;
   row: number;
+  previousPoses: BlazePose.Pose[];
 };
 
 export type Person = {
