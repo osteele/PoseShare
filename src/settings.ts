@@ -36,7 +36,7 @@ export const settings = {
   drawVideoOnCanvas: false,
 
   // maximum of the length of previousPoses
-  posesMaxLength: 5,
+  posesMaxLength: 10,
 };
 
 export const guiControllers = {
