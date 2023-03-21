@@ -11,6 +11,8 @@ import { room } from "./room";
 import { BlazePose, Performer, Person } from "./types";
 import { clientId, username } from "./username";
 
+import { settings } from "./settings";
+
 /** The list of performers. */
 let performers: Performer[] = [];
 
@@ -57,6 +59,11 @@ export function updatePersonPose(
     });
   }
   const { position } = performers[ix];
+  // before overwriting the record, update previousPoses
+  performers[ix].previousPoses.push(performers[ix].pose);
+  while (performers[ix].previousPoses.length > settings.posesMaxLength) {
+    performers[ix].previousPoses.splice(0, 1);
+  }
   // update the record
   performers[ix] = {
     ...performers[ix],

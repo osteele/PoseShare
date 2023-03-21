@@ -34,6 +34,9 @@ export const settings = {
   // Enable the following to draw the image on the canQvas. Currently it is
   // rendered via a <video> element placed behind theQ canvas.
   drawVideoOnCanvas: false,
+
+  // maximum of the length of previousPoses
+  posesMaxLength: 5,
 };
 
 export const guiControllers = {
