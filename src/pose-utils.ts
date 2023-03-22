@@ -78,19 +78,39 @@ export function translatePose(
 }
 
 export function polishPose(
-  previousPose: BlazePose.Pose[],
+  previousPoses: BlazePose.Pose[],
   currentPose: BlazePose.Pose,
 ): BlazePose.Pose {
-  // // calculate the polished pose
-  // // current implementation: (unweighed) average of poses;
-  // for (const keypoint of performers[ix].pose.keypoints) {
-  //   if (keypoint.score >= confidenceThreshold) {
-  //     p5.circle(keypoint.x, keypoint.y, 10);
-  //   }
-  // }
+  // calculate the polished pose
+  // current implementation: (unweighed) average of poses;
+  let polishedPose = JSON.parse(JSON.stringify(currentPose));
+  // traverse the target keypoints
+  for (const targetKeypoint of polishedPose.keypoints) {
+    let xtemp = targetKeypoint.x, ytemp = targetKeypoint.y, countertemp = 1;
+    // find the target name
+    const targetName = targetKeypoint.name;
+    // traverse previous poses
+    for (let i=0; i<previousPoses.length; i++) {
+      const previousPose = previousPoses[i];
+      // if name matches the target name, include this data item
+      for (const kp of previousPose.keypoints) {
+        if (kp.name == targetName) {
+          countertemp++;
+          xtemp += kp.x;
+          ytemp += kp.y;
+        }
+      }
+    }
+    targetKeypoint.x = xtemp / countertemp;
+    targetKeypoint.y = ytemp / countertemp;
+    
+    // const keypoint = findPart(currentPose, targetName);
+    // if (keypoint && keypoint.score >= confidenceThreshold) {
+    // }
+  }
 
   // TODO: return the polished pose
-  return currentPose; 
+  return polishedPose; 
 }
 
 export type PartNameOrPair =

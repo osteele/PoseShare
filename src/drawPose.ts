@@ -30,7 +30,7 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
 
   drawKeypoints(p5, pose, keypointColor, outline);
 
-  drawKeypoints(p5, polishedPose, keypointColor, false);
+  // drawKeypoints(p5, polishedPose, keypointColor, !outline);
 
   // test draw previous poses
   let testH = hue;

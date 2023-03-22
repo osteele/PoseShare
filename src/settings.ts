@@ -12,7 +12,7 @@ const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 
 // The confidence threshold is the minimum confidence score that a keypoint must
 // have in order to be used in the presentation.
-export let confidenceThreshold = 0.2;
+export let confidenceThreshold = 0.95;
 
 export const settings = {
   name: "",
