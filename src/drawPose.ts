@@ -23,13 +23,16 @@ import { BlazePose, Performer } from "./types";
  * interior
  */
 export function drawPose(p5: p5, person: Performer, outline: boolean): void {
-  let { pose, hue, previousPoses } = person;
+  let { pose, hue, previousPoses, polishedPose } = person;
   const keypointColor = p5.color(hue, 100, 100);
   const skeletonColor = p5.color(hue, 50, 50);
   const outlineColor = p5.color(hue, 50, 50, 0.5);
 
   drawKeypoints(p5, pose, keypointColor, outline);
 
+  drawKeypoints(p5, polishedPose, keypointColor, false);
+
+  // test draw previous poses
   let testH = hue;
   let testS = 100;
   let testB = 100;

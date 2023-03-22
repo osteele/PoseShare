@@ -8,6 +8,7 @@ export type Performer = Messages.Performer & {
   col: number;
   row: number;
   previousPoses: BlazePose.Pose[];
+  polishedPose: BlazePose.Pose;
 };
 
 export type Person = {

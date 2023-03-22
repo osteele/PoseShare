@@ -77,6 +77,22 @@ export function translatePose(
   }
 }
 
+export function polishPose(
+  previousPose: BlazePose.Pose[],
+  currentPose: BlazePose.Pose,
+): BlazePose.Pose {
+  // // calculate the polished pose
+  // // current implementation: (unweighed) average of poses;
+  // for (const keypoint of performers[ix].pose.keypoints) {
+  //   if (keypoint.score >= confidenceThreshold) {
+  //     p5.circle(keypoint.x, keypoint.y, 10);
+  //   }
+  // }
+
+  // TODO: return the polished pose
+  return currentPose; 
+}
+
 export type PartNameOrPair =
   | BlazePose.PartName
   | `${BlazePose.PartName}+${BlazePose.PartName}`;

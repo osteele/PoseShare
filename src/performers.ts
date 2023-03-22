@@ -5,7 +5,7 @@
  */
 
 import { poseEmitter } from "./blazePose";
-import { createEmptyPose, translatePose } from "./pose-utils";
+import { createEmptyPose, translatePose, polishPose } from "./pose-utils";
 import { xOffset, yOffset } from "./poseOffset";
 import { room } from "./room";
 import { BlazePose, Performer, Person } from "./types";
@@ -56,6 +56,7 @@ export function updatePersonPose(
       hue: 0,
       timestamp: 0,
       previousPoses: [createEmptyPose()],
+      polishedPose: createEmptyPose(),
     });
   }
   const { position } = performers[ix];
@@ -79,6 +80,9 @@ export function updatePersonPose(
   } else {
     // console.info('no hue', person.name)
   }
+  // after updating the record, calculate the polished pose
+  // TODO: should I just pass the performer and polish pose in-place?
+  performers[ix].polishedPose = polishPose(performers[ix].previousPoses, performers[ix].pose);
 }
 
 /** Update the performer data with properties from the server. */
