@@ -10,6 +10,12 @@ const gui = new dat.GUI({ autoPlace: false });
 const DEFAULT_APPEARANCE = "skeleton";
 const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 
+// If true, the page will reload when the appearance changes between one that
+// requires WebGL, versus one that uses Canvas.
+// Currently this is disabled to test whether this may be responsible for the
+// constant reload issue.
+const reloadPageOnModeChange = true;
+
 // The confidence threshold is the minimum confidence score that a keypoint must
 // have in order to be used in the presentation.
 export let confidenceThreshold = 0.2;
@@ -61,9 +67,14 @@ guiControllers.appearance.onChange((appearance) => {
     // } else {
     //   url.searchParams.delete('webgl');
     // }
-    window.location.href = url.href;
-    // reload the page
-    window.location.reload();
+
+    // Reload the page when the appearance changes between one that requires
+    // WebGL, versus one that uses Canvas
+    if (reloadPageOnModeChange) {
+      window.location.href = url.href;
+      // reload the page
+      window.location.reload();
+    }
   }
 });
 
