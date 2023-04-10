@@ -5,11 +5,13 @@
  */
 
 import { poseEmitter } from "./blazePose";
-import { createEmptyPose, translatePose } from "./pose-utils";
+import { createEmptyPose, translatePose, polishPose } from "./pose-utils";
 import { xOffset, yOffset } from "./poseOffset";
 import { room } from "./room";
 import { BlazePose, Performer, Person } from "./types";
 import { clientId, username } from "./username";
+
+import { settings } from "./settings";
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -52,9 +54,16 @@ export function updatePersonPose(
       // overwritten by the statement that follows this conditional.
       hue: 0,
       timestamp: 0,
+      previousPoses: [createEmptyPose()],
+      polishedPose: createEmptyPose(),
     });
   }
   const { position } = performers[ix];
+  // before overwriting the record, update previousPoses
+  performers[ix].previousPoses.push(performers[ix].pose);
+  while (performers[ix].previousPoses.length > settings.posesMaxLength) {
+    performers[ix].previousPoses.splice(0, 1);
+  }
   // update the record
   performers[ix] = {
     ...performers[ix],
@@ -70,6 +79,9 @@ export function updatePersonPose(
   } else {
     // console.info('no hue', person.name)
   }
+  // after updating the record, calculate the polished pose
+  // TODO: should I just pass the performer and polish pose in-place?
+  performers[ix].polishedPose = polishPose(performers[ix].previousPoses, performers[ix].pose);
 }
 
 /** Update the performer data with properties from the server. */

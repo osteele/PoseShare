@@ -18,7 +18,7 @@ const reloadPageOnModeChange = true;
 
 // The confidence threshold is the minimum confidence score that a keypoint must
 // have in order to be used in the presentation.
-export let confidenceThreshold = 0.2;
+export let confidenceThreshold = 0.95;
 
 export const settings = {
   name: "",
@@ -40,6 +40,9 @@ export const settings = {
   // Enable the following to draw the image on the canQvas. Currently it is
   // rendered via a <video> element placed behind theQ canvas.
   drawVideoOnCanvas: false,
+
+  // maximum of the length of previousPoses
+  posesMaxLength: 10,
 };
 
 export const guiControllers = {
