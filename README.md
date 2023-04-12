@@ -16,7 +16,7 @@ Run `yarn install`.
 
 ## Usage
 
-1. Run `yarn start`.
+1. Run `yarn dev`.
 2. Use a web browser to visit <http://localhost:3000>.
 
 ## Development
