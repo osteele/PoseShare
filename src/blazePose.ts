@@ -12,12 +12,11 @@
  */
 
 import * as poseDetection from "@tensorflow-models/pose-detection";
-// Register WebGL backend:
-import "@tensorflow/tfjs-backend-webgl";
+import "@tensorflow/tfjs-backend-webgl"; // Importing this registers the WebGL backend
 import EventEmitter from "events";
 import { smoothPose } from "./pose-utils";
 
-/*
+/**
  * Configuration
  */
 
@@ -28,14 +27,27 @@ const blazePoseDetectorConfig = {
   modelType: "full", // 'lite', 'full', 'heavy'
 };
 
-/** Emits "pose" events with the (optionally, smoothed) pose. */
+/** Emits the following events:
+ *
+ * ("pose", pose: Pose)
+ *   pose is the (optionally, smoothed) pose, detected by the locally
+ *   running BlazePose detector from the local webcam image.
+ *   The loop inside of `initializeBlazePose` emits this event.
+ *
+ * ("translatedPose", pose: Pose)
+ *   pose is local pose, translated according to the local pose offset.
+ *   This event is emitted by `updatePersonPose` in `performers.ts`.
+ */
 export const poseEmitter = new EventEmitter();
 
-/** Configured BlazePose. Returns a Promise that resolves once the model has
- * loaded.
+/** Starts BlazePose.
  *
- * This function also initiates an asynchronous loop that applies the
- * model to the video and updates the ownPose variable.
+ * Configures and starts BlazePose. This function also starts an asynchronous
+ * loop that continuously relays poses from the model to the poseEmitter,
+ * which emits "pose" events.
+ *
+ * @param video The video element to stream to the model.
+ * @returns A Promise that resolves once the model has loaded.
  */
 export async function initializeBlazePose(
   video: HTMLVideoElement
@@ -48,7 +60,6 @@ export async function initializeBlazePose(
 
   let loopIsRunning = false;
   video.addEventListener("loadeddata", () => {
-    console.info("stream loaded", loopIsRunning);
     if (!loopIsRunning) loop();
   });
   loop(); // run asynchronously
@@ -68,8 +79,12 @@ export async function initializeBlazePose(
       let [bpPose] = await detector.estimatePoses(video);
       if (!bpPose) continue;
       // TODO remove the any cast
-      // It is needed because the typescript definitions for the BlazePose
-      // model specify PartName instead of string
+      //
+      // It is currently needed because the typescript definitions for the
+      // BlazePose model specifies the type as `PartName` instead of `string`.
+      //
+      // Possibly this app should import the BlazePose definitions instead of
+      // defining its own.
       let pose = bpPose as any;
       if (smoothPoses) {
         pose = smoothPose(pose);
