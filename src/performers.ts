@@ -5,13 +5,17 @@
  */
 
 import { poseEmitter } from "./blazePose";
-import { createEmptyPose, translatePose, polishPose } from "./pose-utils";
+import { createEmptyPose, polishPose, translatePose } from "./pose-utils";
 import { xOffset, yOffset } from "./poseOffset";
 import { room } from "./room";
 import { BlazePose, Performer, Person } from "./types";
 import { clientId, username } from "./username";
 
+import EventEmitter from "events";
 import { settings } from "./settings";
+
+/** Emits "performers" event when the list of performers is updated. */
+export const performersEmitter = new EventEmitter();
 
 /** The list of performers. */
 let performers: Performer[] = [];
@@ -19,6 +23,7 @@ let performers: Performer[] = [];
 /** If not null, show only the performer with the specified id. */
 let partnerId: string | null = null;
 
+// When the pose is updated, update the performer data
 poseEmitter.on("pose", (pose: BlazePose.Pose) => {
   pose = translatePose(pose, xOffset, yOffset);
   updatePersonPose(
@@ -81,7 +86,11 @@ export function updatePersonPose(
   }
   // after updating the record, calculate the polished pose
   // TODO: should I just pass the performer and polish pose in-place?
-  performers[ix].polishedPose = polishPose(performers[ix].previousPoses, performers[ix].pose);
+  performers[ix].polishedPose = polishPose(
+    performers[ix].previousPoses,
+    performers[ix].pose
+  );
+  performersEmitter.emit("performers", performers);
 }
 
 /** Update the performer data with properties from the server. */

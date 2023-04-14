@@ -5,11 +5,10 @@ import { drawPose } from "./drawPose";
 import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
 import { getOwnRecord, getPerformers } from "./performers";
-import {
-  movePoseInDirection, updateOffset
-} from "./poseOffset";
+import { movePoseInDirection, updateOffset } from "./poseOffset";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
+import * as dashboard from "./dashboard";
 
 // Create a new p5 instance. This uses the p5 constructor, which takes a
 // function that is called with the p5 instance as an argument.
@@ -41,6 +40,8 @@ new p5((sk: p5) => {
 
       await initializeBlazePose(video.elt);
       document.body.classList.add("detector-initialized");
+
+      dashboard.initialize();
     },
 
     draw() {
