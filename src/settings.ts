@@ -1,5 +1,5 @@
-import { getHashParameter, setHashParameter } from "./utils";
 import dat from "dat.gui";
+import { getHashParameter, setHashParameter } from "./utils";
 
 // dat.GUI is a lightweight GUI library that can be used to create a GUI for
 // controlling the settings of the app.
@@ -11,10 +11,12 @@ const DEFAULT_APPEARANCE = "skeleton";
 const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 
 // If true, the page will reload when the appearance changes between one that
-// requires WebGL, versus one that uses Canvas.
-// Currently this is disabled to test whether this may be responsible for the
-// constant reload issue.
-const reloadPageOnModeChange = true;
+// requires WebGL, versus one that uses Canvas. Currently this is disabled, in
+// order to test whether this may be responsible for the continual page refresh
+// issue.
+const reloadPageOnModeChange = Boolean(
+  import.meta.env.VITE_RELOAD_ON_CANVAS_MODE_CHANGE
+);
 
 // The confidence threshold is the minimum confidence score that a keypoint must
 // have in order to be used in the presentation.

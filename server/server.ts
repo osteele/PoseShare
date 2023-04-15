@@ -21,6 +21,7 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
+const MODE = process.env.NODE_ENV || "development";
 
 //
 // Middleware
@@ -33,6 +34,7 @@ instrument(io, {
 
 // Vite transforms the TypeScript code into JavaScript code.
 async function attachViteMiddleware() {
+  console.log("Attaching Vite middleware...");
   const vite = await createViteServer({
     server: { middlewareMode: "html" },
   });
@@ -44,7 +46,9 @@ async function attachViteMiddleware() {
 //
 
 app.use(express.static("./public"));
-app.use(express.static("./build"));
+if (MODE === "production") {
+  app.use(express.static("./dist"));
+}
 
 //
 // Socket events
@@ -150,6 +154,8 @@ io.on("connection", (socket: ClientToServerEvent) => {
 
 // Start the server
 server.listen(port, async () => {
-  await attachViteMiddleware();
+  if (MODE === "development") {
+    await attachViteMiddleware();
+  }
   console.log("Server listening at http://localhost:%d", port);
 });
