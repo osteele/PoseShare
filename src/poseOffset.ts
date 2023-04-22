@@ -3,7 +3,7 @@
  */
 
 import p5 from "p5";
-import { getOwnRecord } from "./performers";
+import { performerManager } from "./performers";
 import { room } from "./room";
 import { settings } from "./settings";
 import { clamp, lerp, mod } from "./utils";
@@ -50,7 +50,7 @@ export function movePoseInDirection(p5: p5, keyCode: number): void {
     [p5.UP_ARROW]: [0, -1],
     [p5.DOWN_ARROW]: [0, 1],
   }[keyCode] || [0, 0];
-  const { row, col } = getOwnRecord() || { row: 0, col: 0 };
+  const { row, col } = performerManager.getOwnRecord() || { row: 0, col: 0 };
   const prevOffset = { rowOffset, colOffset };
   let row1 = row + rowOffset + dRow;
   let col1 = col + colOffset + dCol;

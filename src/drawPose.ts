@@ -4,10 +4,10 @@
 
 import p5 from "p5";
 import { drawPoseMetaballs } from "./metaballs";
-import { getOwnRecord } from "./performers";
+import { performerManager } from "./performers";
 import {
-  findPart,
   PartNameOrPair,
+  findPart,
   partNames,
   translatePose,
 } from "./pose-utils";
@@ -47,7 +47,7 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
   switch (settings.appearance) {
     case "metaballs":
       {
-        const self = getOwnRecord();
+        const self = performerManager.getOwnRecord();
         if (self && self.row >= 0 && person.row >= 0) {
           pose = translatePose(
             pose,

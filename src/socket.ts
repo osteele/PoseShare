@@ -8,7 +8,7 @@ import * as Messages from "@common/messages";
 import { io } from "socket.io-client";
 import { poseEmitter } from "./blazePose";
 import { appendToLog } from "./htmlLog";
-import { updatePerformerData, updatePersonPose } from "./performers";
+import { performerManager } from "./performers";
 import { updateRoomFromServer } from "./room";
 import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
@@ -34,12 +34,12 @@ export function connectWebsocket() {
   });
 
   socket.on("pose", (person: Person, pose: BlazePose.Pose) => {
-    updatePersonPose(person, pose);
+    performerManager.updatePersonPose(person, pose);
   });
 
   socket.on("performers", (performers: Performer[]) => {
     if (logSocketEvents) console.log("performers", performers);
-    updatePerformerData(performers);
+    performerManager.updatePerformerData(performers);
   });
 
   socket.on("room", (roomData: Room) => {

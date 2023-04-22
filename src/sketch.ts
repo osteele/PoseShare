@@ -1,14 +1,14 @@
 import p5 from "p5";
 import { initializeBlazePose } from "./blazePose";
 import { initializeWebcam, video } from "./camera";
+import * as dashboard from "./dashboard";
 import { drawPose } from "./drawPose";
 import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
-import { getOwnRecord, getPerformers } from "./performers";
+import { performerManager } from "./performers";
 import { movePoseInDirection, updateOffset } from "./poseOffset";
 import { settings } from "./settings";
 import { connectWebsocket } from "./socket";
-import * as dashboard from "./dashboard";
 
 // Create a new p5 instance. This uses the p5 constructor, which takes a
 // function that is called with the p5 instance as an argument.
@@ -92,8 +92,10 @@ new p5((sk: p5) => {
 
 // Does not draw the background. draw() does that before it calls this function.
 function drawScene(sk: p5) {
-  const performers = getPerformers({ includeSelf: settings.showSelf });
-  const self = getOwnRecord();
+  const performers = performerManager.getPerformers({
+    includeSelf: settings.showSelf,
+  });
+  const self = performerManager.getOwnRecord();
   for (const person of performers) {
     sk.push();
     if (self && self.row >= 0 && person.row >= 0) {

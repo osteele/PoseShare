@@ -1,4 +1,4 @@
-import { performersEmitter } from "./performers";
+import { performerManager } from "./performers";
 import { Performer } from "./types";
 
 const dashboardElement = document.getElementById("dashboard")!;
@@ -8,8 +8,7 @@ export function initialize() {
     console.error("dashboard.initialize: no dashboard element");
     return;
   }
-  console.log("dashboard.initialize");
-  performersEmitter.on("performers", updateDashboard);
+  performerManager.on("performers", updateDashboard);
 }
 
 function updateDashboard(performers: Performer[]) {
