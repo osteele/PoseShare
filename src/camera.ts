@@ -1,5 +1,9 @@
 /**
- * This module handles the webcam.
+ * This module provides a CameraManager class that handles the webcam.
+ *
+ * @requires p5 - global object in p5.js sketches
+ * @requires EventEmitter - class that enables the communication between different parts of the code
+ * @requires settings - module that stores the settings for the sketch
  */
 
 /// <reference path="p5.d.ts" />
@@ -7,16 +11,35 @@ import EventEmitter from "events";
 import p5 from "p5";
 import { guiControllers, settings } from "./settings";
 
+/**
+ * Manages the webcam and provides an API for interacting with it.
+ * @event cameraName - Emitted when the camera changes. The event payload is the new camera name as a string.
+ */
 export class CameraManager extends EventEmitter {
+  /**
+   * The video element used for displaying the camera feed.
+   */
   private _videoElement: p5.Video | null = null;
+
+  /**
+   * The camera selection menu element.
+   */
   private _cameraMenu: p5.Element | null = null;
 
-  // Clients must use this to create a CameraManager, in order to ensure that
-  // the camera is initialized before the CameraManager is returned.
-  //
-  // This is necessary because the camera initialization is asynchronous.
-  // A constructor cannot be asynchronous, so we can't initialize the camera
-  // in the constructor.
+  /* Creates and initializes a CameraManager instance.
+   *
+   * Clients must use this to create a CameraManager, in order to ensure that
+   * the camera is initialized before the CameraManager is returned.
+   *
+   * This is necessary because the camera initialization is asynchronous. A
+   * constructor cannot be asynchronous, so we can't initialize the camera in
+   * the constructor.
+   *
+   * @param p5 - The p5 instance to use for initializing the camera and creating
+   * the camera menu. @param initialCameraName - The name of the initial camera
+   * to use. If null, the default camera is used. @returns A Promise that
+   * resolves to a new CameraManager instance.
+   */
   static async create(
     p5: p5,
     initialCameraName: string | null
@@ -26,13 +49,34 @@ export class CameraManager extends EventEmitter {
     return instance;
   }
 
-  // Declaring this `private` prevents clients from calling `new
-  // CameraManager()` without going through `CameraManager.create()`, which
-  // calls `initialize()`.
+  /**
+   * Constructs a new CameraManager instance.
+   *
+   * Declaring this `private` prevents clients from calling `new
+   * CameraManager()` without going through `CameraManager.create()`, which
+   * calls `initialize()`.
+   *
+   * Clients should use the static create method to create CameraManager
+   * instances.
+   *
+   * @param _initialCameraName - The name of the initial camera to use. If null,
+   * the default camera is used.
+   */
   private constructor(private _initialCameraName: string | null) {
     super();
   }
 
+  /**
+   * Initializes the camera and camera menu.
+   *
+   * This method is called by the static create method and should not be called
+   * directly.
+   *
+   * @param p5 - The p5 instance to use for initializing the camera and creating
+   * the camera menu.
+   * @returns A Promise that resolves when the camera and camera menu are
+   * initialized.
+   */
   private async initialize(p5: p5): Promise<void> {
     const streamLoaded = new Promise((resolve) => {
       this._videoElement = p5.createCapture(p5.VIDEO, () =>
@@ -59,6 +103,15 @@ export class CameraManager extends EventEmitter {
     }
   }
 
+  /**
+   * Creates the camera selection menu and sets up event handlers for it.
+   *
+   * This method is called by the initialize method and should not be called
+   * directly.
+   *
+   * @param p5 - The p5 instance to use for creating the camera menu.
+   * @returns A Promise that resolves when the camera menu is created.
+   */
   private async createCameraMenu(p5: p5): Promise<void> {
     const cameras = await this.getCameras();
     const cameraDisplayNames = cameras.map((c) => this.getCameraName(c));
@@ -91,7 +144,7 @@ export class CameraManager extends EventEmitter {
     cameraMenu.changed(() => this.onCameraChanged());
   }
 
-  private getCurrentCameraName() {
+  private getCurrentCameraName(): string {
     return this.getCameraName(
       // FIXME remove the cast to `any`. HTMLVideoElement.srcObject is typed as
       // MediaProvider, but it actually implements MediaStream.
@@ -100,18 +153,24 @@ export class CameraManager extends EventEmitter {
     );
   }
 
-  private getCameraName(camera: MediaDeviceInfo) {
+  private getCameraName(camera: MediaDeviceInfo): string {
     return camera.label.replace(/\(.*\)$/g, "");
   }
 
-  private async getCameras() {
+  private async getCameras(): Promise<MediaDeviceInfo[]> {
     const devices = await navigator.mediaDevices.enumerateDevices();
     return devices
       .filter((d) => d.kind === "videoinput")
       .filter((d) => !d.label.match(/OBS Virtual Camera/));
   }
 
-  private async onCameraChanged() {
+  /**
+   * Handles the camera selection change event.
+   *
+   * This method is called by the camera selection menu event handler and should
+   * not be called directly.
+   */
+  private async onCameraChanged(): Promise<void> {
     if (!this._cameraMenu) {
       throw new Error("CameraManager not initialized");
     }
@@ -119,7 +178,7 @@ export class CameraManager extends EventEmitter {
     this.setCamera(optionName);
   }
 
-  private async setCamera(cameraName: string) {
+  private async setCamera(cameraName: string): Promise<void> {
     const cameras = await this.getCameras();
     const camera = cameras.find((c) => this.getCameraName(c) === cameraName);
     if (!camera) {
