@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { initializeBlazePose } from "./blazePose";
-import { initializeWebcam, video } from "./camera";
+import { CameraManager } from "./camera";
 import { drawPose } from "./drawPose";
 import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
@@ -14,6 +14,8 @@ import * as dashboard from "./dashboard";
 // function that is called with the p5 instance as an argument.
 // See https://github.com/processing/p5.js/wiki/Global-and-instance-mode
 new p5((sk: p5) => {
+  let videoElement: HTMLVideoElement;
+
   const sketch = {
     preload() {
       preloadMetaballs(sk);
@@ -35,10 +37,11 @@ new p5((sk: p5) => {
 
       // initializeWebcam calls createVideo(CAMERA). It returns a Promise that
       // resolves when the video stream is ready.
-      await initializeWebcam(sk);
+      const camera = await CameraManager.create(sk);
+      videoElement = camera.videoElement.elt;
       document.body.classList.add("video-initialized");
 
-      await initializeBlazePose(video.elt);
+      await initializeBlazePose(camera.videoElement.elt);
       document.body.classList.add("detector-initialized");
 
       dashboard.initialize();
@@ -60,10 +63,10 @@ new p5((sk: p5) => {
       if (settings.drawVideoOnCanvas) {
         sk.push();
         if (settings.mirrorVideo) {
-          sk.translate(video.width, 0);
+          sk.translate(videoElement.width, 0);
           sk.scale(-1, 1);
         }
-        sk.image(video, 0, 0);
+        sk.image(videoElement, 0, 0);
         sk.pop();
       }
 
