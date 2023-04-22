@@ -41,54 +41,77 @@ class PerformersManager extends EventEmitter {
 
   public updatePersonPose(person: Person, pose: BlazePose.Pose | null = null) {
     // find the index of the person in the list of performers
-    const performers = this.performers;
-    let ix = performers.findIndex(({ id }) => id === person.id);
-    if (ix < 0) {
-      // if not found, create a new performer and add it to the list
-      ix = performers.length;
-      performers.push({
-        ...person,
-        isLocal: true,
-        position: 0,
-        col: 0,
-        row: 0,
-        pose: createEmptyPose(),
-        // Supply these initial values to satisfy the typechecker. They will be
-        // overwritten by the statement that follows this conditional.
-        hue: 0,
-        timestamp: 0,
-        previousPoses: [createEmptyPose()],
-        polishedPose: createEmptyPose(),
-      });
+    const performer = this.findOrCreatePerformer(person);
+    this.updatePerformerFromPerson(performer, person);
+    if (pose) {
+      this.addPose(performer, pose);
     }
-    const { position } = performers[ix];
-    // before overwriting the record, update previousPoses
-    performers[ix].previousPoses.push(performers[ix].pose);
-    while (performers[ix].previousPoses.length > settings.posesMaxLength) {
-      performers[ix].previousPoses.splice(0, 1);
-    }
-    // update the record
-    performers[ix] = {
-      ...performers[ix],
-      ...person,
-      pose: pose || performers[ix].pose,
-      timestamp: +new Date(),
-      col: position % room.cols,
-      row: Math.floor(position / room.cols),
-    };
+    this.emit("performers", this.performers);
+  }
+
+  private updatePerformerFromPerson(performer: Performer, person: Person) {
+    const performerIndex = this.findPerformerIndex(this.performers, person);
+    const { position } = performer;
     if (person.hue && person.hue >= 0) {
-      performers[ix].hue = person.hue;
+      performer.hue = person.hue;
       // console.info('hue', person.name, person.hue);
     } else {
       // console.info('no hue', person.name)
     }
-    // after updating the record, calculate the polished pose
+    this.performers[performerIndex] = {
+      ...performer,
+      ...person,
+      timestamp: +new Date(),
+      col: position % room.cols,
+      row: Math.floor(position / room.cols),
+    };
+  }
+
+  private findOrCreatePerformer(person: Person) {
+    const performers = this.performers;
+    let performerIndex = this.findPerformerIndex(performers, person);
+    if (performerIndex < 0) {
+      // if not found, create a new performer and add it to the list
+      return this.createPerformer(person);
+    } else {
+      return this.performers[performerIndex];
+    }
+  }
+
+  private addPose(performer: Performer, pose: BlazePose.Pose) {
+    performer.previousPoses.push(performer.pose);
+    while (performer.previousPoses.length > settings.posesMaxLength) {
+      performer.previousPoses.splice(0, 1);
+    }
+    performer.pose = pose;
     // TODO: should I just pass the performer and polish pose in-place?
-    performers[ix].polishedPose = polishPose(
-      performers[ix].previousPoses,
-      performers[ix].pose
+    performer.polishedPose = polishPose(
+      performer.previousPoses,
+      performer.pose
     );
-    this.emit("performers", performers);
+  }
+
+  createPerformer(person: Person) {
+    const performer = {
+      ...person,
+      isLocal: true,
+      position: 0,
+      col: 0,
+      row: 0,
+      pose: createEmptyPose(),
+      // Supply these initial values to satisfy the typechecker. They will be
+      // overwritten by the statement that follows this conditional.
+      hue: 0,
+      timestamp: 0,
+      previousPoses: [createEmptyPose()],
+      polishedPose: createEmptyPose(),
+    };
+    this.performers.push(performer);
+    return performer;
+  }
+
+  private findPerformerIndex(performers: Performer[], person: Person) {
+    return performers.findIndex(({ id }) => id === person.id);
   }
 
   /** Update the performer data with properties from the server. */
