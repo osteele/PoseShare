@@ -48,7 +48,6 @@ export async function initializeBlazePose(
 
   let loopIsRunning = false;
   video.addEventListener("loadeddata", () => {
-    console.info("stream loaded", loopIsRunning);
     if (!loopIsRunning) loop();
   });
   loop(); // run asynchronously
