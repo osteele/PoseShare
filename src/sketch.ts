@@ -6,7 +6,7 @@ import { initializeGallery, updateGallery } from "./gallery";
 import { preloadMetaballs } from "./metaballs";
 import { getOwnRecord, getPerformers } from "./performers";
 import { movePoseInDirection, updateOffset } from "./poseOffset";
-import { settings } from "./settings";
+import { setCameraName, settings } from "./settings";
 import { connectWebsocket } from "./socket";
 import * as dashboard from "./dashboard";
 
@@ -37,7 +37,8 @@ new p5((sk: p5) => {
 
       // initializeWebcam calls createVideo(CAMERA). It returns a Promise that
       // resolves when the video stream is ready.
-      const camera = await CameraManager.create(sk);
+      const camera = await CameraManager.create(sk, settings.cameraName);
+      camera.on("cameraName", (newCameraName) => setCameraName(newCameraName));
       videoElement = camera.videoElement.elt;
       document.body.classList.add("video-initialized");
 

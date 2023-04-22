@@ -3,10 +3,11 @@
  */
 
 /// <reference path="p5.d.ts" />
+import EventEmitter from "events";
 import p5 from "p5";
 import { guiControllers, settings } from "./settings";
 
-export class CameraManager {
+export class CameraManager extends EventEmitter {
   private _videoElement: p5.Video | null = null;
   private _cameraMenu: p5.Element | null = null;
 
@@ -28,7 +29,9 @@ export class CameraManager {
   // Declaring this `private` prevents clients from calling `new
   // CameraManager()` without going through `CameraManager.create()`, which
   // calls `initialize()`.
-  private constructor(private _initialCameraName: string | null) {}
+  private constructor(private _initialCameraName: string | null) {
+    super();
+  }
 
   private async initialize(p5: p5): Promise<void> {
     const streamLoaded = new Promise((resolve) => {
@@ -58,32 +61,43 @@ export class CameraManager {
 
   private async createCameraMenu(p5: p5): Promise<void> {
     const cameras = await this.getCameras();
+    const cameraDisplayNames = cameras.map((c) => this.getCameraName(c));
 
     // Create the camera menu
     p5.createDiv("Camera:").class("label").parent("camera-container");
-    this._cameraMenu = p5.createSelect().parent("camera-container");
+    const cameraMenu = p5.createSelect().parent("camera-container");
+    this._cameraMenu = cameraMenu;
 
-    // Add the cameras to the menu
-    for (const camera of cameras) {
-      const optionName = this.getCameraName(camera);
-      this._cameraMenu.option(optionName);
+    // Add the camera names to the menu
+    cameraDisplayNames.forEach((cameraName) => {
+      cameraMenu.option(cameraName);
+    });
+
+    const initialCameraName = this.getCurrentCameraName();
+    const specifiedCameraName =
+      this._initialCameraName &&
+      cameraDisplayNames.includes(this._initialCameraName)
+        ? this._initialCameraName
+        : null;
+
+    if (specifiedCameraName && specifiedCameraName !== initialCameraName) {
+      await this.setCamera(specifiedCameraName);
     }
 
-    // Set the menu to the selected camera.
-    // FIXME remove the cast to any. HTMLVideoElement.srcObject is typed as
-    // MediaProvider, but it actually implements MediaStream.
-    // TODO verify that this.video.elt.srcObject is a MediaStream.
-    const cameraName =
-      this._initialCameraName &&
-      cameras.find((c) => this.getCameraName(c) === this._initialCameraName)
-        ? this._initialCameraName
-        : this.getCameraName(
-            (this._videoElement!.elt.srcObject as any).getVideoTracks()[0]
-          );
-    this._cameraMenu.selected(cameraName);
+    // Set the menu selection to the currently selected camera.
+    cameraMenu.selected(this.getCurrentCameraName());
 
     // When the camera is changed, update the video element.
-    this._cameraMenu.changed(() => this.onCameraChanged());
+    cameraMenu.changed(() => this.onCameraChanged());
+  }
+
+  private getCurrentCameraName() {
+    return this.getCameraName(
+      // FIXME remove the cast to `any`. HTMLVideoElement.srcObject is typed as
+      // MediaProvider, but it actually implements MediaStream.
+      // TODO verify that this.video.elt.srcObject is a MediaStream.
+      (this._videoElement!.elt.srcObject as any).getVideoTracks()[0]
+    );
   }
 
   private getCameraName(camera: MediaDeviceInfo) {
@@ -98,14 +112,18 @@ export class CameraManager {
   }
 
   private async onCameraChanged() {
-    const cameras = await this.getCameras();
     if (!this._cameraMenu) {
       throw new Error("CameraManager not initialized");
     }
     const optionName = this._cameraMenu.value();
-    const camera = cameras.find((c) => this.getCameraName(c) === optionName);
+    this.setCamera(optionName);
+  }
+
+  private async setCamera(cameraName: string) {
+    const cameras = await this.getCameras();
+    const camera = cameras.find((c) => this.getCameraName(c) === cameraName);
     if (!camera) {
-      alert(`Camera ${optionName} not found`);
+      alert(`Camera ${cameraName} not found`);
       return;
     }
     const { deviceId } = camera;
@@ -113,6 +131,7 @@ export class CameraManager {
       video: { deviceId },
     });
     this._videoElement!.elt.srcObject = mediaStream;
+    this.emit("cameraName", cameraName);
   }
 
   public get videoElement(): p5.Video {
