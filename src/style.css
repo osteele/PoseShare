@@ -66,6 +66,11 @@ video.mirror {
   display: none;
 }
 
+#dashboard-title {
+  font-size: medium;
+  font-weight: normal;
+}
+
 #dat-container {
   padding-bottom: 25px;
   /* margin-bottom: 5px; */

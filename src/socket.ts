@@ -16,7 +16,8 @@ import { getQueryString } from "./utils";
 
 const socket = io();
 
-const logSocketEvents = false; // console.log received messages, if true
+// log received messages to console.log, if true.
+const logSocketEvents = true;
 
 // remembers the initial hash, in order to display the splash if it changes
 let liveReloadHash: string | null = null;
@@ -47,8 +48,14 @@ export function connectWebsocket() {
   });
 
   socket.on("liveReload", (hash: string) => {
-    // If this is the first time this message has been received, set the hash
+    // If this is the first time this message has been received, set the hash.
+    //
+    // This is used to compare to the hash in subsequent messages, to see
+    // if the sources has changed.
+    //
+    // There's a possible race condition, but this isn't a critical feature.
     liveReloadHash ||= hash;
+
     // If the hash has changed, display the splash
     const clientIsOutdated = liveReloadHash !== hash;
     document.getElementById("reload-splash")!.style.display = clientIsOutdated
