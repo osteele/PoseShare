@@ -3,11 +3,15 @@
  */
 
 import p5 from "p5";
-import { video } from "./camera";
 import { confidenceThreshold, settings } from "./settings";
 import { BlazePose } from "./types";
 
 let metaballShader: p5.Shader;
+// FIXME - this is a hack to get the video dimensions
+// The correct way to do this is to pass the video dimensions to the shader.
+// This is extra mechanism and this shader may be on its way out, so I'm not
+// investing the time to do that right now.
+const videoDimensions = { width: 1280, height: 720 };
 
 export function preloadMetaballs(p5: p5) {
   metaballShader = p5.loadShader(
@@ -56,11 +60,11 @@ function setMetaballPoints(p5: p5, shader: p5.Shader, pose: BlazePose.Pose) {
       if (keypoint.score >= confidenceThreshold) {
         shader.setUniform(
           `${keypoint.name}_x`,
-          p5.map(keypoint.x, 0, video.width, xRangeMin, xRangeMax)
+          p5.map(keypoint.x, 0, videoDimensions.width, xRangeMin, xRangeMax)
         );
         shader.setUniform(
           `${keypoint.name}_y`,
-          p5.map(keypoint.y, 0, video.height, yRangeMin, yRangeMax)
+          p5.map(keypoint.y, 0, videoDimensions.height, yRangeMin, yRangeMax)
         );
       } else {
         shader.setUniform(`${keypoint.name}_x`, -1);
@@ -75,11 +79,11 @@ function setMetaballPoints(p5: p5, shader: p5.Shader, pose: BlazePose.Pose) {
   if (hip_score >= confidenceThreshold) {
     shader.setUniform(
       "hip_x",
-      p5.map(hip_x / 2, 0, video.width, xRangeMin, xRangeMax)
+      p5.map(hip_x / 2, 0, videoDimensions.width, xRangeMin, xRangeMax)
     );
     shader.setUniform(
       "hip_y",
-      p5.map(hip_y / 2, 0, video.height, yRangeMin, yRangeMax)
+      p5.map(hip_y / 2, 0, videoDimensions.height, yRangeMin, yRangeMax)
     );
   } else {
     shader.setUniform("hip_x", -1);

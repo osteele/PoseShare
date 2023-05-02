@@ -22,7 +22,32 @@ const reloadPageOnModeChange = Boolean(
 // have in order to be used in the presentation.
 export let confidenceThreshold = 0.95;
 
-export const settings = {
+// #region cameraName
+//
+// TODO: Replace this with a more general solution for storing all the settings.
+// See issue #4 Save configuration information to localStorage
+
+const CAMERA_NAME_KEY = "cameraName";
+
+function getCameraName(): string | null {
+  return localStorage[CAMERA_NAME_KEY];
+}
+
+export function setCameraName(name: string) {
+  settings.cameraName = name;
+  localStorage[CAMERA_NAME_KEY] = name;
+}
+// #endregion
+
+// A minimal specification of a subset of the  `settings` object. This is jsut
+// enough to tell the compiler that cameraName, although initialized to null,
+// can also be a string.
+type Settings = {
+  cameraName: string | null;
+  [key: string]: any;
+};
+
+export const settings: Settings = {
   name: "",
   mirrorVideo: true,
   showSelf: true,
@@ -33,6 +58,7 @@ export const settings = {
   metaballRadius: 0.5,
 
   // These don't have GUI settings at the moment
+  cameraName: getCameraName(),
   width: 880,
   height: 500,
   toroidalMovement: true,
