@@ -7,6 +7,7 @@ export type Performer = {
   connected: boolean;
   hue: number;
   position: number;
+  appearance: string;
 };
 
 export type Room = {

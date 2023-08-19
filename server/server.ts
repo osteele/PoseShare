@@ -126,6 +126,8 @@ io.on("connection", (socket: ClientToServerEvent) => {
     if (!performer) {
       performer = findOrCreatePerformer(userDetails);
       io.emit("performers", getPerformersForBroadcast());
+    } else {
+      performer.appearance = userDetails.appearance;
     }
     performer.timestamp = new Date();
     socket.broadcast.volatile.emit("pose", performer, pose);
