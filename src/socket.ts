@@ -13,7 +13,7 @@ import { updateRoomFromServer } from "./room";
 import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
 import { getQueryString } from "./utils";
-import { settings } from "settings";
+import { settings } from "./settings";
 
 const socket = io();
 
