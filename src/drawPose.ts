@@ -33,15 +33,17 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
   // drawKeypoints(p5, polishedPose, keypointColor, !outline);
 
   // test draw previous poses
-  let testH = hue;
-  let testS = 100;
-  let testB = 100;
-  let testKeypointColor = p5.color(testH, testS, testB);
-  for (let pose of previousPoses) {
-    // testH += 360 / settings.posesMaxLength;
-    testB -= 100 / settings.posesMaxLength;
-    testKeypointColor = p5.color(testH, testS, testB);
-    drawKeypoints(p5, pose, testKeypointColor, outline);
+  if (settings.debugging) {
+    let testH = hue;
+    let testS = 100;
+    let testB = 100;
+    let testKeypointColor = p5.color(testH, testS, testB);
+    for (let pose of previousPoses) {
+      // testH += 360 / settings.posesMaxLength;
+      testB -= 100 / settings.posesMaxLength;
+      testKeypointColor = p5.color(testH, testS, testB);
+      drawKeypoints(p5, pose, testKeypointColor, outline);
+    }
   }
 
   switch (settings.appearance) {

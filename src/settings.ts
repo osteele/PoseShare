@@ -71,7 +71,13 @@ export const settings: Settings = {
 
   // maximum of the length of previousPoses
   posesMaxLength: 10,
+
+  // debugging info
+  debugging: false,
+  // confidenceThreshold: confidenceThreshold,
 };
+
+var debuggingInfoFolder: dat.GUI;
 
 export const guiControllers = {
   username: gui.add(settings, "name").name("User Name").listen(),
@@ -84,6 +90,14 @@ export const guiControllers = {
 gui.add(settings, "metaballRadius", 0.25, 2).name("Metaball Radius");
 gui.add(settings, "smoothing", 0, 0.95, 0.05);
 gui.add(settings, "trail", 0, 10);
+gui.add(settings, "debugging").onChange( () => {
+  if (settings.debugging) {
+    debuggingInfoFolder = gui.addFolder("debugging info");
+    // debuggingInfoFolder.add(settings, "confidenceThreshold", 0.05, 0.95, 0.05);
+  } else {
+    gui.removeFolder(debuggingInfoFolder);
+  }
+})
 
 document.querySelector("#dat-container")!.appendChild(gui.domElement);
 
