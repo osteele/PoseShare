@@ -13,6 +13,7 @@ import { updateRoomFromServer } from "./room";
 import { BlazePose, Performer, Person, Room } from "./types";
 import { clientId, username } from "./username";
 import { getQueryString } from "./utils";
+import { settings } from "settings";
 
 const socket = io();
 
@@ -94,9 +95,9 @@ export function connectWebsocket() {
 poseEmitter.on("translatedPose", (pose: BlazePose.Pose) => {
   socket.emit(
     "pose",
-    { id: clientId, name: username } as Messages.UserDetails,
+    { id: clientId, name: username, appearance: settings.appearance } as Messages.UserDetails,
     pose
-  );
+  ); // TODO: only emit appearance upon change
 });
 
 // TODO: test whether this works in the Edge browser
