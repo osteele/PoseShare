@@ -12,7 +12,7 @@ import { BlazePose, Performer, Person } from "./types";
 import { clientId, username } from "./username";
 
 import EventEmitter from "events";
-import { settings } from "./settings";
+import { settings, DEFAULT_APPEARANCE } from "./settings";
 
 /** Emits "performers" event when the list of performers is updated. */
 export const performersEmitter = new EventEmitter();
@@ -61,6 +61,7 @@ export function updatePersonPose(
       timestamp: 0,
       previousPoses: [createEmptyPose()],
       polishedPose: createEmptyPose(),
+      appearance: DEFAULT_APPEARANCE,
     });
   }
   const { position } = performers[ix];

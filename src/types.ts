@@ -9,6 +9,7 @@ export type Performer = Messages.Performer & {
   row: number;
   previousPoses: BlazePose.Pose[];
   polishedPose: BlazePose.Pose;
+  appearance: String; // if modifying this data structure, also change it in "performers.ts"
 };
 
 export type Person = {

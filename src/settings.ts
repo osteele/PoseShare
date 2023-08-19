@@ -7,7 +7,7 @@ import { getHashParameter, setHashParameter } from "./utils";
 // See https://github.com/dataarts/dat.gui#readme
 const gui = new dat.GUI({ autoPlace: false });
 
-const DEFAULT_APPEARANCE = "skeleton";
+export const DEFAULT_APPEARANCE = "skeleton";
 const initialAppearance = getHashParameter("appearance") || DEFAULT_APPEARANCE;
 
 // If true, the page will reload when the appearance changes between one that
