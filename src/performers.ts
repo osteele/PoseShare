@@ -32,7 +32,7 @@ poseEmitter.on("pose", (pose: BlazePose.Pose) => {
       name: username,
       isSelf: true,
       connected: true,
-      appearance: settings.apperance,
+      appearance: settings.apperance, // TODO: double-check if this updatePersonPose is local
     },
     pose
   );
