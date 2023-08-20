@@ -12,7 +12,7 @@ import { BlazePose, Performer, Person } from "./types";
 import { clientId, username } from "./username";
 
 import EventEmitter from "events";
-import { settings, DEFAULT_APPEARANCE } from "./settings";
+import { settings } from "./settings";
 
 /** Emits "performers" event when the list of performers is updated. */
 export const performersEmitter = new EventEmitter();
@@ -32,7 +32,7 @@ poseEmitter.on("pose", (pose: BlazePose.Pose) => {
       name: username,
       isSelf: true,
       connected: true,
-      appearance: settings.apperance, // TODO: double-check if this updatePersonPose is local
+      appearance: settings.appearance, // TODO: double-check if this updatePersonPose is local
     },
     pose
   );
