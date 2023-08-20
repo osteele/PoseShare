@@ -19,6 +19,7 @@
     "@tensorflow/tfjs-backend-webgl": "^3.18.0",
     "@tensorflow/tfjs-converter": "^3.18.0",
     "@tensorflow/tfjs-core": "^3.18.0",
+    "@types/stats": "^0.16.30",
     "cross-env": "^7.0.3",
     "d3": "^7.5.0",
     "dat.gui": "^0.7.9",

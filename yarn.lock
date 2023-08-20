@@ -488,6 +488,11 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
+"@types/stats@^0.16.30":
+  version "0.16.30"
+  resolved "https://registry.npmjs.org/@types/stats/-/stats-0.16.30.tgz"
+  integrity sha512-ihuaNKhVjTQ8UNLJu7Kx96ywf0bSBday/K//HHvO9LKha07Ezxdm6HkazOKUIdayp0EmGEIPBQSL7eLxm8rX0w==
+
 "@types/webgl-ext@0.0.30":
   version "0.0.30"
   resolved "https://registry.npmjs.org/@types/webgl-ext/-/webgl-ext-0.0.30.tgz"
