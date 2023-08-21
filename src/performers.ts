@@ -32,6 +32,7 @@ poseEmitter.on("pose", (pose: BlazePose.Pose) => {
       name: username,
       isSelf: true,
       connected: true,
+      appearance: settings.appearance, // TODO: double-check if this updatePersonPose is local
     },
     pose
   );
@@ -61,6 +62,7 @@ export function updatePersonPose(
       timestamp: 0,
       previousPoses: [createEmptyPose()],
       polishedPose: createEmptyPose(),
+      // appearance: DEFAULT_APPEARANCE,
     });
   }
   const { position } = performers[ix];

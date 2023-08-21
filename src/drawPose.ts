@@ -46,7 +46,8 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
     }
   }
 
-  switch (settings.appearance) {
+  // switch (settings.appearance) {
+  switch (person.appearance) {
     case "metaballs":
       {
         const self = getOwnRecord();

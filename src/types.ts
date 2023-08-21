@@ -9,6 +9,7 @@ export type Performer = Messages.Performer & {
   row: number;
   previousPoses: BlazePose.Pose[];
   polishedPose: BlazePose.Pose;
+  appearance: string; // if modifying this data structure, change it in "performers.ts" as well
 };
 
 export type Person = {
@@ -17,6 +18,7 @@ export type Person = {
   connected: boolean;
   isSelf: boolean;
   hue?: number;
+  appearance: string; // if modifying this data structure, change it in "performers.ts" as well
 };
 
 export type Room = Messages.Room & {
