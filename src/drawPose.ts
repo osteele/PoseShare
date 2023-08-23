@@ -11,7 +11,7 @@ import {
   partNames,
   translatePose,
 } from "./pose-utils";
-import { confidenceThreshold, settings } from "./settings";
+import { settings } from "./settings";
 import { createSkeleton } from "./skeleton";
 import { BlazePose, Performer } from "./types";
 
@@ -91,7 +91,7 @@ function drawKeypoints(
     p5.strokeWeight(1);
   }
   for (const keypoint of pose.keypoints) {
-    if (keypoint.score >= confidenceThreshold) {
+    if (keypoint.score >= settings.confidenceThreshold) {
       p5.circle(keypoint.x, keypoint.y, 10);
     }
   }
@@ -101,7 +101,7 @@ function drawSkeleton(p5: p5, pose: BlazePose.Pose, c: p5.Color): void {
   p5.stroke(c);
   p5.strokeWeight(2);
   for (const [p1, p2] of createSkeleton(pose)) {
-    if (p5.min(p1.score, p2.score) >= confidenceThreshold) {
+    if (p5.min(p1.score, p2.score) >= settings.confidenceThreshold) {
       p5.line(p1.x, p1.y, p2.x, p2.y);
     }
   }
@@ -120,7 +120,7 @@ function drawPoseOutline(
     p5.beginShape();
     for (const name of partNames) {
       const keypoint = findPart(pose, name);
-      if (keypoint && keypoint.score >= confidenceThreshold) {
+      if (keypoint && keypoint.score >= settings.confidenceThreshold) {
         if (curved && name.match(/elbow|knee/i)) {
           p5.curveVertex(keypoint.x, keypoint.y);
         } else {

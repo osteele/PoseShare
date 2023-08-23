@@ -74,7 +74,7 @@ export const settings: Settings = {
 
   // debugging info
   debugging: false,
-  // confidenceThreshold: confidenceThreshold,
+  confidenceThreshold: confidenceThreshold,
 };
 
 var debuggingInfoFolder: dat.GUI;
@@ -93,7 +93,7 @@ gui.add(settings, "trail", 0, 10);
 gui.add(settings, "debugging").onChange( () => {
   if (settings.debugging) {
     debuggingInfoFolder = gui.addFolder("debugging info");
-    // debuggingInfoFolder.add(settings, "confidenceThreshold", 0.05, 0.95, 0.05);
+    debuggingInfoFolder.add(settings, "confidenceThreshold", 0.05, 0.95, 0.05);
   } else {
     gui.removeFolder(debuggingInfoFolder);
   }
