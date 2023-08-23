@@ -149,8 +149,8 @@ export function findPart(
     }
     return {
       score: (p1.score + p2.score) / 2,
-      x: p1.x + p2.x,
-      y: p1.x + p2.x,
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
     };
   } else {
     return pose.keypoints.find(({ name }) => name === partName);
