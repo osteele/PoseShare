@@ -9,12 +9,12 @@ import { movePoseInDirection, updateOffset } from "./poseOffset";
 import { setCameraName, settings } from "./settings";
 import { connectWebsocket } from "./socket";
 import * as dashboard from "./dashboard";
-import Stats from "stats-js"; // ignore error message
-
-// for usage, see: https://github.com/mrdoob/stats.js
-var stats = new Stats();
-stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild( stats.dom );
+// import Stats from "stats-js"; // ignore error message
+// 
+// // for usage, see: https://github.com/mrdoob/stats.js
+// var stats = new Stats();
+// stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+// document.body.appendChild( stats.dom );
 
 // Create a new p5 instance. This uses the p5 constructor, which takes a
 // function that is called with the p5 instance as an argument.
@@ -55,8 +55,8 @@ new p5((sk: p5) => {
     },
 
     draw() {
-      // stats begin
-      stats.begin();
+      // // stats begin
+      // stats.begin();
 
       // Fade out the previous canvas pixels towards transparency.
       // This leaves a ghostly trail.
@@ -83,8 +83,8 @@ new p5((sk: p5) => {
       drawScene(sk);
       updateGallery(sk);
 
-      // stats end
-      stats.end();
+      // // stats end
+      // stats.end();
     },
 
     keyPressed() {
