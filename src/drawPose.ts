@@ -33,7 +33,7 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
   // drawKeypoints(p5, polishedPose, keypointColor, !outline);
 
   // test draw previous poses
-  if (settings.debugging) {
+  if (settings.drawPreviousPoses) {
     let testH = hue;
     let testS = 100;
     let testB = 100;
