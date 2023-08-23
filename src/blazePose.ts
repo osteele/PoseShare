@@ -15,6 +15,12 @@ import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl"; // Importing this registers the WebGL backend
 import EventEmitter from "events";
 import { smoothPose } from "./pose-utils";
+import Stats from "stats-js"; // ignore error message
+
+// for usage, see: https://github.com/mrdoob/stats.js
+var stats = new Stats();
+stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 /**
  * Configuration
@@ -68,6 +74,9 @@ export async function initializeBlazePose(
   async function loop() {
     loopIsRunning = true;
     while (true) {
+      // stats begin
+      stats.begin();
+
       let poses;
       try {
         poses = await detector.estimatePoses(video);
@@ -90,6 +99,9 @@ export async function initializeBlazePose(
         pose = smoothPose(pose);
       }
       poseEmitter.emit("pose", pose);
+      
+      // stats end
+      stats.end();
     }
   }
 }
