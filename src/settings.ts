@@ -74,7 +74,8 @@ export const settings: Settings = {
 
   // debugging info
   debugging: false,
-  // confidenceThreshold: confidenceThreshold,
+  confidenceThreshold: confidenceThreshold,
+  drawPreviousPoses: false,
 };
 
 var debuggingInfoFolder: dat.GUI;
@@ -90,10 +91,23 @@ export const guiControllers = {
 gui.add(settings, "metaballRadius", 0.25, 2).name("Metaball Radius");
 gui.add(settings, "smoothing", 0, 0.95, 0.05);
 gui.add(settings, "trail", 0, 10);
+
+let numOfPrevPosesSlider: dat.GUIController;
 gui.add(settings, "debugging").onChange( () => {
   if (settings.debugging) {
     debuggingInfoFolder = gui.addFolder("debugging info");
-    // debuggingInfoFolder.add(settings, "confidenceThreshold", 0.05, 0.95, 0.05);
+    debuggingInfoFolder.add(settings, "confidenceThreshold", 0.05, 0.95, 0.05).onChange( () => {
+      // The line below updates confidenceThreshold (NOT settings.confidenceThreshold), which most scripts reference
+      // temporarily commented out for the avatar contrast between camera and gallery
+      // confidenceThreshold = settings.confidenceThreshold; 
+    });
+    debuggingInfoFolder.add(settings, "drawPreviousPoses").onChange( () => {
+      if (settings.drawPreviousPoses) {
+        numOfPrevPosesSlider = debuggingInfoFolder.add(settings, "posesMaxLength", 0, 100, 5);
+      } else {
+        debuggingInfoFolder.remove(numOfPrevPosesSlider);
+      }
+    });
   } else {
     gui.removeFolder(debuggingInfoFolder);
   }
