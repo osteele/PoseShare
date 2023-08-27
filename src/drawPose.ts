@@ -70,7 +70,6 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
         p5,
         pose,
         outlineColor,
-        // settings.appearance === "bouba",
         person.appearance === "bouba",
         outline
       );
