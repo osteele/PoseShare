@@ -65,9 +65,10 @@ export const settings: Settings = {
   useWebGL: appearanceRequiresWebGL(initialAppearance),
   // useWebGL: getQueryParameter('webgl') === 'true',
 
-  // Enable the following to draw the image on the canQvas. Currently it is
-  // rendered via a <video> element placed behind theQ canvas.
+  // Enable the following to draw the image on the canvas. Currently it is
+  // rendered via a <video> element placed behind the canvas.
   drawVideoOnCanvas: false,
+  drawVideoBehindCanvas: true,
 
   // maximum of the length of previousPoses
   posesMaxLength: 10,
@@ -83,6 +84,7 @@ var debuggingInfoFolder: dat.GUI;
 export const guiControllers = {
   username: gui.add(settings, "name").name("User Name").listen(),
   mirrorVideo: gui.add(settings, "mirrorVideo").name("Mirror Video"),
+  showVideoSource: gui.add(settings, "drawVideoBehindCanvas").name("Show Video Source"),
   outlineSelf: gui.add(settings, "outlineSelf").name("Outline Self"),
   appearance: gui
     .add(settings, "appearance")
@@ -111,7 +113,7 @@ gui.add(settings, "debugging").onChange( () => {
   } else {
     gui.removeFolder(debuggingInfoFolder);
   }
-})
+});
 
 document.querySelector("#dat-container")!.appendChild(gui.domElement);
 

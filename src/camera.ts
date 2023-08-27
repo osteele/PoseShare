@@ -87,10 +87,17 @@ export class CameraManager extends EventEmitter {
       if (settings.drawVideoOnCanvas) {
         this._videoElement.hide();
       }
+      if (!settings.drawVideoBehindCanvas) {
+        this._videoElement.hide();
+      }
     });
 
     this.updateMirror();
     guiControllers.mirrorVideo.onFinishChange(() => this.updateMirror());
+    
+    this.updateVideoSource();
+    guiControllers.showVideoSource.onFinishChange(() => this.updateVideoSource());
+    
     await streamLoaded;
     await this.createCameraMenu(p5);
   }
@@ -100,6 +107,14 @@ export class CameraManager extends EventEmitter {
       this._videoElement?.addClass("mirror");
     } else {
       this._videoElement?.removeClass("mirror");
+    }
+  }
+
+  updateVideoSource() {
+    if (!settings.drawVideoBehindCanvas) {
+      this._videoElement?.hide();
+    } else {
+      this._videoElement?.show();
     }
   }
 
