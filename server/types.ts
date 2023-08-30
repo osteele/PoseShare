@@ -9,11 +9,7 @@ export type Performer = Messages.Performer & {
 /** The server-side representation of a room. */
 export type Room = Messages.Room & {
   name: string;
-  performers: {
-    id: string;
-    name: string;
-    position: number;
-  }[];
+  performers: Messages.Performer[];
 };
 
 export interface ClientToServerEvent {
