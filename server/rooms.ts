@@ -63,7 +63,7 @@ export function getNamedRoom(roomName: string | null | undefined): Room {
 
 export function findUnusedPosition(room: Room) {
   // collect the positions that are in use
-  const occupiedPositions = performers.map(({ position }) => position);
+  const occupiedPositions = performers.filter(({room}) => room.name == "default").map(({ position }) => position);
   // create an array of available positions, and then remove the ones that are
   // already in use.
   const availablePositions = Array.from(
