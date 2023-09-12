@@ -12,6 +12,7 @@
  */
 import * as fs from "fs";
 import { Room } from "./types";
+import { performers } from "./performers";
 
 const ROOM_CONFIG_PATH = "./config/rooms.json";
 const DEFAULT_ROOM_NAME = "default";
@@ -20,8 +21,8 @@ const DEFAULT_ROOM_NAME = "default";
  * specify a default room, use this instead.  */
 const DEFAULT_ROOM: Room = {
   name: DEFAULT_ROOM_NAME,
-  rows: 1,
-  cols: 1,
+  rows: 3,
+  cols: 3,
   performers: [],
 };
 
@@ -54,7 +55,7 @@ if (fs.existsSync(ROOM_CONFIG_PATH)) {
 export function getNamedRoom(roomName: string | null | undefined): Room {
   const room = rooms[roomName || DEFAULT_ROOM_NAME];
   if (!room) {
-    console.error(`Uknown room: ${roomName}`);
+    console.error(`Unknown room: ${roomName}`);
     return rooms[DEFAULT_ROOM_NAME];
   }
   return room;
@@ -62,13 +63,14 @@ export function getNamedRoom(roomName: string | null | undefined): Room {
 
 export function findUnusedPosition(room: Room) {
   // collect the positions that are in use
-  const occupiedPositions = room.performers.map(({ position }) => position);
+  const occupiedPositions = performers.filter(({room}) => room.name == "default").map(({ position }) => position);
   // create an array of available positions, and then remove the ones that are
   // already in use.
   const availablePositions = Array.from(
     { length: room.rows * room.cols },
     (_, i) => i
   ).filter((p) => !occupiedPositions.includes(p));
+  console.log(`occupiedPositions: [${occupiedPositions}], availablePositions: [${availablePositions}]`);
   return (
     availablePositions.shift() ??
     availablePositions.push(Math.max(...occupiedPositions) + 1)

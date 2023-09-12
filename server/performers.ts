@@ -8,7 +8,7 @@ import * as Messages from "@common/messages";
 import { findUnusedPosition, getNamedRoom } from "./rooms";
 import { Performer } from "./types";
 
-let performers: Performer[] = [];
+export let performers: Performer[] = [];
 
 export function logConnectedUsers(): void {
   const connected = performers.filter(({ connected }) => connected);
@@ -22,7 +22,7 @@ export function logConnectedUsers(): void {
   console.log(msg);
 
   function names(people: Performer[]) {
-    return people.map(({ name }) => name).join(", ");
+    return people.map(({ name, position }) => `${name} (${position})`).join(", ");
   }
 }
 

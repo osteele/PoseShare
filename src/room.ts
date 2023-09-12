@@ -15,8 +15,8 @@ import { Room } from "./types";
 // run the client without the server.
 export let room: Room = {
   name: "local",
-  rows: 1,
-  cols: 1,
+  rows: 3,
+  cols: 3,
   performers: [],
 };
 
