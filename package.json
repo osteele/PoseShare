@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@mediapipe/pose": "^0.5.1635988162",
+    "@mediapipe/tasks-vision": "^0.10.6",
     "@socket.io/admin-ui": "^0.2.0",
     "@tensorflow-models/pose-detection": "^2.0.0",
     "@tensorflow/tfjs-backend-webgl": "^3.18.0",
