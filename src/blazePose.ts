@@ -178,7 +178,7 @@ export async function initializeBlazePose(
     let pose : BlazePose.Pose = {
       keypoints: [],
       keypoints3D: [],
-      score: 0.85,
+      score: 0.99,
     };
 
     let landmarks : NormalizedLandmark[] | undefined = undefined;
@@ -194,7 +194,7 @@ export async function initializeBlazePose(
             for (let i=0;i<landmarks.length;i++) {
               let landmark = landmarks[i];
               let kp : BlazePose.Keypoint = {
-                score: 0.85,
+                score: 0.99,
                 x: landmark.x * video.width,
                 y: landmark.y * video.height,
                 name: poseLandmarks[i],
@@ -219,9 +219,10 @@ export async function initializeBlazePose(
           for (let i=0;i<landmarks.length;i++) {
             let landmark = landmarks[i];
             let kp : BlazePose.Keypoint = {
-              score: 0.85,
+              score: 0.99,
               x: landmark.x,
               y: landmark.y,
+              name: poseLandmarks[i],
             };
             pose.keypoints.push(kp);
           }
