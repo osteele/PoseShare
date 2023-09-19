@@ -81,36 +81,16 @@ const poseLandmarks : BlazePose.PartName[] = [
 
 let poseLandmarker: PoseLandmarker | undefined = undefined;
 let runningMode : RunningMode = "VIDEO";
-// let webcamRunning: Boolean = false;
+let smoothPoses = true;
 
 /********************************************************************
 // Demo 2: Continuously grab image from webcam stream and detect it.
 ********************************************************************/
-// const video = document.getElementById("webcam") as HTMLVideoElement;
-// const canvasElement = document.getElementById(
-//   "output_canvas"
-// ) as HTMLCanvasElement;
-// const canvasCtx = canvasElement.getContext("2d");
-// const drawingUtils = new DrawingUtils(canvasCtx);
-
-
-// ========== end of @mediapipe/tasks-vision ==========
 
 // for usage, see: https://github.com/mrdoob/stats.js
 var stats = new Stats();
 stats.showPanel( 0 ); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
-
-/**
- * Configuration
- */
-
-// const smoothPoses = false;
-
-// const blazePoseDetectorConfig = {
-//   runtime: "tfjs", // 'mediapipe', 'tfjs'
-//   modelType: "full", // 'lite', 'full', 'heavy'
-// };
 
 /** Emits the following events:
  *
@@ -137,12 +117,6 @@ export const poseEmitter = new EventEmitter();
 export async function initializeBlazePose(
   video: HTMLVideoElement
 ): Promise<void> {
-  // const model = poseDetection.SupportedModels.BlazePose;
-  // const detector = await poseDetection.createDetector(
-  //   model,
-  //   blazePoseDetectorConfig
-  // );
-
   // Before we can use PoseLandmarker class we must wait for it to finish
   // loading. Machine Learning models can be large and take a moment to
   // get everything needed to run.
@@ -162,11 +136,9 @@ export async function initializeBlazePose(
   let loopIsRunning = false;
   let lastVideoTime = -1;
   video.addEventListener("loadeddata", () => {
-    // if (!loopIsRunning) loop();
     loopIsRunning = true;
     predictWebcam();
   });
-  // loop(); // run asynchronously
   loopIsRunning = true;
   predictWebcam();
   return;
@@ -184,7 +156,6 @@ export async function initializeBlazePose(
     let landmarks : NormalizedLandmark[] | undefined = undefined;
 
     try {
-      // poses = await detector.estimatePoses(video);
       let startTimeMs = performance.now();
       if (lastVideoTime !== video.currentTime) {
         lastVideoTime = video.currentTime;
@@ -229,144 +200,17 @@ export async function initializeBlazePose(
         });
       }
     }    
+
     console.log(pose);
     poseEmitter.emit("pose", pose);
   
     // Call this function again to keep predicting when the browser is ready.
     if (loopIsRunning) {
       window.requestAnimationFrame(predictWebcam);
-      // predictWebcam();
     }
 
     // stats end
     stats.end();
   }
   
-
-  // async function loop() {
-  //   loopIsRunning = true;
-
-    // ========== @mediapipe/tasks-vision ==========
-    // ========== end of @mediapipe/tasks-vision ==========
-
-    // while (true) {
-      // stats begin
-      // stats.begin();
-      // let startTimeMs;
-      // let landmarks : NormalizedLandmark[] | undefined = undefined;
-      // let pose : BlazePose.Pose = {
-      //   keypoints: [],
-      //   keypoints3D: [],
-      //   score: 0.85,
-      // };
-      
-      // try {
-      //   // poses = await detector.estimatePoses(video);
-      //   startTimeMs = performance.now();
-      //   if (lastVideoTime !== video.currentTime) {
-      //     lastVideoTime = video.currentTime;
-      //     if (poseLandmarker != undefined) {
-      //       poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
-      //         [landmarks] = result.landmarks;
-      //       });
-      //     }
-      //   }
-      // } catch (e) {
-      //   console.error("error while estimating poses", e);
-      //   loopIsRunning = false;
-      //   return;
-      // }
-      // startTimeMs = performance.now();
-      // if (lastVideoTime !== video.currentTime) {
-      //   lastVideoTime = video.currentTime;
-      //   if (poseLandmarker != undefined) {
-      //     poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
-      //       [landmarks] = result.landmarks;
-      //       for (let i=0;i<landmarks.length;i++) {
-      //         let landmark = landmarks[i];
-      //         let kp : BlazePose.Keypoint = {
-      //           score: 0.85,
-      //           x: landmark.x,
-      //           y: landmark.y,
-      //         };
-      //         pose.keypoints.push(kp);
-      //       }
-      //       poseEmitter.emit("pose", pose);
-      //     });
-      //   }
-      // }
-
-      // for (let i=0;i<landmarks.length;i++) {
-      //   let landmark = landmarks[i];
-      //   let kp : BlazePose.Keypoint = {
-      //     score: 0.85,
-      //     x: landmark.x,
-      //     y: landmark.y,
-      //   };
-      //   pose.keypoints.push(kp);
-      // }
-      // poseEmitter.emit("pose", pose);
-      // let [bpPose] = await detector.estimatePoses(video);
-
-      // // TODO remove the any cast
-      // //
-      // // It is currently needed because the typescript definitions for the
-      // // BlazePose model specifies the type as `PartName` instead of `string`.
-      // //
-      // // Possibly this app should import the BlazePose definitions instead of
-      // // defining its own.
-      // let pose : BlazePose.Pose = {
-      //   keypoints: [],
-      //   keypoints3D: [],
-      //   score: 0.85,
-      // };
-      // startTimeMs = performance.now();
-      // if (lastVideoTime !== video.currentTime) {
-      //   lastVideoTime = video.currentTime;
-      //   if (poseLandmarker != undefined) {
-      //     poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
-      //       [landmarks] = result.landmarks;
-      //       for (let i=0;i<landmarks.length;i++) {
-      //         let landmark = landmarks[i];
-      //         let kp : BlazePose.Keypoint = {
-      //           score: 0.85,
-      //           x: landmark.x,
-      //           y: landmark.y,
-      //         };
-      //         pose.keypoints.push(kp);
-      //       }
-      //       poseEmitter.emit("pose", pose);
-      //     });
-      //   }
-      // }
-
-      // if (!landmarks) continue;
-
-      // ========== @mediapipe/tasks-vision ==========
-      // let startTimeMs = performance.now();
-      // if (lastVideoTime !== video.currentTime) {
-      //   lastVideoTime = video.currentTime;
-      //   poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
-      //     let poses = result.landmarks
-      //     let [bpPose] = poses;
-      //     // for (const landmark of result.landmarks) {
-      //       // drawingUtils.drawLandmarks(landmark, {
-      //       //   radius: (data) => DrawingUtils.lerp(data.from!.z, -0.15, 0.1, 5, 1)
-      //       // });
-      //       // drawingUtils.drawConnectors(landmark, PoseLandmarker.POSE_CONNECTIONS);
-      //     // }
-      //     // canvasCtx.restore();
-      //   });
-      // }
-      // ========== end of @mediapipe/tasks-vision ==========
-
-      if (smoothPoses) {
-        pose = smoothPose(pose);
-      }
-      // poseEmitter.emit("pose", pose);
-      
-      // stats end
-    //   stats.end();
-    // }
-  // }
 }
