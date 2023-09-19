@@ -25,10 +25,8 @@
  *  });
  */
 
-import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl"; // Importing this registers the WebGL backend
 import EventEmitter from "events";
-import { partNames, smoothPose } from "./pose-utils";
 import Stats from "stats-js"; // ignore error message
 
 // ========== @mediapipe/tasks-vision ==========
@@ -40,7 +38,6 @@ import {
   NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
 import { BlazePose } from "types";
-
 
 const poseLandmarks : BlazePose.PartName[] = [
   "nose"
@@ -81,7 +78,6 @@ const poseLandmarks : BlazePose.PartName[] = [
 
 let poseLandmarker: PoseLandmarker | undefined = undefined;
 let runningMode : RunningMode = "VIDEO";
-let smoothPoses = true;
 
 /********************************************************************
 // Demo 2: Continuously grab image from webcam stream and detect it.
@@ -162,23 +158,13 @@ export async function initializeBlazePose(
         if (poseLandmarker != undefined) {
           poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
             [landmarks] = result.landmarks;
-            for (let i=0;i<landmarks.length;i++) {
-              let landmark = landmarks[i];
-              let kp : BlazePose.Keypoint = {
-                score: 0.99,
-                x: landmark.x * video.width,
-                y: landmark.y * video.height,
-                name: poseLandmarks[i],
-              };
-              pose.keypoints.push(kp);
-            }
           });
         }
       }
     } catch (e) {
       console.error("error while estimating poses", e);
-      loopIsRunning = false;
-      return;
+      // loopIsRunning = false;
+      // return;
     }
 
     let startTimeMs = performance.now();
@@ -187,30 +173,36 @@ export async function initializeBlazePose(
       if (poseLandmarker != undefined) {
         poseLandmarker.detectForVideo(video, startTimeMs, (result) => {
           [landmarks] = result.landmarks;
-          for (let i=0;i<landmarks.length;i++) {
-            let landmark = landmarks[i];
-            let kp : BlazePose.Keypoint = {
-              score: 0.99,
-              x: landmark.x,
-              y: landmark.y,
-              name: poseLandmarks[i],
-            };
-            pose.keypoints.push(kp);
-          }
         });
       }
     }    
 
-    console.log(pose);
-    poseEmitter.emit("pose", pose);
+    if (landmarks != undefined) {
+      for (let i=0;i<landmarks.length;i++) {
+        let landmark = landmarks[i];
+        let kp : BlazePose.Keypoint = {
+          score: 0.99,
+          x: landmark.x * video.width,
+          y: landmark.y * video.height,
+          name: poseLandmarks[i],
+        };
+        pose.keypoints.push(kp);
+      }
+
+      
+      if (pose.keypoints.length > 0) {
+        console.log(pose);
+        poseEmitter.emit("pose", pose);
+      }
+
+      // stats end
+      stats.end();
+    }
   
     // Call this function again to keep predicting when the browser is ready.
     if (loopIsRunning) {
       window.requestAnimationFrame(predictWebcam);
     }
-
-    // stats end
-    stats.end();
   }
   
 }
