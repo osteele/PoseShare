@@ -28,7 +28,7 @@
 import * as poseDetection from "@tensorflow-models/pose-detection";
 import "@tensorflow/tfjs-backend-webgl"; // Importing this registers the WebGL backend
 import EventEmitter from "events";
-import { smoothPose } from "./pose-utils";
+import { partNames, smoothPose } from "./pose-utils";
 import Stats from "stats-js"; // ignore error message
 
 // ========== @mediapipe/tasks-vision ==========
@@ -40,6 +40,44 @@ import {
   NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
 import { BlazePose } from "types";
+
+
+const poseLandmarks : BlazePose.PartName[] = [
+  "nose"
+  , "left_eye_inner"
+  , "left_eye"
+  , "left_eye_outer"
+  , "right_eye_inner"
+  , "right_eye"
+  , "right_eye_outer"
+  , "left_ear"
+  , "right_ear"
+  , "mouth_left"
+  , "mouth_right"
+  , "left_shoulder"
+  , "right_shoulder"
+  , "left_elbow"
+  , "right_elbow"
+  , "left_wrist"
+  , "right_wrist"
+  , "left_pinky"
+  , "right_pinky"
+  , "left_indix"
+  , "right_indix"
+  , "left_thumb"
+  , "right_thumb"
+  , "left_hip"
+  , "right_hip"
+  , "left_knee"
+  , "right_knee"
+  , "left_ankle"
+  , "right_ankle"
+  , "left_heel"
+  , "right_heel"
+  , "left_foot_index"
+  , "right_foot_index"
+  ,
+ ];
 
 let poseLandmarker: PoseLandmarker | undefined = undefined;
 let runningMode : RunningMode = "VIDEO";
@@ -157,8 +195,9 @@ export async function initializeBlazePose(
               let landmark = landmarks[i];
               let kp : BlazePose.Keypoint = {
                 score: 0.85,
-                x: landmark.x,
-                y: landmark.y,
+                x: landmark.x * video.width,
+                y: landmark.y * video.height,
+                name: poseLandmarks[i],
               };
               pose.keypoints.push(kp);
             }
@@ -195,6 +234,7 @@ export async function initializeBlazePose(
     // Call this function again to keep predicting when the browser is ready.
     if (loopIsRunning) {
       window.requestAnimationFrame(predictWebcam);
+      // predictWebcam();
     }
 
     // stats end
@@ -319,9 +359,9 @@ export async function initializeBlazePose(
       // }
       // ========== end of @mediapipe/tasks-vision ==========
 
-      // if (smoothPoses) {
-      //   pose = smoothPose(pose);
-      // }
+      if (smoothPoses) {
+        pose = smoothPose(pose);
+      }
       // poseEmitter.emit("pose", pose);
       
       // stats end
