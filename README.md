@@ -10,13 +10,21 @@ The client and server are written in Typescript. They use the
 
 ## Setup
 
-Install npm.
+1. Install npm.
 
-Run `yarn install`.
+2. Install yarn.
+
+3. Run
+  ```
+  yarn install
+  ```
 
 ## Usage
 
-1. Run `yarn dev`.
+1. Run 
+  ```
+  yarn dev
+  ```
 2. Use a web browser to visit <http://localhost:3000>.
 
 ## Development
@@ -41,8 +49,8 @@ Subdirectories:
 - `common/` — source files that are shared between the client and server
 - `config/` — configuration files for the client and server
 - `public/` — static files that are served by the embedded web server
-- `server/` — TypeScript source code for the http (web and API) server
-- `src/` — TypeScript source code for client
+- [`server/`](./server/README.md) — TypeScript source code for the http (web and API) server
+- [`src/`](./src/README.md) — TypeScript source code for client
 
 Top-level files:
 
