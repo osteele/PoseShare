@@ -1,12 +1,10 @@
-import * as Messages from "@common/messages";
+import * as Base from "@common/base-types";
 
-export type Performer = Messages.Performer & {
+export type Performer = Base.Performer & {
   isLocal: boolean;
   isSelf: boolean;
   pose: BlazePose.Pose;
   timestamp: number; // This is a Date in the server
-  col: number;
-  row: number;
   previousPoses: BlazePose.Pose[];
   polishedPose: BlazePose.Pose;
   appearance: string; // if modifying this data structure, change it in "performers.ts" as well
@@ -21,7 +19,7 @@ export type Person = {
   appearance: string; // if modifying this data structure, change it in "performers.ts" as well
 };
 
-export type Room = Messages.Room & {
+export type Room = Base.Room & {
   performers: Performer[];
 };
 

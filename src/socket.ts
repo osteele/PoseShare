@@ -4,7 +4,7 @@
  * should reload the page.
  */
 
-import * as Messages from "@common/messages";
+import * as Base from "@common/base-types";
 import { io } from "socket.io-client";
 import { poseEmitter } from "./blazePose";
 import { appendToLog } from "./htmlLog";
@@ -87,7 +87,7 @@ export function connectWebsocket() {
       id: clientId,
       name: username,
       roomName,
-    } as Messages.UserDetails);
+    } as Base.UserDetails);
     sentJoinEvent = true;
   }
 }
@@ -95,7 +95,11 @@ export function connectWebsocket() {
 poseEmitter.on("translatedPose", (pose: BlazePose.Pose) => {
   socket.emit(
     "pose",
-    { id: clientId, name: username, appearance: settings.appearance } as Messages.UserDetails,
+    {
+      id: clientId,
+      name: username,
+      appearance: settings.appearance,
+    } as Base.UserDetails,
     pose
   ); // TODO: only emit appearance upon change
 });

@@ -6,11 +6,13 @@ import { settings } from "./settings";
 import { BlazePose } from "./types";
 import { lerp } from "./utils";
 
-export function createEmptyPose(): BlazePose.Pose {
+function createEmptyPose(): BlazePose.Pose {
   const keypoints = new Array<BlazePose.Keypoint>();
   const keypoints3D = new Array<BlazePose.Keypoint>();
   return { keypoints, keypoints3D, score: 0 };
 }
+
+export const emptyPose = createEmptyPose();
 
 /** The previous pose, used for smoothing. */
 let previousPose: BlazePose.Pose;
@@ -103,14 +105,14 @@ export function polishPose(
     }
     targetKeypoint.x = xtemp / countertemp;
     targetKeypoint.y = ytemp / countertemp;
-    
+
     // const keypoint = findPart(currentPose, targetName);
     // if (keypoint && keypoint.score >= confidenceThreshold) {
     // }
   }
 
   // TODO: return the polished pose
-  return polishedPose; 
+  return polishedPose;
 }
 
 export type PartNameOrPair =

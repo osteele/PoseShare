@@ -1,18 +1,21 @@
-import * as Messages from "@common/messages";
+import * as Base from "@common/base-types";
 
 /** The server-side representation of a performer */
-export type Performer = Messages.Performer & {
+export type Performer = Base.Performer & {
   room: Room;
   timestamp: Date;
+  row: number;
+  col: number;
 };
 
 /** The server-side representation of a room. */
-export type Room = Messages.Room & {
+export type Room = Base.Room & {
   name: string;
   performers: {
     id: string;
     name: string;
-    position: number;
+    col: number;
+    row: number;
   }[];
 };
 
@@ -26,7 +29,7 @@ export interface ClientToServerEvent {
   emit(name: string, event?: ServerToClientEvent): void;
   on(
     name: string,
-    handler: (person: Messages.UserDetails, pose: unknown) => void
+    handler: (person: Base.UserDetails, pose: unknown) => void
   ): void;
   id: string;
 }

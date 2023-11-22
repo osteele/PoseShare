@@ -3,7 +3,7 @@
  * It sets up the websocket connection and the HTTP server.
  */
 
-import * as Messages from "@common/messages";
+import * as Base from "@common/base-types";
 import { instrument } from "@socket.io/admin-ui";
 import express from "express";
 import { createServer as createViteServer } from "vite";
@@ -75,7 +75,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
   socket.emit("performers", getPerformersForBroadcast());
 
   // When a client connects, it sends this event.
-  socket.on("join", (client: Messages.UserDetails) => {
+  socket.on("join", (client: Base.UserDetails) => {
     // If we haven't yet logged the client connection, or if we have already
     // logged the client *without* a username, log it again *with* a username.
     if (!username) {
@@ -114,7 +114,7 @@ io.on("connection", (socket: ClientToServerEvent) => {
   });
 
   // When a client sends a pose, broadcast it to the other clients.
-  socket.on("pose", (userDetails: Messages.UserDetails, pose: unknown) => {
+  socket.on("pose", (userDetails: Base.UserDetails, pose: unknown) => {
     // If the client hasn't yet sent a join event, request that it do so
     if (!username) {
       requestJoinEvent();

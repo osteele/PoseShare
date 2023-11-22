@@ -28,7 +28,7 @@ function updateDashboard(performers: Performer[]) {
         return `<tr>
         <td>${performer.name}</td>
         <td>${Number(new Date()) - performer.timestamp} ms</td>
-        <td>${performer.position}</td>
+        <td>(${performer.col}, ${performer.row})</td>
       </tr>`;
       })
       .join("") +

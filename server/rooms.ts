@@ -11,7 +11,7 @@
  * doesn't have a row or column, it returns the default room.
  */
 import * as fs from "fs";
-import { Room } from "./types";
+import { Performer, Room } from "./types";
 
 const ROOM_CONFIG_PATH = "./config/rooms.json";
 const DEFAULT_ROOM_NAME = "default";
@@ -20,8 +20,8 @@ const DEFAULT_ROOM_NAME = "default";
  * specify a default room, use this instead.  */
 const DEFAULT_ROOM: Room = {
   name: DEFAULT_ROOM_NAME,
-  rows: 1,
-  cols: 1,
+  rows: 3,
+  cols: 3,
   performers: [],
 };
 
@@ -60,17 +60,25 @@ export function getNamedRoom(roomName: string | null | undefined): Room {
   return room;
 }
 
-export function findUnusedPosition(room: Room) {
-  // collect the positions that are in use
-  const occupiedPositions = room.performers.map(({ position }) => position);
-  // create an array of available positions, and then remove the ones that are
-  // already in use.
-  const availablePositions = Array.from(
-    { length: room.rows * room.cols },
-    (_, i) => i
-  ).filter((p) => !occupiedPositions.includes(p));
-  return (
-    availablePositions.shift() ??
-    availablePositions.push(Math.max(...occupiedPositions) + 1)
-  );
+/**
+ * Finds an unused cell in a room.
+ * @param room - The room object.
+ * @returns An object containing the row and column of the unused cell.
+ */
+// TODO read `performers` from the room object instead of passing it in as an
+// argument.
+export function findUnusedPosition(room: Room, performers: Performer[]) {
+  const { rows, cols } = room;
+  const cells = new Array(rows * cols).fill(false);
+  performers.forEach(({ row, col }) => {
+    if (row === null || col === null) {
+      return;
+    }
+    cells[row * cols + col] = true;
+  });
+  let ix = cells.findIndex((x) => x === false);
+  if (ix < 0) {
+    ix = cells.length;
+  }
+  return { row: Math.floor(ix / cols), col: ix % cols };
 }

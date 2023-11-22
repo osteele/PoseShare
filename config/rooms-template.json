@@ -14,17 +14,20 @@
       {
         "id": "042795e7-f3f4-4a6d-a491-7195f3191923",
         "name": "Developer (Edge)",
-        "position": 1
+        "col": 1,
+        "row": 0,
       },
       {
         "id": "ab2a8888-8f53-49fb-806b-7414e5952dff",
         "name": "Developer (Chrome)",
-        "position": 2
+        "col": 2,
+        "row": 0,
       },
       {
         "id": "b0139af8-c973-49c3-9744-0f76a2a80903",
         "name": "Developer (Safari)",
-        "position": 3
+        "col": 3,
+        "row": 0,
       }
     ]
   },

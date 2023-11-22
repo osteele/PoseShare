@@ -3,12 +3,12 @@
  * It displays the current state of the room, with each person's pose.
  */
 
-import p5 from "p5";
-import { room } from "./room";
 import * as d3 from "d3";
+import p5 from "p5";
 import { setOffset } from "./poseOffset";
-import { createSkeleton } from "./skeleton";
+import { room } from "./room";
 import { confidenceThreshold } from "./settings";
+import { createSkeleton } from "./skeleton";
 
 let galleryScale = 1;
 
@@ -45,7 +45,8 @@ export function updateGallery(p5: p5): void {
 
   for (const person of room.performers) {
     if (!person.pose) continue;
-    const { row, col } = person;
+    const row = person.row ?? 0;
+    const col = person.col ?? 0;
     const color = person.isSelf ? "white" : `hsl(${person.hue}, 100%, 50%)`;
     const background = person.isSelf
       ? "hsla(0, 0%, 50%, 30%)"

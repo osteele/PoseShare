@@ -6,7 +6,8 @@ export type Performer = {
   name: string;
   connected: boolean;
   hue: number;
-  position: number;
+  row: number | null;
+  col: number | null;
   appearance: string;
 };
 

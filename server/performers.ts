@@ -4,10 +4,12 @@
  * should update its list of performers.
  */
 
-import * as Messages from "@common/messages";
+// FIXME why doesn't the first import work?
+import * as Base from "@common/base-types";
 import { findUnusedPosition, getNamedRoom } from "./rooms";
 import { Performer } from "./types";
 
+/** All performers, across all rooms. */
 let performers: Performer[] = [];
 
 export function logConnectedUsers(): void {
@@ -33,19 +35,24 @@ export function findPerformerById(clientId: string): Performer | undefined {
 
 // Find or create a performer with the given data.
 export function findOrCreatePerformer(
-  userDetails: Messages.UserDetails
+  userDetails: Base.UserDetails
 ): Performer {
   let performer = findPerformerById(userDetails.id);
   if (!performer) {
-    // Create a new performer from the data in data.
+    // Create a new performer.
     const room = getNamedRoom(userDetails.roomName);
+    const { row, col } = findUnusedPosition(
+      room,
+      performers.filter((p) => p.room === room)
+    );
     performer = {
       ...userDetails,
       room,
+      col,
+      row,
       // These are replaced later
       connected: true,
       hue: 0,
-      position: findUnusedPosition(room),
       timestamp: new Date(),
     };
     performers.push(performer);
@@ -68,20 +75,22 @@ function reassignPerformerColors() {
 /** If there's a entry with this id or name in the rooms.json file, copy its
  * position to the Performer.
  */
-function updatePerformerFromRoom(performer: Performer) {
-  const room = performer.room;
-  if (room) {
-    const roomPerformer =
-      room.performers.find(({ id }) => id === performer.id) ||
-      room.performers.find(({ name }) => name === performer.name);
-    if (roomPerformer) {
-      performer.position = roomPerformer.position;
-    }
-  }
+function updatePerformerFromRoom(_performer: Performer) {
+  // TODO: fix the following code or remove this function
+  // const { room } = performer;
+  // if (room) {
+  //   const roomPerformer =
+  //     room.performers.find(({ id }) => id === performer.id) ||
+  //     room.performers.find(({ name }) => name === performer.name);
+  //   if (roomPerformer) {
+  //     performer.col = roomPerformer.col;
+  //     performer.row = roomPerformer.row;
+  //   }
+  // }
 }
 
 // Returns a list of performers to be broadcast to clients.
-export function getPerformersForBroadcast(): Messages.Performer[] {
+export function getPerformersForBroadcast(): Base.Performer[] {
   reassignPerformerColors();
   // remove the room and timestamp properties
   return performers.map(({ room, timestamp, ...performer }) => performer);
