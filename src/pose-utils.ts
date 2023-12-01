@@ -84,7 +84,6 @@ export function polishPose(
   currentPose: BlazePose.Pose,
 ): BlazePose.Pose {
   // calculate the polished pose
-  // current implementation: (unweighed) average of poses;
   let polishedPose = JSON.parse(JSON.stringify(currentPose));
   // traverse the target keypoints
   for (const targetKeypoint of polishedPose.keypoints) {
@@ -97,9 +96,14 @@ export function polishPose(
       // if name matches the target name, include this data item
       for (const kp of previousPose.keypoints) {
         if (kp.name == targetName) {
-          countertemp++;
-          xtemp += kp.x;
-          ytemp += kp.y;
+          // // past implementation: (unweighted) average of poses
+          // countertemp++;
+          // xtemp += kp.x;
+          // ytemp += kp.y;
+          // current implementation: previous N poses have weight f(delta_N) = (N - delta_N + 1) / N, i = N - delta_N;
+          countertemp += 1/previousPoses.length * (i+1);
+          xtemp += kp.x * 1/previousPoses.length * (i+1);
+          ytemp += kp.y * 1/previousPoses.length * (i+1);
         }
       }
     }

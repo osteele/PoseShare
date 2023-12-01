@@ -28,6 +28,8 @@ export function drawPose(p5: p5, person: Performer, outline: boolean): void {
   const skeletonColor = p5.color(hue, 50, 50);
   const outlineColor = p5.color(hue, 50, 50, 0.5);
 
+  pose = polishedPose;
+
   drawKeypoints(p5, pose, keypointColor, outline);
 
   // drawKeypoints(p5, polishedPose, keypointColor, !outline);
