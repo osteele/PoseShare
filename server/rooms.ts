@@ -63,22 +63,26 @@ export function getNamedRoom(roomName: string | null | undefined): Room {
 /**
  * Finds an unused cell in a room.
  * @param room - The room object.
+ * @param performers - The performers in the room.
  * @returns An object containing the row and column of the unused cell.
  */
-// TODO read `performers` from the room object instead of passing it in as an
+// TODO: read `performers` from the room object instead of passing it in as an
 // argument.
-export function findUnusedPosition(room: Room, performers: Performer[]) {
-  const { rows, cols } = room;
-  const cells = new Array(rows * cols).fill(false);
+// FIXME: this function is duplicated in src/room.ts
+// An effort to move this function to common/common-utils.ts failed with an
+// an error of unknown origin:
+//   Error: Cannot find module '@common/base-types'
+export function findEmptyCell(room: Room, performers: Performer[]) {
+  const { rows, cols } = room; // get the dimensions of the room
+  const occupiedCells = new Array(rows * cols).fill(false); // which cells are occupied?
   performers.forEach(({ row, col }) => {
-    if (row === null || col === null) {
-      return;
+    if (row !== null && col !== null) {
+      occupiedCells[row * cols + col] = true;
     }
-    cells[row * cols + col] = true;
   });
-  let ix = cells.findIndex((x) => x === false);
+  let ix = occupiedCells.findIndex((x) => x === false);
   if (ix < 0) {
-    ix = cells.length;
+    ix = occupiedCells.length;
   }
   return { row: Math.floor(ix / cols), col: ix % cols };
 }

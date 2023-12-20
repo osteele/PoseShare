@@ -6,7 +6,7 @@
 
 // FIXME why doesn't the first import work?
 import * as Base from "@common/base-types";
-import { findUnusedPosition, getNamedRoom } from "./rooms";
+import { findEmptyCell, getNamedRoom } from "./rooms";
 import { Performer } from "./types";
 
 /** All performers, across all rooms. */
@@ -41,7 +41,7 @@ export function findOrCreatePerformer(
   if (!performer) {
     // Create a new performer.
     const room = getNamedRoom(userDetails.roomName);
-    const { row, col } = findUnusedPosition(
+    const { row, col } = findEmptyCell(
       room,
       performers.filter((p) => p.room === room)
     );

@@ -6,7 +6,7 @@
 import * as d3 from "d3";
 import p5 from "p5";
 import { setOffset } from "./poseOffset";
-import { room } from "./room";
+import { findUnusedPosition as findEmptyCell, room } from "./room";
 import { confidenceThreshold } from "./settings";
 import { createSkeleton } from "./skeleton";
 
@@ -45,8 +45,20 @@ export function updateGallery(p5: p5): void {
 
   for (const person of room.performers) {
     if (!person.pose) continue;
-    const row = person.row ?? 0;
-    const col = person.col ?? 0;
+    let { row, col } = person;
+    // If the server has not yet assigned a row and col, find an empty cell.
+    // This allows the user to see this person's pose in an empty cell while
+    // they are waiting for the server to assign a position. The position that
+    // the client computes is not persisted, since the server will assign a
+    // position later. It is not sent to the server, because a race condition
+    // can occur if multiple clients assign their own positions. If the race
+    // condition does not occur, the position that the server assigns will end
+    // up being the same as the one that the server assigns.
+    if (row === undefined || col === undefined) {
+      const position = findEmptyCell(room);
+      row = position.row;
+      col = position.col;
+    }
     const color = person.isSelf ? "white" : `hsl(${person.hue}, 100%, 50%)`;
     const background = person.isSelf
       ? "hsla(0, 0%, 50%, 30%)"
