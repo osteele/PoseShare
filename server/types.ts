@@ -1,5 +1,8 @@
 import * as Base from "@common/base-types";
 
+/** A pose is a JSON-serializable object. It is opaque to the server. */
+type Pose = unknown;
+
 /** The server-side representation of a performer */
 export type Performer = Base.Performer & {
   room: Room;
@@ -29,7 +32,7 @@ export interface ClientToServerEvent {
   emit(name: string, event?: ServerToClientEvent): void;
   on(
     name: string,
-    handler: (person: Base.UserDetails, pose: unknown) => void
+    handler: (person: Base.UserDetails, pose: Pose) => void
   ): void;
   id: string;
 }
