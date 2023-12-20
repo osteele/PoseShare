@@ -12,4 +12,7 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "files.exclude": {
+    "build": true
+  },
 }
