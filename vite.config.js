@@ -1,4 +1,7 @@
 /** @type {import('vite').UserConfig} */
 export default {
-  build: { sourcemap: true }
-}
+  build: {
+    chunkSizeWarningLimit: 1_000_000,
+    sourcemap: true,
+  },
+};
